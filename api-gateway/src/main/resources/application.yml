@@ -26,7 +26,7 @@ spring:
   data:
     redis:
       host: ${redis_host:localhost}}
-      port: ${redis_port:6379}}
+      port: ${redis_port:6379}
       username: ${redis_username}
       password: ${redis_password}
 
