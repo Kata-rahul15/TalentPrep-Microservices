@@ -20,12 +20,12 @@ spring:
               predicates:
                 - Path=/api/resumes/**
             - id: job-description-service
-              uri: http://localhost:8082
+              uri: ${RESUME_SERVICE_URL:http://localhost:8082}
               predicates:
                 - Path=/api/job-descriptions/**
   data:
     redis:
-      host: ${redis_host:localhost}}
+      host: ${redis_host:localhost}
       port: ${redis_port:6379}
       username: ${redis_username}
       password: ${redis_password}

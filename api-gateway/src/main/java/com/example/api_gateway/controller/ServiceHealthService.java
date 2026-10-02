@@ -12,12 +12,11 @@ public class ServiceHealthService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${services.auth.base-url}")
+    @Value("${AUTH_SERVICE_URL:http://localhost:8081}")
     private String authUrl;
 
-    @Value("${services.resume.base-url}")
+    @Value("${RESUME_SERVICE_URL:http://localhost:8082}")
     private String resumeUrl;
-
     public ServiceHealthService(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
