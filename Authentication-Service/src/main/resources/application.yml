@@ -41,7 +41,7 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: "${baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "${baseUrl:http://localhost:8080/api/auth}/login/oauth2/code/{registrationId}"
 
   data:
     redis:
@@ -55,5 +55,5 @@ jwt:
     key: ${jwt_secret_key}
 
 app:
-  url-redirect: ${Url_redirect}
-  url-frontend: ${Url_frontend}
+  url-redirect: ${Url_redirect:http://localhost:5173/home}
+  url-frontend: ${Url_frontend:http://localhost:5173}

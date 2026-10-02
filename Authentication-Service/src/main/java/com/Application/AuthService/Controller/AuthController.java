@@ -54,14 +54,14 @@ public class AuthController {
         ResponseCookie AccessCookie = ResponseCookie.from("AccessToken", response.getAccessToken())
                 .httpOnly(true)
                 .path("/")
-                .secure(false)
+                .secure(true)
                 .maxAge(Duration.ofMinutes(15))
                 .sameSite("Strict")
                 .build();
         ResponseCookie RefreshCookie = ResponseCookie.from("RefreshToken", response.getRefreshToken())
                 .httpOnly(true)
                 .path("/api/auth/refresh")
-                .secure(false)
+                .secure(true)
                 .maxAge(Duration.ofDays(7))
                 .sameSite("Strict")
                 .build();

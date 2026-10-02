@@ -11,12 +11,12 @@ spring:
         webflux:
           routes:
             - id: auth-service
-              uri: http://localhost:8081
+              uri: ${AUTH_SERVICE_URL:http://localhost:8081}
               predicates:
                 - Path=/api/auth/**
 
             - id: resume-service
-              uri: http://localhost:8082
+              uri: ${RESUME_SERVICE_URL:http://localhost:8082}
               predicates:
                 - Path=/api/resumes/**
             - id: job-description-service
@@ -25,17 +25,16 @@ spring:
                 - Path=/api/job-descriptions/**
   data:
     redis:
-      host: ${redis_host:${REDIS_HOST:localhost}}
-      port: ${redis_port:${REDIS_PORT:6379}}
-      username: ${redis_username:${REDIS_USERNAME:}}
-      password: ${redis_password:${REDIS_PASSWORD:}}
+      host: ${redis_host:localhost}}
+      port: ${redis_port:6379}}
+      username: ${redis_username}
+      password: ${redis_password}
 
 jwt:
   secret:
-    key: ${jwt_secret_key:${JWT_SECRET_KEY:thisismyecretkeyforemailservice12232321314y2urwbwedjdsfdfdsgbvcbcvnnpoiujyhgbvcdsxszdfdwd}}
-
+    key: ${jwt_secret_key}
 cors:
-  allowed-origins: http://localhost:5173
+  allowed-origins: ${FRONTEND_URL:http://localhost:5173}
 
 management:
   endpoints:
