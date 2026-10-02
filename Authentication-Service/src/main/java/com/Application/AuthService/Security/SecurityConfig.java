@@ -51,24 +51,25 @@ public class SecurityConfig {
                         (request, response, authException) ->
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
                 ))
-                         .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(
-                                        "/api/auth/register",
-                                        "/api/auth/login",
-                                        "/api/auth/refresh",
-                                        "/api/auth/send-reset-otp",
-                                        "/api/auth/send-verify-otp",
-                                        "/api/auth/resend-otp",
-                                        "/api/auth/reset-password",
-                                        "/api/auth/forgot-password",
-                                        "/api/auth/oauth2/**",
-                                        "/api/auth/login/oauth2/**"
-                                ).permitAll()
-                                .requestMatchers("/api/auth/profile",
-                                        "/api/auth/logout"
-                                ).authenticated()
-                                .anyRequest().authenticated()
-                        )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/refresh",
+                                "/api/auth/logout",
+                                "/api/auth/send-reset-otp",
+                                "/api/auth/send-verify-otp",
+                                "/api/auth/resend-otp",
+                                "/api/auth/reset-password",
+                                "/api/auth/forgot-password",
+                                "/api/auth/oauth2/**",
+                                "/api/auth/login/oauth2/**"
+                        ).permitAll()
+
+                        .requestMatchers("/api/auth/profile").authenticated()
+
+                        .anyRequest().authenticated()
+                )
                 .oauth2Login(oauth -> oauth
                         .authorizationEndpoint(
                                 authorization -> authorization.baseUri("/api/auth/oauth2/authorization")

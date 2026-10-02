@@ -147,8 +147,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 ResponseCookie.from("RefreshToken", refreshToken.getToken())
                         .httpOnly(true)
                         .secure(true)
-                        .sameSite("Strict")
-                        .path("/api/auth/refresh")
+                        .sameSite("None")
+                        .path("/api/auth")
                         .maxAge(Duration.ofDays(7))
                         .build();
 

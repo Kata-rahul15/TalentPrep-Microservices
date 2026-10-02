@@ -12,6 +12,7 @@ import com.Application.AuthService.Exception.InvalidOtpException;
 import com.Application.AuthService.Security.CustomUserPrincipal;
 import com.Application.AuthService.Security.JwtUtil;
 import com.Application.AuthService.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -224,7 +225,7 @@ public class ProfileService {
                 ResponseCookie.from("AccessToken", accessToken)
                         .httpOnly(true)
                         .secure(true)
-                        .sameSite("Strict")
+                        .sameSite("None")
                         .path("/")
                         .maxAge(Duration.ofMinutes(15))
                         .build();
@@ -236,8 +237,8 @@ public class ProfileService {
                         )
                         .httpOnly(true)
                         .secure(true)
-                        .sameSite("Strict")
-                        .path("/api/auth/refresh")
+                        .sameSite("None")
+                        .path("/api/auth")
                         .maxAge(Duration.ofDays(7))
                         .build();
 
@@ -246,36 +247,47 @@ public class ProfileService {
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
                 .build();
     }
+    public void logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
 
-    public void logout(HttpServletRequest request, HttpServletResponse response,String email) {
-        String token = jwtUtil.extractToken(request);
+        String refreshToken = null;
 
-        if(token!=null) {
-            Duration remaining = jwtUtil.getRemainingValidity(token);
-            blacklistService.blacklistToken(token, remaining);
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("RefreshToken".equals(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                    break;
+                }
+            }
         }
 
-        if(email!=null) {
-            refreshTokenService.deleteByEmail(email);
-        }
-        clearCookies(response);
-    }
+        try {
+            if (refreshToken != null && !refreshToken.isBlank()) {
 
-    private void clearCookies(HttpServletResponse response) {
+                // Validate the refresh token before revoking it.
+                // Revoke the matching refresh-token record.
+                refreshTokenService.revokeRefreshToken(refreshToken);
+            }
+        } finally {
+            clearCookies(response);
+        }
+    }    private void clearCookies(HttpServletResponse response) {
 
             ResponseCookie accessCookie =
                     ResponseCookie.from("AccessToken","")
                             .httpOnly(true)
                             .secure(true)
-                            .sameSite("Strict")
+                            .sameSite("None")
                             .path("/")
                             .maxAge(0)
                             .build();
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", "")
                         .httpOnly(true)
                         .secure(true)
-                        .sameSite("Strict")
-                        .path("/api/auth/refresh")
+                        .sameSite("None")
+                        .path("/api/auth")
                         .maxAge(0)
                         .build();
             response.addHeader(HttpHeaders.SET_COOKIE,accessCookie.toString());

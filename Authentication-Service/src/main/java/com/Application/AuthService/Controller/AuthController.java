@@ -56,14 +56,14 @@ public class AuthController {
                 .path("/")
                 .secure(true)
                 .maxAge(Duration.ofMinutes(15))
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
         ResponseCookie RefreshCookie = ResponseCookie.from("RefreshToken", response.getRefreshToken())
                 .httpOnly(true)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .secure(true)
                 .maxAge(Duration.ofDays(7))
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
 
@@ -90,10 +90,10 @@ public class AuthController {
 
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response, HttpServletRequest request, Authentication authentication) {
-        String email = authentication != null ? authentication.getName() : null;
-        profileService.logout(request, response, email);
-        return ResponseEntity.ok().body("Logout Successfully");
+    public ResponseEntity<Void> logout(
+            HttpServletRequest request, HttpServletResponse response) {
+        profileService.logout(request, response);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/send-verify-otp")
