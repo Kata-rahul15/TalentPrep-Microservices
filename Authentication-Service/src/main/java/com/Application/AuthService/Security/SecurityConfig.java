@@ -34,8 +34,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-//    @Value("${app.url-frontend}")
-//    private String frontendUrl;
 
     private final JwtFilter jwtFilter;
     private final CustomProfileService service;
@@ -59,6 +57,7 @@ public class SecurityConfig {
                                         "/api/auth/login",
                                         "/api/auth/refresh",
                                         "/api/auth/send-reset-otp",
+                                        "/api/auth/send-verify-otp",
                                         "/api/auth/resend-otp",
                                         "/api/auth/reset-password",
                                         "/api/auth/forgot-password",
@@ -70,10 +69,6 @@ public class SecurityConfig {
                                 ).authenticated()
                                 .anyRequest().authenticated()
                         )
-//                .oauth2Login(oauth -> oauth
-//                        .successHandler(oAuth2SuccessHandler)
-//                        .failureHandler(oAuth2FailureHandler)
-//                )
                 .oauth2Login(oauth -> oauth
                         .authorizationEndpoint(
                                 authorization -> authorization.baseUri("/api/auth/oauth2/authorization")
@@ -95,24 +90,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//    @Bean
-//    public CorsFilter corsFilter() {
-//        return new CorsFilter(corsConfigurationSource());
-//    }
-//
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowedOrigins(List.of(frontendUrl));
-//        config.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"));
-//        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-//        config.setAllowCredentials(true);
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", config);
-//        return source;
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(PasswordEncoder passwordEncoder) {

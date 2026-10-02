@@ -29,7 +29,12 @@ public class SecurityConfig {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/api/auth/**", "/actuator/health", "/actuator/**", "/health").permitAll()
+                        .pathMatchers("/api/auth/**",
+                                "/health",
+                                "/actuator/health",
+                                "/actuator/**",
+                                "/health")
+                        .permitAll()
                         .anyExchange().permitAll()
                 )
                 .build();
