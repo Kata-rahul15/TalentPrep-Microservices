@@ -1,0 +1,22 @@
+
+resume:
+
+  storage:
+    type: ${STORAGE_TYPE:supabase}
+
+    supabase:
+      url: ${SUPABASE_URL}
+      service-key: ${SUPABASE_SERVICE_KEY}
+      bucket: ${SUPABASE_RESUME_BUCKET:Resumes}
+
+  # =========================================================
+  # Resume Validation
+  # =========================================================
+
+  validation:
+    max-file-size-bytes: 10485760
+
+    allowed-mime-types:
+      - application/pdf
+      - application/msword
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document

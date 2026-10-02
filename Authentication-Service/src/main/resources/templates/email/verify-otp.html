@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify your TalentPrep Account</title>
+</head>
+
+<body style="margin:0;padding:0;background:#f4f6fb;font-family:Arial,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td align="center">
+
+            <table width="600" cellpadding="0" cellspacing="0"
+                   style="background:#ffffff;border-radius:12px;margin:40px 0;padding:40px;">
+
+                <tr>
+                    <td align="center">
+
+                        <h1 style="color:#6D28D9;">
+                            TalentPrep
+                        </h1>
+
+                        <h2>Verify Your Email</h2>
+
+                        <p>
+                            Hello
+                            <strong th:text="${name}">User</strong>,
+                        </p>
+
+                        <p>
+                            Thank you for signing up for TalentPrep.
+                        </p>
+
+                        <p>
+                            Use the following verification code:
+                        </p>
+
+                        <div
+                                style="
+display:inline-block;
+padding:18px 36px;
+background:#6D28D9;
+color:white;
+font-size:34px;
+font-weight:bold;
+border-radius:10px;
+letter-spacing:8px;
+margin:20px 0;
+">
+
+                            <span th:text="${otp}">123456</span>
+
+                        </div>
+
+                        <p>
+                            This verification code expires in
+                            <strong>5 minutes</strong>.
+                        </p>
+
+                        <p>
+                            If you did not request this email, you can safely ignore it.
+                        </p>
+
+                        <hr>
+
+                        <p style="font-size:13px;color:#888;">
+                            © TalentPrep
+                        </p>
+
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

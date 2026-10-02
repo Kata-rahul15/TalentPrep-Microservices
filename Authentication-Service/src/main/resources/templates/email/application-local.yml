@@ -1,0 +1,38 @@
+brevo:
+  api-key: ${BREVO_API_KEY}
+
+spring:
+  application:
+    name: student
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
+
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 5
+      connection-timeout: 3000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  data:
+    redis:
+      host: ${redis_host}
+      port: ${redis_port}
+      username: ${redis_username}
+      password: ${redis_password}
+logging:
+  level:
+    org.springframework.mail: DEBUG
+    org.eclipse.angus.mail: DEBUG
+    com.zaxxer.hikari: DEBUG
+jwt:
+  secret:
+    key: ${jwt_secret_key}

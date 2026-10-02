@@ -1,0 +1,20 @@
+resume:
+  storage:
+    type: ${STORAGE_TYPE:local}
+    base-path: ./uploads/resumes
+
+  validation:
+    max-file-size-bytes: 10485760
+    allowed-mime-types:
+      - application/pdf
+      - application/msword
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+  rag:
+    top-k: 5
+    similarity-threshold: 0.50
+
+  matching:
+    required-skills-weight: 0.60
+    preferred-skills-weight: 0.20
+    responsibilities-weight: 0.20

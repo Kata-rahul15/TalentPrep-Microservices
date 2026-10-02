@@ -1,0 +1,28 @@
+
+# Environment variables and secrets
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Java / Maven
+**/target/
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+**/.idea/
+.vscode/
+*.iml
+
+# Runtime uploads and user data
+uploads/
+**/uploads/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db

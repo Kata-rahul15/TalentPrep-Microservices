@@ -1,0 +1,275 @@
+server:
+  port: 8082
+
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:prod}
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      max-lifetime: 300000
+      keepalive-time: 60000
+      connection-timeout: 30000
+      validation-timeout: 5000
+
+  # =========================================================
+  # SPRING AI
+  # =========================================================
+
+  ai:
+
+    # Chat provider
+    model:
+      chat: openai
+      embedding:
+        text: google-genai
+
+    # =======================================================
+    # GROQ CHAT
+    # =======================================================
+
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai/v1
+
+      chat:
+        model: openai/gpt-oss-120b
+        temperature: 0.2
+        max-tokens: 4096
+
+    # =======================================================
+    # GOOGLE GEMINI EMBEDDINGS
+    # =======================================================
+
+    google:
+      genai:
+        embedding:
+          api-key: ${GEMINI_API_KEY}
+
+          text:
+            model: gemini-embedding-001
+            dimensions: 768
+            task-type: RETRIEVAL_DOCUMENT
+
+  # =========================================================
+  # JPA / Hibernate
+  # =========================================================
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        format_sql: true
+
+
+# =============================================================
+# RAG
+# =============================================================
+
+#rag:
+#  top-k: 5
+#  similarity-threshold: 0.50
+
+resume:
+  rag:
+    top-k: 5
+    similarity-threshold: 0.40
+# =============================================================
+# Job Matching
+# =============================================================
+
+matching:
+  required-skills-weight: 0.60
+  preferred-skills-weight: 0.20
+  responsibilities-weight: 0.20
+#server:
+#  port: 8082
+#
+#spring:
+#  profiles:
+#    active: ${SPRING_PROFILES_ACTIVE:prod}
+#  datasource:
+#    url: ${DB_URL}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+#    driver-class-name: org.postgresql.Driver
+#
+#    hikari:
+#      max-lifetime: 300000
+#      keepalive-time: 60000
+#      connection-timeout: 30000
+#      validation-timeout: 5000
+#
+#  ai:
+#
+#    model:
+#      chat: google-genai
+#      audio:
+#        speech: none
+#        transcription: none
+#
+#    google:
+#      genai:
+#        api-key: ${GEMINI_API_KEY}
+#
+#        chat:
+#          options:
+#            model: gemini-3.8-flash
+#            temperature: 0.2
+#            max-output-tokens: 4096
+#
+#        embedding:
+#          api-key: ${GEMINI_API_KEY}
+#          text:
+#            model: gemini-embedding-001
+#            dimensions: 768
+#            task-type: RETRIEVAL_DOCUMENT
+#  # =========================================================
+#  # JPA / Hibernate
+#  # =========================================================
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#
+#    properties:
+#      hibernate:
+#        format_sql: true
+#
+#
+## =============================================================
+## Resume Storage - Supabase
+## =============================================================
+##
+##resume:
+##
+##  storage:
+##    type: ${STORAGE_TYPE:supabase}
+##
+##    supabase:
+##      url: ${SUPABASE_URL}
+##      service-key: ${SUPABASE_SERVICE_KEY}
+##      bucket: ${SUPABASE_RESUME_BUCKET:resumes}
+##
+##  # =========================================================
+##  # Resume Validation
+##  # =========================================================
+##
+##  validation:
+##    max-file-size-bytes: 10485760
+##
+##    allowed-mime-types:
+##      - application/pdf
+##      - application/msword
+##      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+#
+#  # =========================================================
+#  # RAG
+#  # =========================================================
+#
+#  rag:
+#    top-k: 5
+#    similarity-threshold: 0.50
+#
+#  # =========================================================
+#  # Job Matching
+#  # =========================================================
+#
+#  matching:
+#    required-skills-weight: 0.60
+#    preferred-skills-weight: 0.20
+#    responsibilities-weight: 0.20
+##server:
+##  port: 8082
+##
+##spring:
+##
+##  datasource:
+##    url: ${DB_URL}
+##    username: ${DB_USERNAME}
+##    password: ${DB_PASSWORD}
+##    driver-class-name: org.postgresql.Driver
+##
+##    hikari:
+##      max-lifetime: 300000
+##      keepalive-time: 60000
+##      connection-timeout: 30000
+##      validation-timeout: 5000
+##
+##  ai:
+##
+##    model:
+##      chat: google-genai
+##      audio:
+##        speech: none
+##        transcription: none
+##
+##    google:
+##      genai:
+##        api-key: ${GEMINI_API_KEY}
+##
+##        chat:
+##          options:
+##            model: gemini-2.5-flash
+##            temperature: 0.2
+##            max-output-tokens: 2048
+##
+##        embedding:
+##          api-key: ${GEMINI_API_KEY}
+##          text:
+##            model: gemini-embedding-001
+##            dimensions: 768
+##            task-type: RETRIEVAL_DOCUMENT
+##  # =========================================================
+##  # JPA / Hibernate
+##  # =========================================================
+##
+##  jpa:
+##    hibernate:
+##      ddl-auto: update
+##
+##    properties:
+##      hibernate:
+##        format_sql: true
+##
+##
+### =============================================================
+### Resume Storage
+### =============================================================
+##
+##resume:
+##
+##  storage:
+##    type: local
+##    base-path: ./uploads/resumes
+##
+##  validation:
+##    max-file-size-bytes: 10485760
+##
+##    allowed-mime-types:
+##      - application/pdf
+##      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+##
+##  # =========================================================
+##  # RAG
+##  # =========================================================
+##
+##  rag:
+##    top-k: 5
+##    similarity-threshold: 0.50
+##
+##  # =========================================================
+##  # Job Matching
+##  # =========================================================
+##
+##  matching:
+##    required-skills-weight: 0.60
+##    preferred-skills-weight: 0.20
+##    responsibilities-weight: 0.20
