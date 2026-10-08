@@ -72,37 +72,14 @@ public class ResumeAgentService {
         profiles.getProfile(resumeId, userId);
         UUID conversationId = request.getConversationId() == null ? UUID.randomUUID() : request.getConversationId();
 
-//        List<ResumeAgentMessage> prior = new ArrayList<>(messages
-//                .findTop12ByConversationIdAndUserIdAndResumeIdOrderByCreatedAtDesc(conversationId, userId, resumeId));
-//        Collections.reverse(prior);
-//        List<Message> history = new ArrayList<>();
-//        for (ResumeAgentMessage item : prior) {
-//            if ("user".equals(item.getRole())) {
-//                history.add(new UserMessage(item.getContent()));
-//            } else if ("assistant".equals(item.getRole())) {
-//                // Persist only the visible assistant text. Do not replay provider-specific
-//                // reasoning/tool metadata from a previous model response.
-//                history.add(AssistantMessage.builder()
-//                        .content(item.getContent())
-//                        .build());
-//            }
-//        }
-
         ResumeAgentTools scopedTools = new ResumeAgentTools(userId, resumeId, profiles, knowledge, mapper, jobSearchService);
 
-        // Groq's GPT-OSS models can return reasoning metadata. With Spring AI's
-        // OpenAI-compatible tool-calling flow, replaying that metadata can cause Groq
-        // to reject the next assistant message with:
-        // "property 'reasoning_content' is unsupported". Explicitly disable reasoning
-        // output for this ChatClient call while keeping model reasoning/tool selection
-        // available internally.
         Map<String, Object> extraBody = new HashMap<>();
         extraBody.put("include_reasoning", false);
 
 
         String reply = chatClient.prompt()
                 .system(SYSTEM_PROMPT)
-//                .messages(history)
                 .user(text)
                 .tools(scopedTools)
                 .call()

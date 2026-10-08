@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -46,7 +48,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse response,
                                         Authentication authentication)
             throws IOException, ServletException {
-        System.out.println("===== OAuth2SuccessHandler called =====");
+        log.info("Oauth SuccessHandler Called");
         OAuth2AuthenticationToken oauthToken =
                 (OAuth2AuthenticationToken) authentication;
 
@@ -154,7 +156,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-        System.out.println("oauth successfull");
+
 
         response.sendRedirect(redirectUrl);
     }

@@ -98,31 +98,6 @@ public class JobDescriptionService {
                 );
     }
 
-    /**
-     * Loads a job description and verifies ownership.
-     *
-     * Used by operations such as job matching where the
-     * authenticated user's ownership must be enforced.
-     */
-    @Transactional(readOnly = true)
-    public JobDescription getJobDescriptionEntity(
-            UUID id,
-            UUID userId) {
-
-        JobDescription jobDescription =
-                getJobDescriptionEntity(id);
-
-        if (userId != null
-                && !userId.equals(jobDescription.getUserId())) {
-
-            throw new IllegalArgumentException(
-                    "You are not authorized to access this job description."
-            );
-        }
-
-        return jobDescription;
-    }
-
     @Transactional(readOnly = true)
     public List<JobDescriptionResponse> getUserJobDescriptions(
             UUID userId) {

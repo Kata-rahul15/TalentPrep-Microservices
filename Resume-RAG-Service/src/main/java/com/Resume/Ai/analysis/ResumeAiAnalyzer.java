@@ -23,11 +23,10 @@ import java.util.Set;
 
 /**
  * The single semantic AI step in resume ingestion.
- *
- * Apache Tika is responsible for extracting document text. This service takes
- * that cleaned text once and asks the LLM for the complete structured resume
- * representation plus the general ATS evaluation. The result is persisted so
- * later overview/details/ATS requests do not call the LLM again.
+ * Apache Tika is responsible for extracting document text.
+ * This service takes that cleaned text once and asks the LLM for the complete structured resume
+ * representation plus the general ATS evaluation.
+ * The result is persisted so later overview/details/ATS requests do not call the LLM again.
  */
 @Service
 public class ResumeAiAnalyzer {

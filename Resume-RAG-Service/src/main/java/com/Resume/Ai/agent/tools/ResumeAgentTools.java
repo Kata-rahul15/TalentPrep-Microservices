@@ -16,7 +16,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/** Per-request tool object: identity and resume scope are bound by trusted server code. */
 public class ResumeAgentTools {
     private static final int MAX_TOOL_INVOCATIONS = 5;
     private final UUID userId;

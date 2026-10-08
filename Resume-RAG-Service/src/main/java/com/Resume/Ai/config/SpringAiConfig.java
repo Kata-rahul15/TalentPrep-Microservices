@@ -13,21 +13,13 @@ import org.springframework.context.annotation.Primary;
 
 /**
  * AI model wiring for TalentPrep.
- *
- * Qwen/Groq remains the application's primary chat model and is used by the
- * career agent, job-related AI flows, and any existing ChatClient consumers.
- * Resume ingestion gets a dedicated GPT ChatClient so structured resume
- * extraction is independent from the agent model and its tool-calling limits.
- * Gemini remains the embedding provider through Spring AI auto-configuration.
+ * Qwen/Groq remains the application's primary chat model
+ * Gpt Model is used for resume parsing
+ * Gemini remains the embedding provider
  */
 @Configuration
 public class SpringAiConfig {
 
-    /**
-     * Primary/general ChatClient: Qwen through the configured OpenAI-compatible
-     * Groq endpoint. Existing agent and job/RAG services continue to inject
-     * ChatClient without code changes.
-     */
     @Bean
     @Primary
     public ChatClient chatClient(
@@ -35,10 +27,6 @@ public class SpringAiConfig {
         return ChatClient.builder(chatModel).build();
     }
 
-    /**
-     * Dedicated ChatClient for the one semantic resume-analysis call.
-     * This model is configured independently from the Qwen agent model.
-     */
     @Bean(name = "resumeAnalysisChatClient")
     public ChatClient resumeAnalysisChatClient(
             @Value("${talentprep.ai.resume.base-url:https://api.groq.com/openai/v1}") String baseUrl,
