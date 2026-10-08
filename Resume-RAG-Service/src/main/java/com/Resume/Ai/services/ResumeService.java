@@ -776,6 +776,14 @@ public class ResumeService {
         );
     }
 
+    /** Loads a resume after enforcing ownership for the download endpoint. */
+    @Transactional(readOnly = true)
+    public Resume requireOwnedResumeForDownload(UUID resumeId, UUID userId) {
+        Resume resume = requireResume(resumeId);
+        validateOwnership(resume, userId);
+        return resume;
+    }
+
     // =============================================================
     // DELETE
     // =============================================================

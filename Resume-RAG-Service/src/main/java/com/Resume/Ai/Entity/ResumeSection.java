@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -98,4 +99,13 @@ public class ResumeSection {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private ContactDetails contactDetails;
+
+    /**
+     * Exact UI state for the Resume Builder. This preserves template selection,
+     * section order/visibility, links and other builder-only metadata without
+     * forcing the normalized analysis schema to mirror the React model.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, Object> builderContent;
 }

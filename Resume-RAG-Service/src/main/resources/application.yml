@@ -5,6 +5,13 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:prod}
 
+  data:
+    redis:
+      host: ${redis_host:localhost}
+      port: ${redis_port:6379}
+      username: ${redis_username:}
+      password: ${redis_password:}
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -33,15 +40,23 @@ spring:
     # GROQ CHAT
     # =======================================================
 
+#    openai:
+#      api-key: ${GROQ_API_KEY}
+#      base-url: https://api.groq.com/openai/v1
+#
+#      chat:
+#        model: openai/gpt-oss-120b
+#        temperature: 0.2
+#        max-tokens: 4096
     openai:
       api-key: ${GROQ_API_KEY}
       base-url: https://api.groq.com/openai/v1
-
       chat:
-        model: openai/gpt-oss-120b
-        temperature: 0.2
-        max-tokens: 4096
-
+        options:
+          model: qwen/qwen3.8-27b
+          temperature: 0.2
+          extra-body:
+            reasoning_effort: none
     # =======================================================
     # GOOGLE GEMINI EMBEDDINGS
     # =======================================================
@@ -83,3 +98,21 @@ matching:
   required-skills-weight: 0.60
   preferred-skills-weight: 0.20
   responsibilities-weight: 0.20
+
+# =============================================================
+# Live Job Search (provider-agnostic facade -> SerpApi Google Jobs)
+# =============================================================
+job-search:
+  cache:
+    enabled: ${JOB_SEARCH_CACHE_ENABLED:true}
+    ttl-minutes: ${JOB_SEARCH_CACHE_TTL_MINUTES:30}
+    key-prefix: ${JOB_SEARCH_CACHE_KEY_PREFIX:jobs:search:v1:}
+    job-details-key-prefix: ${JOB_SEARCH_JOB_DETAILS_CACHE_KEY_PREFIX:jobs:details:v1:}
+  serpapi:
+    base-url: ${SERPAPI_BASE_URL:https://serpapi.com/search.json}
+    api-key: ${SERPAPI_API_KEY:}
+    engine: ${SERPAPI_JOBS_ENGINE:google_jobs}
+    listing-engine: ${SERPAPI_JOBS_LISTING_ENGINE:google_jobs_listing}
+    language: ${SERPAPI_LANGUAGE:en}
+    country: ${SERPAPI_COUNTRY:in}
+    timeout-seconds: ${SERPAPI_TIMEOUT_SECONDS:20}

@@ -1,9 +1,14 @@
 package com.Resume.Ai.controller;
 
 import com.Resume.Ai.dto.*;
+import com.Resume.Ai.Entity.Resume;
+import com.Resume.Ai.storage.FileStorageService;
+import org.springframework.core.io.Resource;
 import com.Resume.Ai.services.ResumeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +27,11 @@ public class ResumeController {
     private static final String FALLBACK_USER_ID_HEADER = "X-User-Id";
 
     private final ResumeService resumeService;
+    private final FileStorageService fileStorageService;
 
-    public ResumeController(ResumeService resumeService) {
+    public ResumeController(ResumeService resumeService, FileStorageService fileStorageService) {
         this.resumeService = resumeService;
+        this.fileStorageService = fileStorageService;
     }
 
     private UUID resolveUserId(UUID authUserId, UUID fallbackUserId) {
@@ -61,6 +68,41 @@ public class ResumeController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(resumeService.uploadResume(request));
+    }
+
+    @GetMapping("/{resumeId}/download")
+    public ResponseEntity<Resource> downloadResume(
+            @RequestHeader(name = AUTH_USER_ID_HEADER, required = false) UUID authUserId,
+            @RequestHeader(name = FALLBACK_USER_ID_HEADER, required = false) UUID fallbackUserId,
+            @PathVariable UUID resumeId) {
+        UUID userId = resolveUserId(authUserId, fallbackUserId);
+        Resume resume = resumeService.requireOwnedResumeForDownload(resumeId, userId);
+
+        if (resume.getStoragePath() == null || resume.getStoragePath().isBlank()
+                || "builder".equalsIgnoreCase(resume.getStoragePath())) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource resource = fileStorageService.download(resume.getStoragePath());
+        String filename = resume.getOriginalFilename();
+        if (filename == null || filename.isBlank()) filename = resume.getStoredFilename();
+        if (filename == null || filename.isBlank()) filename = "resume";
+        filename = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+        MediaType contentType;
+        try {
+            contentType = resume.getMimeType() == null || resume.getMimeType().isBlank()
+                    ? MediaType.APPLICATION_OCTET_STREAM
+                    : MediaType.parseMediaType(resume.getMimeType());
+        } catch (IllegalArgumentException ex) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename(filename).build().toString())
+                .body(resource);
     }
 
     @GetMapping("/{resumeId}")

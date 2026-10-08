@@ -7,6 +7,7 @@ import com.Resume.Ai.enums.ResumeStatus;
 import com.Resume.Ai.exception.GlobalExceptionHandler;
 import com.Resume.Ai.exception.ResumeUnauthorizedAccessException;
 import com.Resume.Ai.services.ResumeService;
+import com.Resume.Ai.storage.FileStorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +37,9 @@ class ResumeControllerTest {
     @Mock
     private ResumeService resumeService;
 
+    @Mock
+    private FileStorageService fileStorageService;
+
     private UUID userId;
     private UUID resumeId;
 
@@ -43,7 +47,7 @@ class ResumeControllerTest {
     void setUp() {
         userId = UUID.randomUUID();
         resumeId = UUID.randomUUID();
-        ResumeController controller = new ResumeController(resumeService);
+        ResumeController controller = new ResumeController(resumeService, fileStorageService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();

@@ -2,7 +2,6 @@ package com.Resume.Ai.rag;
 
 import com.Resume.Ai.Entity.Resume;
 import com.Resume.Ai.Repositories.ResumeRepository;
-import com.Resume.Ai.config.RagProperties;
 import com.Resume.Ai.dto.ChunkSourceMetadata;
 import com.Resume.Ai.dto.ResumeChatRequest;
 import com.Resume.Ai.dto.ResumeChatResponse;
@@ -16,8 +15,6 @@ import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,19 +52,16 @@ public class ResumeRagService {
             """;
 
     private final ResumeRepository resumeRepository;
-    private final VectorStore vectorStore;
-    private final RagProperties ragProperties;
+    private final ResumeKnowledgeService knowledgeService;
     private final ChatClient chatClient;
 
     public ResumeRagService(
             ResumeRepository resumeRepository,
-            VectorStore vectorStore,
-            RagProperties ragProperties,
+            ResumeKnowledgeService knowledgeService,
             ChatClient chatClient) {
 
         this.resumeRepository = resumeRepository;
-        this.vectorStore = vectorStore;
-        this.ragProperties = ragProperties;
+        this.knowledgeService = knowledgeService;
         this.chatClient = chatClient;
     }
 
@@ -154,42 +148,17 @@ public class ResumeRagService {
          *
          * No Resume DB lookup happens here.
          */
-        String filterExpression =
-                String.format(
-                        "resumeId == '%s'",
-                        resumeId
-                );
-
-        SearchRequest searchRequest =
-                SearchRequest.builder()
-                        .query(question)
-                        .topK(ragProperties.getTopK())
-                        .similarityThreshold(
-                                ragProperties.getSimilarityThreshold()
-                        )
-                        .filterExpression(filterExpression)
-                        .build();
-
         List<Document> relevantChunks;
-
         try {
-
-            relevantChunks =
-                    vectorStore.similaritySearch(searchRequest);
-
+            relevantChunks = knowledgeService.search(
+                    authenticatedUserId, resumeId, question);
         } catch (Exception ex) {
-
-            log.error(
-                    "Vector search failed — user={}, resumeId={}",
-                    authenticatedUserId,
-                    resumeId,
-                    ex
-            );
-
-            throw new AiServiceException(
-                    "Failed to search resume information.",
-                    ex
-            );
+            log.error("Resume knowledge retrieval failed — user={}, resumeId={}",
+                    authenticatedUserId, resumeId, ex);
+            if (ex instanceof AiServiceException aiException) {
+                throw aiException;
+            }
+            throw new AiServiceException("Failed to search resume information.", ex);
         }
 
         /*
