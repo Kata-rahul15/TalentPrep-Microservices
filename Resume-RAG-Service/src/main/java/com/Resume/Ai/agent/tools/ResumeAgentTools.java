@@ -4,7 +4,7 @@ import com.Resume.Ai.profile.ResumeProfile;
 import com.Resume.Ai.profile.ResumeProfileService;
 import com.Resume.Ai.rag.ResumeKnowledgeService;
 import com.Resume.Ai.jobsearch.JobSearchService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.ai.document.Document;

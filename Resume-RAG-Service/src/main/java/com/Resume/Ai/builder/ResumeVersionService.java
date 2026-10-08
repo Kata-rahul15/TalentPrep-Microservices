@@ -8,8 +8,8 @@ import com.Resume.Ai.Repositories.ResumeSectionRepository;
 import com.Resume.Ai.Repositories.ResumeVersionRepository;
 import com.Resume.Ai.exception.ResumeNotFoundException;
 import com.Resume.Ai.exception.ResumeUnauthorizedAccessException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +43,7 @@ public class ResumeVersionService {
                     .resume(resume).versionNumber(next).label(normalizeLabel(label))
                     .snapshotJson(mapper.writeValueAsString(toSnapshot(section))).build());
             return toResponse(saved);
-        } catch (JsonProcessingException ex) {
+        } catch (Exception ex) {
             throw new IllegalStateException("Could not serialize resume snapshot.", ex);
         }
     }
@@ -70,7 +70,7 @@ public class ResumeVersionService {
             applySnapshot(section, snapshot);
             sections.save(section);
             return create(resumeId, userId, "Restored from version " + source.getVersionNumber());
-        } catch (JsonProcessingException ex) {
+        } catch (Exception ex) {
             throw new IllegalStateException("Stored resume version is invalid.", ex);
         }
     }

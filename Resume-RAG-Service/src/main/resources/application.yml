@@ -17,7 +17,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-
     hikari:
       max-lifetime: 300000
       keepalive-time: 60000
@@ -27,81 +26,70 @@ spring:
   # =========================================================
   # SPRING AI
   # =========================================================
-
   ai:
-
-    # Chat provider
+    # Qwen/Groq is the default ChatModel used by the career agent,
+    # job-related AI flows, and existing ChatClient consumers.
     model:
       chat: openai
       embedding:
         text: google-genai
 
-    # =======================================================
-    # GROQ CHAT
-    # =======================================================
-
-#    openai:
-#      api-key: ${GROQ_API_KEY}
-#      base-url: https://api.groq.com/openai/v1
-#
-#      chat:
-#        model: openai/gpt-oss-120b
-#        temperature: 0.2
-#        max-tokens: 4096
     openai:
       api-key: ${GROQ_API_KEY}
-      base-url: https://api.groq.com/openai/v1
+      base-url: ${QWEN_BASE_URL:https://api.groq.com/openai/v1}
       chat:
         options:
-          model: qwen/qwen3.8-27b
-          temperature: 0.2
+          model: ${QWEN_AGENT_MODEL:qwen/qwen3.8-27b}
+          temperature: ${QWEN_TEMPERATURE:0.2}
+          # Keep this within the model/provider's enforced output budget.
+          # The resume analyzer does NOT use this model or this limit.
+          max-tokens: ${QWEN_MAX_TOKENS:4096}
           extra-body:
             reasoning_effort: none
-    # =======================================================
-    # GOOGLE GEMINI EMBEDDINGS
-    # =======================================================
 
+    # Gemini is used ONLY for embeddings / PGVector indexing and retrieval.
     google:
       genai:
         embedding:
           api-key: ${GEMINI_API_KEY}
-
           text:
-            model: gemini-embedding-001
-            dimensions: 768
+            model: ${GEMINI_EMBEDDING_MODEL:gemini-embedding-001}
+            dimensions: ${GEMINI_EMBEDDING_DIMENSIONS:768}
             task-type: RETRIEVAL_DOCUMENT
-
-  # =========================================================
-  # JPA / Hibernate
-  # =========================================================
 
   jpa:
     hibernate:
       ddl-auto: update
-
     properties:
       hibernate:
         format_sql: true
 
+# =============================================================
+# Dedicated GPT-OSS model for resume upload / semantic analysis
+# =============================================================
+# This is intentionally separate from spring.ai.openai above.
+# spring.ai.openai -> Qwen/Groq -> Agent
+# talentprep.ai.resume -> GPT-OSS/Groq -> ResumeAnalysisResponse
+# =============================================================
+talentprep:
+  ai:
+    resume:
+      base-url: ${GROQ_BASE_URL:https://api.groq.com/openai/v1}
+      api-key: ${GROQ_API_KEY}
+      model: ${RESUME_AI_MODEL:openai/gpt-oss-120b}
+      temperature: ${RESUME_AI_TEMPERATURE:0.1}
+      max-tokens: ${RESUME_AI_MAX_TOKENS:4096}
 
 resume:
   rag:
-    top-k: 5
-    similarity-threshold: 0.40
-
-
-# =============================================================
-# Job Matching
-# =============================================================
+    top-k: ${RAG_TOP_K:5}
+    similarity-threshold: ${RAG_SIMILARITY_THRESHOLD:0.40}
 
 matching:
   required-skills-weight: 0.60
   preferred-skills-weight: 0.20
   responsibilities-weight: 0.20
 
-# =============================================================
-# Live Job Search (provider-agnostic facade -> SerpApi Google Jobs)
-# =============================================================
 job-search:
   cache:
     enabled: ${JOB_SEARCH_CACHE_ENABLED:true}
