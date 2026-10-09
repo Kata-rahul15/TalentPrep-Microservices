@@ -1,38 +1,123 @@
-# TalentPrep Resume-RAG-Service
+# 🧠 TalentPrep Resume-RAG-Service
 
-The **Resume-RAG-Service** is the resume intelligence and career-support microservice in TalentPrep. It accepts resumes, extracts and analyzes their content, persists structured profile data, indexes resume content for retrieval, and exposes APIs for resume management, job matching, job discovery, resume building, and the AI career/resume agent.
+An AI-powered Resume Intelligence and Career Assistance microservice built with **Java, Spring Boot, Spring AI, PostgreSQL, pgvector, Redis, Apache Tika, Gemini Embeddings, and SerpAPI**.
 
+This service powers TalentPrep's resume processing, AI resume analysis, retrieval-augmented generation (RAG), personalized job discovery, ATS evaluation, job matching, resume building, and AI Career Agent.
 
-## Contents
+It combines structured resume analysis with vector-based retrieval and cached job search to deliver resume-aware career assistance.
 
-- [Responsibilities](#responsibilities)
-- [Architecture](#architecture)
-- [Features](#features)
-- [Technology stack](#technology-stack)
-- [Design Principles](#Design-Principles)
-- [API overview](#api-overview)
-- [Database and storage](#database-and-storage)
+---
 
-## Responsibilities
+# 🚀 Features
 
-This service owns resume-specific and career-support workflows:
+## 📄 Resume Management
 
-- Resume upload, parsing, analysis, retrieval, and download.
-- Structured resume profile and analysis persistence.
-- Resume chunking and vector indexing for RAG.
-- ATS evaluation and job-description matching.
-- Resume builder and version history.
-- Job discovery using SerpAPI's Google Jobs engine.
-- Redis caching for job-search and job-detail lookups.
-- AI agent tools for resume knowledge and job discovery.
+- Resume Upload
+- Resume Text Extraction using Apache Tika
+- Resume Processing Status Tracking
+- Structured Resume Profile
+- Resume Overview and Details
+- Resume Download and Deletion
+- Asynchronous Resume Processing
 
-Authentication and request routing belong to the surrounding TalentPrep microservices architecture. In the monorepo, this service is intended to be called through the API Gateway rather than exposed directly to the public internet.
+---
 
-## Architecture — Resume-RAG-Service
+## 🤖 AI Resume Analysis
 
-The Resume-RAG-Service is the AI-powered resume intelligence component of TalentPrep. It combines resume parsing, LLM-based analysis, vector search, personalized job discovery, and resume-building capabilities in a Spring Boot microservice.
+- LLM-Based Resume Analysis
+- Professional Summary Extraction
+- Skills and Technology Identification
+- Education and Experience Extraction
+- Project and Certification Analysis
+- Structured Resume Profile Generation
+- Resume Evaluation and Insights
 
-### High-Level Architecture
+### Target Role Identification
+
+During resume analysis, the LLM identifies up to two suitable target roles based on the candidate's resume evidence.
+
+- Target Role Generation During Resume Analysis
+- Role Selection Based on Skills, Projects, Experience, and Certifications
+- Target Role Persistence in PostgreSQL
+- Reuse of Stored Target Roles During Job Search
+- Support for Existing Resumes Without Stored Target Roles
+
+---
+
+## 🔎 Retrieval-Augmented Generation (RAG)
+
+- Resume Text Chunking
+- Embedding Generation using Google Gemini
+- Vector Storage using pgvector
+- Semantic Similarity Search
+- Resume-Grounded Context Retrieval
+- Retrieval Tools for the AI Career/Resume Agent
+
+RAG allows supported AI workflows to retrieve relevant resume information instead of relying only on general model knowledge.
+
+---
+
+## 💼 AI Find Jobs for Me
+
+Personalized job discovery based on the user's stored resume profile and target roles.
+
+- Resume-Backed Job Search
+- Target-Role-Based Search Queries
+- Multiple Role Searches
+- Google Jobs Retrieval through SerpAPI
+- Result Merging and Deduplication
+- Redis-Backed Search Caching
+- Job Detail Caching
+- Manual Job Search Support
+
+### Job Search Flow
+
+1. Retrieve the authenticated user's active resume.
+2. Load its stored target roles.
+3. Search each target role using SerpAPI.
+4. Retrieve cached results from Redis when available.
+5. Cache provider results after successful cache misses.
+6. Merge and deduplicate results.
+7. Return job recommendations to the frontend.
+
+---
+
+## 📊 ATS Analysis and Job Matching
+
+- Resume ATS Evaluation
+- Job Description Management
+- Resume-to-Job Matching
+- Skill Match and Gap Information
+- Match Result Retrieval
+- Job-Specific Resume Evaluation
+
+---
+
+## 📝 AI Resume Builder
+
+- Resume Content Generation
+- Resume Content Updates
+- Builder Data Persistence
+- Resume Version Creation
+- Version History Retrieval
+- Previous Version Restoration
+
+---
+
+## 💬 AI Career/Resume Agent
+
+- AI Agent Chat
+- Resume Profile Access
+- Resume Knowledge Retrieval
+- Job Search Tool Integration
+- Resume-Grounded Assistance
+- Agent Message Persistence
+
+The agent can use backend tools to access resume information and perform supported career workflows.
+
+---
+
+# 🏗️ Architecture
 
 ```text
                     TALENTPREP FRONTEND
@@ -46,7 +131,7 @@ The Resume-RAG-Service is the AI-powered resume intelligence component of Talent
           +-----------------+------------------+
           |                 |                  |
           v                 v                  v
-    RESUME PROCESSING   AI CAREER AGENT    JOB SEARCH
+   RESUME PROCESSING    AI CAREER AGENT    JOB SEARCH
           |                 |                  |
           v                 v                  v
      Apache Tika       Resume Profile      Target Roles
@@ -64,7 +149,7 @@ The Resume-RAG-Service is the AI-powered resume intelligence component of Talent
              +----------+-----------+
              |                      |
              v                      v
-      SUPABASE POSTGRESQL         REDIS
+      SUPABASE POSTGRESQL          REDIS
              |                      |
              v                      v
        Resume Metadata        Cached Job Search
@@ -88,131 +173,270 @@ The Resume-RAG-Service is the AI-powered resume intelligence component of Talent
                         v
               Semantic RAG Retrieval
 
-
        OTHER RESUME-SERVICE CAPABILITIES
                         |
           +-------------+-------------+
           |             |             |
           v             v             v
       ATS Analysis  Resume Builder  Version History
-          |             |             |
-          +-------------+-------------+
                         |
                         v
                Personalized Results
                  to the Frontend
 ```
 
+---
 
-## Features
+# 🔄 Resume Processing Flow
 
-### Resume management
-- Upload and validate resume documents.
-- Extract text using Apache Tika.
-- Track resume processing status.
-- Retrieve resume details, overview, profile, and ATS analysis.
-- Download a stored resume.
-- Delete a resume through the resume API.
+```text
+User Uploads Resume
+        |
+        v
+Validate Uploaded File
+        |
+        v
+Apache Tika Text Extraction
+        |
+        v
+Normalize Extracted Text
+        |
+        v
+LLM Resume Analysis
+        |
+        +----------------------------+
+        |                            |
+        v                            v
+Structured Resume Profile     Target Role Generation
+        |                            |
+        +-------------+--------------+
+                      |
+                      v
+              Persist in PostgreSQL
+                      |
+                      v
+                Text Chunking
+                      |
+                      v
+               Gemini Embeddings
+                      |
+                      v
+                pgvector Indexing
+                      |
+                      v
+               Resume Status: READY
+```
 
-### AI analysis and retrieval
-- Structured resume analysis.
-- Resume chunking and embedding generation.
-- Vector retrieval through pgvector.
-- Resume-grounded RAG / knowledge retrieval for the agent and supported workflows.
+---
 
-### Job discovery and matching
-- Google Jobs search through SerpAPI.
-- Redis caching for searches and job details.
-- Resume-backed target-role search.
-- Job-description creation and retrieval.
-- Resume-to-job matching and evaluation.
-- Matched and missing skill information where provided by the matching response.
+# 🔍 AI Find Jobs for Me Flow
 
-### Resume builder
-- Generate and update resume content through the builder API.
-- Save resume versions.
-- List versions and restore a previous version.
+```text
+User Clicks AI Find Jobs For Me
+              |
+              v
+GET /api/resumes/jobs/for-me
+              |
+              v
+Resolve Authenticated User
+              |
+              v
+Load Active Resume Profile
+              |
+              v
+Retrieve Stored Target Roles
+              |
+              v
+Search Each Target Role
+              |
+              v
+        Redis Cache Check
+              |
+        +-----+-----+
+        |           |
+        v           v
+     Cache HIT   Cache MISS
+        |           |
+        |           v
+        |        SerpAPI
+        |      Google Jobs
+        |           |
+        |           v
+        |       Cache Results
+        |           |
+        +-----+-----+
+              |
+              v
+     Merge and Deduplicate
+              |
+              v
+      Return Job Results
+```
 
-### AI career/resume agent
-- Agent chat endpoint and message persistence.
-- Tools for accessing resume profile/knowledge and job discovery.
-- `findJobsForMe` tool for target-role-driven job search.
+---
 
-## Technology stack
+# 🗄️ Database and Caching
 
-| Area | Technology / integration |
-|---|---|
-| Backend | Java, Spring Boot |
-| API routing | Spring MVC controllers; deployed behind Spring Cloud Gateway |
-| Resume extraction | Apache Tika |
-| AI orchestration | Spring AI `ChatClient` |
-| Resume analysis | Dedicated Groq-compatible API configuration; default model configured as `openai/gpt-oss-120b` |
-| Agent / general chat | OpenAI-compatible Spring AI model configuration pointing to Groq; default model configured as `qwen/qwen3.8-27b` |
-| Embeddings | Google Gemini embedding API; model and dimensions configurable |
-| Relational persistence | PostgreSQL via Spring Data JPA / Hibernate |
-| Vector search | pgvector through Spring AI's `VectorStore` integration |
-| Search provider | SerpAPI Google Jobs engine |
-| Search cache | Redis |
-| File storage | Configurable local or Supabase-backed storage implementations |
-| Configuration | Spring YAML and environment variables |
+## PostgreSQL / Supabase
 
+Stores persistent application data, including:
 
-### Design Principles
+- Resume Metadata
+- Structured Resume Sections
+- Stored Target Roles
+- ATS Analysis
+- Job Descriptions
+- Resume Job Matches
+- Resume Evaluations
+- Resume Versions
+- AI Agent Messages and Chat History
 
-- **Separation of concerns:** Resume processing, retrieval, job search, and resume building are separate responsibilities within the service.
-- **Resume-grounded recommendations:** Job searches use target roles derived from the candidate's stored resume profile.
-- **Reusable retrieval:** Cached job-search results reduce repeated provider calls.
-- **Retrieval-augmented generation:** Resume chunks provide contextual evidence to supported AI workflows.
-- **Persistent state:** PostgreSQL stores structured resume data, while pgvector supports semantic retrieval and Redis accelerates repeated searches.
+Target roles are stored with resume data so the job-search service can reuse them without running another LLM analysis on every search.
 
+## pgvector
 
-## API overview
+Used for vector-based resume retrieval.
 
-The following routes are visible in the supplied source. Exact request/response schemas are defined by the controller DTOs.
+- Stores resume embeddings and associated metadata.
+- Supports semantic similarity search.
+- Provides relevant resume context to supported RAG workflows.
 
-| Method | Route | Purpose |
+## Redis
+
+Used as the caching layer for job-search operations.
+
+- Job Search Result Caching
+- Job Detail Caching
+- Configurable Cache Expiration
+- Reduced Repeated SerpAPI Requests
+
+PostgreSQL remains the source of truth for resume profiles and target roles. Redis improves retrieval performance, while pgvector supports semantic search.
+
+---
+
+# 🛠️ Tech Stack
+
+- Java
+- Spring Boot
+- Spring AI
+- Spring Data JPA
+- Hibernate
+- Apache Tika
+- PostgreSQL / Supabase
+- pgvector
+- Redis
+- Google Gemini Embeddings
+- Configured LLM APIs through OpenAI-compatible integrations
+- SerpAPI — Google Jobs
+- Maven
+- REST APIs
+- Spring Cloud API Gateway
+
+---
+
+# 📌 REST API
+
+The following routes are documented by the supplied service source. Confirm exact request and response DTOs in the controllers.
+
+| Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/resumes/upload` | Upload a resume (`multipart/form-data`) |
-| `GET` | `/api/resumes/me` | Retrieve current user's resume |
-| `GET` | `/api/resumes/{resumeId}` | Retrieve a resume |
-| `GET` | `/api/resumes/details` | Retrieve resume details |
-| `GET` | `/api/resumes/{resumeId}/details` | Retrieve details for a resume |
+| `POST` | `/api/resumes/upload` | Upload a resume |
+| `GET` | `/api/resumes/me` | Retrieve the current user's resume |
+| `GET` | `/api/resumes/{resumeId}` | Retrieve resume information |
+| `GET` | `/api/resumes/{resumeId}/profile` | Retrieve the structured resume profile |
 | `GET` | `/api/resumes/overview` | Retrieve resume overview |
-| `GET` | `/api/resumes/{resumeId}/overview` | Retrieve overview for a resume |
 | `GET` | `/api/resumes/ats-analysis` | Retrieve ATS analysis |
-| `GET` | `/api/resumes/{resumeId}/ats-analysis` | Retrieve ATS analysis for a resume |
-| `GET` | `/api/resumes/{resumeId}/profile` | Retrieve a structured resume profile |
 | `GET` | `/api/resumes/{resumeId}/download` | Download a resume |
 | `DELETE` | `/api/resumes/{resumeId}` | Delete a resume |
 | `GET` | `/api/resumes/jobs/search` | Search jobs by query |
 | `GET` | `/api/resumes/jobs/for-me` | Search jobs using stored target roles |
-| `POST` | `/api/resumes/{resumeId}/match` | Match a resume to a job description / requirements |
+| `POST` | `/api/resumes/{resumeId}/match` | Match a resume against job requirements |
 | `GET` | `/api/resumes/{resumeId}/match/{matchId}` | Retrieve a job-match result |
 | `POST` | `/api/job-descriptions` | Create a job description |
+| `GET` | `/api/job-descriptions/me` | List the current user's job descriptions |
 | `GET` | `/api/job-descriptions/{id}` | Retrieve a job description |
-| `GET` | `/api/job-descriptions/me` | List current user's job descriptions |
 | `DELETE` | `/api/job-descriptions/{id}` | Delete a job description |
-| `POST` | `/api/resumes/builder` | Create/generate builder content |
+| `POST` | `/api/resumes/builder` | Generate resume-builder content |
 | `GET` | `/api/resumes/{resumeId}/builder` | Retrieve builder content |
 | `PUT` | `/api/resumes/{resumeId}/builder` | Update builder content |
 | `POST` | `/api/resumes/{resumeId}/versions` | Save a resume version |
 | `GET` | `/api/resumes/{resumeId}/versions` | List resume versions |
-| `POST` | `/api/resumes/{resumeId}/versions/{versionId}/restore` | Restore a saved version |
+| `POST` | `/api/resumes/{resumeId}/versions/{versionId}/restore` | Restore a resume version |
 
+---
 
-The service also has local and production YAML profiles and storage configuration classes. Review those files in the complete project for any additional profile-specific variables. Keep embedding dimensions consistent with the existing pgvector column and all stored vectors; changing the dimension requires a planned migration/reindex.
+# 🔐 Security and Integration
 
-## Database and storage
+- Designed to operate behind the TalentPrep API Gateway.
+- Uses authenticated user identity for user-specific resume operations.
+- Requires ownership checks for resume-specific data access.
+- Keeps database credentials and external API keys in environment configuration.
+- Separates persistent resume data from temporary search caching.
 
-### PostgreSQL / Supabase
+The gateway must provide trusted identity information for personalized endpoints. Identity headers must not be accepted directly from an untrusted browser without validation.
 
-The service uses PostgreSQL for resume metadata and structured records, including resume sections, job descriptions, evaluations, matches, and versions.
+---
 
-### pgvector
+# ⚙️ Configuration
 
-Resume content is chunked and embedded for similarity retrieval. The embedding model, dimensions, and retrieval settings are configured through YAML/environment variables. Existing vector columns and indexes must match the embedding dimension in use.
+Configure the following environment variables according to your deployment:
 
-### File storage
+| Variable | Purpose |
+|---|---|
+| `DB_URL` | PostgreSQL JDBC URL |
+| `DB_USERNAME` | Database username |
+| `DB_PASSWORD` | Database password |
+| `GROQ_API_KEY` | Configured LLM API key |
+| `GEMINI_API_KEY` | Gemini embedding API key |
+| `SERPAPI_API_KEY` | SerpAPI key |
+| `redis_host` | Redis host |
+| `redis_port` | Redis port |
+| `redis_username` | Redis username, if required |
+| `redis_password` | Redis password, if required |
+| `SPRING_PROFILES_ACTIVE` | Active Spring profile |
 
- local and Supabase storage implementations. Configured the intended storage backend explicitly for each environment and ensure downloaded-file ownership checks are enforced.
+Use the complete project's `application.yml` and profile-specific YAML files to verify additional variables and configured defaults. Never commit production secrets.
 
+---
+
+# 🚀 Running and Validation
+
+From the complete Resume-RAG-Service Maven project root:
+
+```bash
+mvn test
+mvn package
+```
+
+Before deployment:
+
+1. Configure PostgreSQL, Redis, and AI provider credentials.
+2. Apply the target-role database migration if it has not already been applied.
+3. Verify pgvector dimensions match the configured embedding model.
+4. Confirm the API Gateway forwards trusted user identity.
+5. Test resume upload through processing completion.
+6. Verify that target roles are saved with the correct resume.
+7. Test `/api/resumes/jobs/for-me` with different resumes.
+8. Verify Redis cache hits and misses.
+9. Test RAG retrieval, ATS matching, builder, version history, and downloads.
+
+---
+
+# 💡 What This Project Demonstrates
+
+- AI-Powered Resume Processing
+- LLM-Based Structured Information Extraction
+- Retrieval-Augmented Generation
+- Vector Search with pgvector
+- Semantic Embeddings
+- Resume-Driven Job Discovery
+- Redis Caching
+- Third-Party Search API Integration
+- Resume-to-Job Matching
+- REST API Design
+- Spring Boot Microservice Architecture
+- Persistent AI Workflows
+
+---
+
+## ⭐ If you find TalentPrep useful, consider giving the repository a star!
