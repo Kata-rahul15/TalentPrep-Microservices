@@ -42,6 +42,10 @@ public class ResumeAnalysisResponse {
     @Builder.Default
     private List<String> languages = new ArrayList<>();
 
+    /** Up to two resume-grounded job titles generated during the same analysis call. */
+    @Builder.Default
+    private List<String> targetRoles = new ArrayList<>();
+
     private String aiInsight;
 
     @Builder.Default

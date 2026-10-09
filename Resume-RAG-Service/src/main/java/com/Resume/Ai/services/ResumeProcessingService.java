@@ -460,6 +460,9 @@ public class ResumeProcessingService {
                                         analysis.getLanguages()
                                 )
                         )
+                        .targetRoles(
+                                safeList(analysis.getTargetRoles()).stream().limit(2).toList()
+                        )
 
                         .contactInformation(
                                 formatContact(contact)

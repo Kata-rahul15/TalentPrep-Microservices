@@ -23,6 +23,7 @@ class ResumeAiAnalyzerTest {
     void analyzerUsesOneChatClientCall() {
         ResumeAnalysisResponse expected = ResumeAnalysisResponse.builder()
                 .summary("Backend developer")
+                .targetRoles(java.util.List.of(" ServiceNow Developer ", "Junior Java Developer", "Unrelated fourth role"))
                 .atsEvaluation(AtsEvaluation.builder()
                         .scores(AtsScores.builder()
                                 .atsScore(84)
@@ -48,6 +49,7 @@ class ResumeAiAnalyzerTest {
         ResumeAnalysisResponse actual = analyzer.analyze("Rahul Kata\nJava\nSpring Boot");
 
         assertThat(actual.getAtsEvaluation().getScores().getAtsScore()).isEqualTo(84);
+        assertThat(actual.getTargetRoles()).containsExactly("ServiceNow Developer", "Junior Java Developer");
         verify(chatClient, times(1)).prompt();
         verify(requestSpec, times(1)).call();
         verify(responseSpec, times(1)).entity(ResumeAnalysisResponse.class);

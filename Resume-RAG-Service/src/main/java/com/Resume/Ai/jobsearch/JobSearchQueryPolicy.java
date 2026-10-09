@@ -93,7 +93,6 @@ public final class JobSearchQueryPolicy {
         if (containsAny(lower, "react")) candidates.add("React Developer");
         if (containsAny(lower, "python")) candidates.add("Python Developer");
         if (containsAny(lower, "software engineer", "software developer")) candidates.add("Software Engineer");
-        candidates.add("Software Engineer Developer");
         return new ArrayList<>(candidates);
     }
 

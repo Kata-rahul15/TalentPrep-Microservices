@@ -75,7 +75,7 @@ public class ResumeAgentTools {
         if (docs.isEmpty()) return "No relevant evidence was found in the selected resume.";
         return docs.stream().limit(5).map(d -> d.getText()).reduce((a, b) -> a + "\n---\n" + b).orElse("");
     }
-    @Tool(description = "Search live job openings using Google Jobs through SerpApi. Use this whenever the user asks to find current jobs, openings, companies hiring, or job listings. Use a broad role-oriented query: a job title plus at most one or two core technologies. Do not concatenate every resume skill. Location is supplied separately. Do not fabricate live job listings.")
+    @Tool(description = "Search live job openings using Google Jobs through SerpApi. Use this for an explicit job title or role-specific search. For a personalized find-jobs-for-me request, use findJobsForMe instead. Use a broad role-oriented query: a job title plus at most one or two core technologies. Do not concatenate every resume skill. Location is supplied separately. Do not fabricate live job listings.")
     public String searchJobs(
             @ToolParam(description = "Broad role-oriented query, for example Java Backend Developer or Spring Boot Developer. Use at most one or two core technologies; do not list every resume skill.") String query,
             @ToolParam(description = "Indian city, town, or state, for example Hyderabad or Telangana") String location,
@@ -83,8 +83,33 @@ public class ResumeAgentTools {
         guard("searchJobs");
         toolTrace.add("searchJobs");
         org.slf4j.LoggerFactory.getLogger(ResumeAgentTools.class).info("[AGENT-TOOL] searchJobs query='{}' location='{}' days={}", query, location, days);
+        if (isGenericPersonalizedQuery(query)) {
+            ResumeProfile profile = profiles.getProfile(resumeId, userId);
+            JsonNode personalized = jobSearchService.searchForTargetRoles(profile.getTargetRoles(), location, days, 10);
+            return personalized == null ? "No jobs found for this resume's target roles." : personalized.toString();
+        }
         JsonNode result = jobSearchService.search(query, location, days, 10);
         return result == null ? "No jobs found." : result.toString();
+    }
+
+    @Tool(description = "Find live job openings personalized to the authenticated user's selected resume. Always use this tool when the user says AI Find Jobs for Me, asks for jobs based on their resume, or asks for recommended jobs. It loads the stored targetRoles from the authorized resume profile and searches each role separately; do not invent or substitute a generic role.")
+    public String findJobsForMe(
+            @ToolParam(description = "Indian city, town, or state, for example Hyderabad or Telangana") String location,
+            @ToolParam(description = "Only jobs posted within this many days; use 30 when not specified") Integer days) {
+        guard("findJobsForMe");
+        toolTrace.add("findJobsForMe");
+        org.slf4j.LoggerFactory.getLogger(ResumeAgentTools.class).info("[AGENT-TOOL] findJobsForMe user={} resume={} location='{}' days={}", userId, resumeId, location, days);
+        ResumeProfile profile = profiles.getProfile(resumeId, userId);
+        JsonNode result = jobSearchService.searchForTargetRoles(profile.getTargetRoles(), location, days, 10);
+        return result == null ? "No jobs found for this resume's target roles." : result.toString();
+    }
+
+    private boolean isGenericPersonalizedQuery(String query) {
+        if (query == null || query.isBlank()) return true;
+        String normalized = query.trim().toLowerCase(java.util.Locale.ROOT).replaceAll("\\s+", " ");
+        return java.util.Set.of("software engineer developer", "software engineer", "software developer",
+                "find jobs for me", "ai find jobs for me", "jobs for me", "recommended jobs",
+                "jobs based on my resume").contains(normalized);
     }
 
     @Tool(description = "Fetch details for one live job returned by searchJobs. Use this when the user asks for details about a specific job result.")

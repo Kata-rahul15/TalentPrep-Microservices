@@ -112,6 +112,13 @@ public class ResumeAiAnalyzer {
                 - explicit skills, certifications, achievements and languages.
                 - concise aiInsight and keyHighlights.
                 - up to 3 actionable topRecommendations.
+                - targetRoles: up to TWO concise, searchable job titles best supported by this resume.
+                  Rank strongest fit first. Base roles on explicit skills, demonstrated projects, internships/work,
+                  certifications, and summary together. Prefer specific roles when evidence supports them
+                  (for example ServiceNow Developer, Junior Java Developer, Python Developer). Do not always
+                  choose Java or generic Software Engineer. Do not infer unlisted frameworks or experience.
+                  Return only role-title strings, not explanations. Return one role if only one is supported,
+                  and [] if there is insufficient evidence to recommend a role.
 
                 ATS EVALUATION
                 Evaluate the resume itself, not a job description. There is no target
@@ -153,6 +160,7 @@ public class ResumeAiAnalyzer {
         response.setCertifications(cleanStringList(response.getCertifications()));
         response.setAchievements(cleanStringList(response.getAchievements()));
         response.setLanguages(cleanStringList(response.getLanguages()));
+        response.setTargetRoles(cleanTargetRoles(response.getTargetRoles()));
         response.setKeyHighlights(cleanStringList(response.getKeyHighlights()));
         response.setTopRecommendations(sanitizeSuggestions(response.getTopRecommendations()));
 
@@ -296,6 +304,20 @@ public class ResumeAiAnalyzer {
             case "high", "medium", "low" -> normalized;
             default -> "medium";
         };
+    }
+
+    private List<String> cleanTargetRoles(List<String> values) {
+        if (values == null) return new ArrayList<>();
+        LinkedHashSet<String> roles = new LinkedHashSet<>();
+        for (String value : values) {
+            String role = trimToNull(value);
+            if (role == null) continue;
+            role = role.replaceAll("\\s+", " ");
+            if (role.length() > 100) role = role.substring(0, 100).trim();
+            if (!role.isBlank()) roles.add(role);
+            if (roles.size() == 2) break;
+        }
+        return new ArrayList<>(roles);
     }
 
     private List<String> cleanStringList(List<String> values) {

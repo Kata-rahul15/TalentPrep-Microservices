@@ -93,6 +93,12 @@ public class ResumeSection {
     @Builder.Default
     private List<String> languageList = new ArrayList<>();
 
+    /** Resume-grounded target job titles generated during ingestion. */
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "target_roles", columnDefinition = "jsonb")
+    @Builder.Default
+    private List<String> targetRoles = new ArrayList<>();
+
     @Column(columnDefinition = "TEXT")
     private String contactInformation;
 

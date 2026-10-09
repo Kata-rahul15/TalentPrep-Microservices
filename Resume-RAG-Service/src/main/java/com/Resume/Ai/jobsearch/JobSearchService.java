@@ -9,6 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -16,6 +18,10 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Map;
 
 /** Provider-agnostic facade with Redis caching and controlled Google Jobs fallbacks. */
 @Service
@@ -99,6 +105,95 @@ public class JobSearchService {
         empty.put("cached", false);
         empty.put("message", "No jobs were returned for the selected search. Try a broader role or location.");
         return empty;
+    }
+
+    /**
+     * Searches each persisted target role independently. Each provider result is cached
+     * by the existing query/location/days/limit cache key, then results are merged and deduplicated.
+     */
+    public JsonNode searchForTargetRoles(List<String> targetRoles, String location, Integer days, Integer limit) {
+        LinkedHashSet<String> roles = new LinkedHashSet<>();
+        if (targetRoles != null) {
+            for (String role : targetRoles) {
+                String cleaned = JobSearchQueryPolicy.normalize(role);
+                if (!cleaned.isBlank()) roles.add(cleaned);
+                if (roles.size() == 2) break;
+            }
+        }
+
+        int safeDays = days == null ? 30 : Math.max(1, Math.min(days, 365));
+        int safeLimit = limit == null ? 10 : Math.max(1, Math.min(limit, 50));
+        String normalizedLocation = normalizeLocation(location);
+        ObjectNode combined = mapper.createObjectNode();
+        combined.put("provider", provider.providerName());
+        combined.put("location", normalizedLocation);
+        combined.put("days", safeDays);
+        combined.put("count", 0);
+        ArrayNode roleArray = mapper.createArrayNode();
+        ArrayNode queriesArray = mapper.createArrayNode();
+        ArrayNode jobsArray = mapper.createArrayNode();
+        List<List<JsonNode>> jobsByRole = new ArrayList<>();
+
+        if (roles.isEmpty()) {
+            combined.set("targetRoles", roleArray);
+            combined.set("queries", queriesArray);
+            combined.set("jobs", jobsArray);
+            combined.put("message", "No target roles are available for this resume. Reprocess the resume or select a preferred role.");
+            return combined;
+        }
+
+        for (String role : roles) {
+            roleArray.add(role);
+            queriesArray.add(role);
+            JsonNode result = search(role, normalizedLocation, safeDays, safeLimit);
+            JsonNode jobs = result == null ? null : result.path("jobs");
+            List<JsonNode> roleJobs = new ArrayList<>();
+            if (jobs != null && jobs.isArray()) {
+                for (JsonNode job : jobs) roleJobs.add(job);
+            }
+            jobsByRole.add(roleJobs);
+        }
+
+        // Interleave role results so the first role cannot crowd out the second role.
+        LinkedHashSet<String> seen = new LinkedHashSet<>();
+        int index = 0;
+        while (jobsArray.size() < safeLimit) {
+            boolean addedAtThisIndex = false;
+            for (int roleIndex = 0; roleIndex < jobsByRole.size() && jobsArray.size() < safeLimit; roleIndex++) {
+                List<JsonNode> roleJobs = jobsByRole.get(roleIndex);
+                if (index >= roleJobs.size()) continue;
+                JsonNode job = roleJobs.get(index);
+                String identity = jobIdentity(job);
+                if (identity.isBlank()) identity = job.toString();
+                if (seen.add(identity)) {
+                    JsonNode copy = job.deepCopy();
+                    if (copy instanceof ObjectNode objectJob) objectJob.put("matchedTargetRole", new ArrayList<>(roles).get(roleIndex));
+                    jobsArray.add(copy);
+                }
+                addedAtThisIndex = true;
+            }
+            if (!addedAtThisIndex) break;
+            index++;
+        }
+
+        combined.set("targetRoles", roleArray);
+        combined.set("queries", queriesArray);
+        combined.set("jobs", jobsArray);
+        combined.put("count", jobsArray.size());
+        if (jobsArray.isEmpty()) combined.put("message", "No jobs found for the resume's target roles. Try a broader location or review the target roles.");
+        log.info("[AI-JOBS] targetRoles={} location='{}' days={} results={}", roles, normalizedLocation, safeDays, jobsArray.size());
+        return combined;
+    }
+
+    private String jobIdentity(JsonNode job) {
+        for (String field : List.of("job_id", "jobId", "link", "url")) {
+            String value = job.path(field).asText("").trim();
+            if (!value.isBlank()) return field + ":" + value.toLowerCase(Locale.ROOT);
+        }
+        String title = job.path("title").asText("").trim();
+        String company = job.path("company_name").asText(job.path("company").asText("")).trim();
+        if (!title.isBlank() || !company.isBlank()) return "title-company:" + title.toLowerCase(Locale.ROOT) + "|" + company.toLowerCase(Locale.ROOT);
+        return "";
     }
 
     public JsonNode getJob(String jobId) {
