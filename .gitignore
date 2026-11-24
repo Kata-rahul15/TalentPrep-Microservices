@@ -1,4 +1,6 @@
 
+
+.agents
 # Environment variables and secrets
 .env
 .env.*
@@ -26,3 +28,12 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Ignore service-specific documentation
+/Authentication-Service/docs/
+/Resume-RAG-Service/docs/
+/docs/
+/interview-service/docs/
+
+# Ignore zip archives
+*.zip

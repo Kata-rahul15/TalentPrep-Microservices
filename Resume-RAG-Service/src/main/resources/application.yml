@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:prod}
+    active: ${SPRING_PROFILES_ACTIVE:local}
 
   data:
     redis:
@@ -104,3 +104,8 @@ job-search:
     language: ${SERPAPI_LANGUAGE:en}
     country: ${SERPAPI_COUNTRY:in}
     timeout-seconds: ${SERPAPI_TIMEOUT_SECONDS:20}
+
+# Internal service-to-service authentication. Use the same high-entropy value in Interview Service.
+security:
+  internal-services:
+    interview-token: ${INTERVIEW_TO_RESUME_INTERNAL_TOKEN:}

@@ -16,6 +16,15 @@ public class ResumeProfileController {
 
     public ResumeProfileController(ResumeProfileService service) { this.service = service; }
 
+    @GetMapping("/profile")
+    public ResponseEntity<ResumeProfile> getActiveProfile(
+            @RequestHeader(name = AUTH_HEADER, required = false) UUID authenticated,
+            @RequestHeader(name = FALLBACK_HEADER, required = false) UUID fallback) {
+        UUID userId = authenticated != null ? authenticated : fallback;
+        if (userId == null) throw new IllegalArgumentException("Missing authenticated user identity.");
+        return ResponseEntity.ok(service.getActiveProfile(userId));
+    }
+
     @GetMapping("/{resumeId}/profile")
     public ResponseEntity<ResumeProfile> getProfile(
             @RequestHeader(name = AUTH_HEADER, required = false) UUID authenticated,

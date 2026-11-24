@@ -10,6 +10,7 @@ import com.Resume.Ai.dto.JobMatchRequest;
 import com.Resume.Ai.dto.JobMatchResponse;
 import com.Resume.Ai.enums.JobMatchStatus;
 import com.Resume.Ai.exception.JobDescriptionNotFoundException;
+import com.Resume.Ai.exception.JobDescriptionUnauthorizedAccessException;
 import com.Resume.Ai.exception.ResumeNotFoundException;
 import com.Resume.Ai.exception.ResumeUnauthorizedAccessException;
 
@@ -49,6 +50,8 @@ public class JobMatchingService {
             UUID authenticatedUserId,
             UUID resumeId,
             JobMatchRequest request) {
+
+        requireAuthenticatedUser(authenticatedUserId);
 
         Resume resume =
                 resumeRepository.findById(resumeId)
@@ -103,6 +106,8 @@ public class JobMatchingService {
             UUID resumeId,
             UUID matchId) {
 
+        requireAuthenticatedUser(authenticatedUserId);
+
         ResumeJobMatch match =
                 resumeJobMatchRepository.findById(matchId)
                         .orElseThrow(
@@ -127,12 +132,21 @@ public class JobMatchingService {
         return toResponse(match);
     }
 
+    private void requireAuthenticatedUser(UUID authenticatedUserId) {
+        if (authenticatedUserId == null) {
+            throw new IllegalArgumentException("Authenticated user identity is required.");
+        }
+    }
+
     private void validateResumeOwnership(
             UUID authenticatedUserId,
             Resume resume) {
 
-        if (authenticatedUserId != null
-                && !authenticatedUserId.equals(resume.getUserId())) {
+        if (authenticatedUserId == null) {
+            throw new IllegalArgumentException("Authenticated user identity is required.");
+        }
+
+        if (!authenticatedUserId.equals(resume.getUserId())) {
 
             throw new ResumeUnauthorizedAccessException(
                     resume.getId(),
@@ -153,12 +167,13 @@ public class JobMatchingService {
                                 )
                         );
 
-        if (authenticatedUserId != null
-                && !authenticatedUserId.equals(jobDescription.getUserId())) {
+        if (authenticatedUserId == null) {
+            throw new IllegalArgumentException("Authenticated user identity is required.");
+        }
 
-            throw new IllegalArgumentException(
-                    "You are not authorized to access this job description."
-            );
+        if (!authenticatedUserId.equals(jobDescription.getUserId())) {
+
+            throw new JobDescriptionUnauthorizedAccessException(jobDescriptionId);
         }
 
         return jobDescription;

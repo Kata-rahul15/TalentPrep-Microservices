@@ -40,10 +40,11 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())
+                // CSRF is enforced at the only public ingress (API Gateway). This service
+                // must remain private and must not be exposed directly to browsers.
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())

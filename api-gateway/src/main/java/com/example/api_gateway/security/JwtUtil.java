@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 public class JwtUtil {
 
     private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
+    // Keep the existing key prefix so current logout revocations remain effective.
     private static final String BLACKLIST_PREFIX = "blacklist :";
 
     private final String secretKey;
@@ -57,12 +58,13 @@ public class JwtUtil {
 
     public Mono<Boolean> isBlacklisted(String token) {
         if (redisTemplate == null) {
-            return Mono.just(false);
+            return Mono.error(new TokenRevocationStoreUnavailableException(
+                    new IllegalStateException("Redis template is not configured")));
         }
         return redisTemplate.hasKey(BLACKLIST_PREFIX + token)
-                .onErrorResume(ex -> {
-                    log.error("Error checking Redis token blacklist: {}", ex.getMessage());
-                    return Mono.just(false);
+                .onErrorMap(ex -> {
+                    log.error("Cannot verify token revocation state in Redis", ex);
+                    return new TokenRevocationStoreUnavailableException(ex);
                 });
     }
 }

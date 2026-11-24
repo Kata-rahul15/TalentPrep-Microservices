@@ -103,6 +103,45 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
+    void testRevocationStoreFailureReturns503() {
+        MockServerHttpRequest request = MockServerHttpRequest.get("/api/resumes/me")
+                .cookie(new HttpCookie("AccessToken", "valid.jwt.token"))
+                .build();
+        MockServerWebExchange exchange = MockServerWebExchange.from(request);
+        when(jwtUtil.validateToken("valid.jwt.token")).thenReturn(Mono.error(
+                new com.example.api_gateway.security.TokenRevocationStoreUnavailableException(
+                        new IllegalStateException("Redis down"))));
+
+        StepVerifier.create(filter.filter(exchange, filterChain)).verifyComplete();
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, exchange.getResponse().getStatusCode());
+    }
+
+    @Test
+    void testOptionsPreflightDoesNotRequireJwt() {
+        MockServerHttpRequest request = MockServerHttpRequest.options("/api/interviews")
+                .header("X-User-Id", "spoofed")
+                .build();
+        MockServerWebExchange exchange = MockServerWebExchange.from(request);
+
+        StepVerifier.create(filter.filter(exchange, filterChain)).verifyComplete();
+        verify(filterChain).filter(Mockito.argThat(ex -> ex.getRequest().getHeaders().getFirst("X-User-Id") == null));
+    }
+
+    @Test
+    void testProtectedRouteWithValidTokenMissingUserIdIsRejected() {
+        MockServerHttpRequest request = MockServerHttpRequest.get("/api/resumes/me")
+                .cookie(new HttpCookie("AccessToken", "valid-but-incomplete.jwt.token"))
+                .build();
+        MockServerWebExchange exchange = MockServerWebExchange.from(request);
+        Jwt jwt = new Jwt("valid-but-incomplete.jwt.token", Instant.now(), Instant.now().plusSeconds(900),
+                Map.of("alg", "HS256"), Map.of("sub", "person@example.com"));
+        when(jwtUtil.validateToken("valid-but-incomplete.jwt.token")).thenReturn(Mono.just(jwt));
+
+        StepVerifier.create(filter.filter(exchange, filterChain)).verifyComplete();
+        assertEquals(HttpStatus.UNAUTHORIZED, exchange.getResponse().getStatusCode());
+    }
+
+    @Test
     void testProtectedRouteWithValidCookieInjectsIdentityAndStripsSpoofedHeaders() {
         String testUserId = UUID.randomUUID().toString();
         String testEmail = "realuser@example.com";
@@ -134,8 +173,9 @@ class JwtAuthenticationFilterTest {
             String passedAuthEmail = ex.getRequest().getHeaders().getFirst("X-Authenticated-User-Email");
             String passedUserId = ex.getRequest().getHeaders().getFirst("X-User-Id");
             String passedEmail = ex.getRequest().getHeaders().getFirst("X-User-Email");
+            String tokenExpiry = ex.getRequest().getHeaders().getFirst("X-Authenticated-Token-Expires-At");
 
-            return testUserId.equals(passedAuthUserId) &&
+            return tokenExpiry != null && testUserId.equals(passedAuthUserId) &&
                    testEmail.equals(passedAuthEmail) &&
                    testUserId.equals(passedUserId) &&
                    testEmail.equals(passedEmail);

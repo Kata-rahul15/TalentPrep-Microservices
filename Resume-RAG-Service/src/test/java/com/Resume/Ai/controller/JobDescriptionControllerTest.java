@@ -68,10 +68,11 @@ class JobDescriptionControllerTest {
 
     @Test
     void getJobDescription_NotFound_ReturnsNotFound() throws Exception {
-        when(jobDescriptionService.getJobDescription(jdId))
+        when(jobDescriptionService.getJobDescription(jdId, userId))
                 .thenThrow(new JobDescriptionNotFoundException(jdId));
 
-        mockMvc.perform(get("/api/job-descriptions/{id}", jdId))
+        mockMvc.perform(get("/api/job-descriptions/{id}", jdId)
+                        .header("X-Authenticated-User-Id", userId.toString()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }

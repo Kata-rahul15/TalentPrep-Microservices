@@ -5,6 +5,7 @@ import com.Resume.Ai.Repositories.JobDescriptionRepository;
 import com.Resume.Ai.dto.CreateJobDescriptionRequest;
 import com.Resume.Ai.dto.JobDescriptionResponse;
 import com.Resume.Ai.exception.JobDescriptionNotFoundException;
+import com.Resume.Ai.exception.JobDescriptionUnauthorizedAccessException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class JobDescriptionService {
             UUID userId,
             CreateJobDescriptionRequest request) {
 
+        requireAuthenticatedUser(userId);
         String title = trimToNull(request.getTitle());
         String companyName = trimToNull(request.getCompanyName());
         String description = normalize(request.getDescription());
@@ -82,26 +84,28 @@ public class JobDescriptionService {
     // ============================================================
 
     @Transactional(readOnly = true)
-    public JobDescriptionResponse getJobDescription(UUID id) {
-
-        return toResponse(
-                getJobDescriptionEntity(id)
-        );
+    public JobDescriptionResponse getJobDescription(UUID id, UUID authenticatedUserId) {
+        return toResponse(getOwnedJobDescriptionEntity(id, authenticatedUserId));
     }
 
     @Transactional(readOnly = true)
-    public JobDescription getJobDescriptionEntity(UUID id) {
-
-        return jobDescriptionRepository.findById(id)
-                .orElseThrow(
-                        () -> new JobDescriptionNotFoundException(id)
-                );
+    public JobDescription getOwnedJobDescriptionEntity(UUID id, UUID authenticatedUserId) {
+        if (authenticatedUserId == null) {
+            throw new IllegalArgumentException("Authenticated user identity is required.");
+        }
+        JobDescription entity = jobDescriptionRepository.findById(id)
+                .orElseThrow(() -> new JobDescriptionNotFoundException(id));
+        if (!authenticatedUserId.equals(entity.getUserId())) {
+            throw new JobDescriptionUnauthorizedAccessException(id);
+        }
+        return entity;
     }
 
     @Transactional(readOnly = true)
     public List<JobDescriptionResponse> getUserJobDescriptions(
             UUID userId) {
 
+        requireAuthenticatedUser(userId);
         return jobDescriptionRepository
                 .findAllByUserId(userId)
                 .stream()
@@ -114,10 +118,10 @@ public class JobDescriptionService {
     // ============================================================
 
     @Transactional
-    public void deleteJobDescription(UUID id) {
+    public void deleteJobDescription(UUID id, UUID authenticatedUserId) {
 
         JobDescription jobDescription =
-                getJobDescriptionEntity(id);
+                getOwnedJobDescriptionEntity(id, authenticatedUserId);
 
         jobDescriptionRepository.delete(jobDescription);
 
@@ -186,6 +190,12 @@ public class JobDescriptionService {
     // ============================================================
     // HELPERS
     // ============================================================
+
+    private void requireAuthenticatedUser(UUID userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("Authenticated user identity is required.");
+        }
+    }
 
     private String trimToNull(String value) {
 

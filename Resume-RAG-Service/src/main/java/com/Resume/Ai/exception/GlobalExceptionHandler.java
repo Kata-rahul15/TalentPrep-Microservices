@@ -77,6 +77,12 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to extract job requirements.");
     }
 
+    @ExceptionHandler(JobDescriptionUnauthorizedAccessException.class)
+    public ResponseEntity<ApiError> handleJobDescriptionUnauthorized(JobDescriptionUnauthorizedAccessException ex) {
+        log.warn("Unauthorized job description access attempt: {}", ex.getMessage());
+        return buildError(HttpStatus.FORBIDDEN, "You are not authorized to access this job description.");
+    }
+
     @ExceptionHandler(ResumeUnauthorizedAccessException.class)
     public ResponseEntity<ApiError> handleUnauthorizedAccess(ResumeUnauthorizedAccessException ex) {
         log.warn("Unauthorized resume access attempt: {}", ex.getMessage());

@@ -3,6 +3,7 @@
 
 # Local uploads
 /uploads/
+/docs/
 
 # Environment / secrets
 .env

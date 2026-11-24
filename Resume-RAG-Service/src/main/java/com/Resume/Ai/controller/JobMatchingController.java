@@ -35,7 +35,7 @@ public class JobMatchingController {
     public ResponseEntity<JobMatchResponse> matchResumeToJob(
             @RequestHeader(
                     value = AUTH_USER_ID_HEADER,
-                    required = false
+                    required = true
             )
             UUID userId,
 
@@ -69,7 +69,7 @@ public class JobMatchingController {
     public ResponseEntity<JobMatchResponse> getMatchStatus(
             @RequestHeader(
                     value = AUTH_USER_ID_HEADER,
-                    required = false
+                    required = true
             )
             UUID userId,
 

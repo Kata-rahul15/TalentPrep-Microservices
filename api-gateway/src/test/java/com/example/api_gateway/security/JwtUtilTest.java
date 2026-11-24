@@ -43,6 +43,16 @@ class JwtUtilTest {
     }
 
     @Test
+    void testRedisFailureDoesNotTreatTokenAsNotBlacklisted() {
+        String token = "sample.redis-unavailable.jwt";
+        when(redisTemplate.hasKey("blacklist :" + token)).thenReturn(Mono.error(new IllegalStateException("Redis down")));
+
+        StepVerifier.create(jwtUtil.isBlacklisted(token))
+                .expectError(TokenRevocationStoreUnavailableException.class)
+                .verify();
+    }
+
+    @Test
     void testValidateTokenRejectsBlacklistedToken() {
         String token = "sample.blacklisted.jwt";
         when(redisTemplate.hasKey("blacklist :" + token)).thenReturn(Mono.just(true));

@@ -5,6 +5,7 @@ import com.Resume.Ai.Repositories.JobDescriptionRepository;
 import com.Resume.Ai.dto.CreateJobDescriptionRequest;
 import com.Resume.Ai.dto.JobDescriptionResponse;
 import com.Resume.Ai.exception.JobDescriptionNotFoundException;
+import com.Resume.Ai.exception.JobDescriptionUnauthorizedAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,7 @@ class JobDescriptionServiceTest {
     void getJobDescription_notFound_throwsException() {
         when(repository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.getJobDescription(JOB_ID))
+        assertThatThrownBy(() -> service.getJobDescription(JOB_ID, USER_ID))
                 .isInstanceOf(JobDescriptionNotFoundException.class);
     }
 }

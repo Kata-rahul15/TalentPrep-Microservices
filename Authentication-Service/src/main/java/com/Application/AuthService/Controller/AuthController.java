@@ -24,13 +24,19 @@ public class AuthController {
 
     private final ProfileService profileService;
     private final String frontendUrl;
+    private final boolean cookieSecure;
+    private final String cookieSameSite;
 
     public AuthController(
             ProfileService profileService,
-            @Value("${app.url-frontend}") String frontendUrl
+            @Value("${app.url-frontend}") String frontendUrl,
+            @Value("${auth.cookies.secure:true}") boolean cookieSecure,
+            @Value("${auth.cookies.same-site:None}") String cookieSameSite
     ) {
         this.profileService = profileService;
         this.frontendUrl = frontendUrl;
+        this.cookieSecure = cookieSecure;
+        this.cookieSameSite = cookieSameSite;
     }
 
     @GetMapping("/health")
@@ -54,16 +60,16 @@ public class AuthController {
         ResponseCookie AccessCookie = ResponseCookie.from("AccessToken", response.getAccessToken())
                 .httpOnly(true)
                 .path("/")
-                .secure(true)
+                .secure(cookieSecure)
                 .maxAge(Duration.ofMinutes(15))
-                .sameSite("None")
+                .sameSite(cookieSameSite)
                 .build();
         ResponseCookie RefreshCookie = ResponseCookie.from("RefreshToken", response.getRefreshToken())
                 .httpOnly(true)
                 .path("/api/auth")
-                .secure(true)
+                .secure(cookieSecure)
                 .maxAge(Duration.ofDays(7))
-                .sameSite("None")
+                .sameSite(cookieSameSite)
                 .build();
 
 

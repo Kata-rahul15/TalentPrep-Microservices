@@ -37,6 +37,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Value("${app.url-redirect}")
     private String redirectUrl;
 
+    @Value("${auth.cookies.secure:true}")
+    private boolean cookieSecure;
+
+    @Value("${auth.cookies.same-site:None}")
+    private String cookieSameSite;
+
     private final UserRepository userRepository;
     private final OAuth2AuthorizedClientService authorizedClientService;
     private final JwtUtil jwtUtil;
@@ -139,8 +145,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie accessCookie =
                 ResponseCookie.from("AccessToken", accessToken)
                         .httpOnly(true)
-                        .secure(true)
-                        .sameSite("None")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/")
                         .maxAge(Duration.ofMinutes(15))
                         .build();
@@ -148,8 +154,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie refreshCookie =
                 ResponseCookie.from("RefreshToken", refreshToken.getToken())
                         .httpOnly(true)
-                        .secure(true)
-                        .sameSite("None")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/api/auth")
                         .maxAge(Duration.ofDays(7))
                         .build();

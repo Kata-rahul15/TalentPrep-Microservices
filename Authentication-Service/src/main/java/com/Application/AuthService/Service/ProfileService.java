@@ -16,11 +16,13 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import io.jsonwebtoken.JwtException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,7 +36,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProfileService {
 
     private final UserRepository userRepository;
@@ -46,6 +48,11 @@ public class ProfileService {
     private final OtpService otpService;
     private final BlacklistService blacklistService;
 
+    @Value("${auth.cookies.secure:true}")
+    private boolean cookieSecure;
+
+    @Value("${auth.cookies.same-site:None}")
+    private String cookieSameSite;
 
     public LoginResponse login(LoginRequest request) {
         Authentication authentication;
@@ -224,8 +231,8 @@ public class ProfileService {
         ResponseCookie accessCookie =
                 ResponseCookie.from("AccessToken", accessToken)
                         .httpOnly(true)
-                        .secure(true)
-                        .sameSite("None")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/")
                         .maxAge(Duration.ofMinutes(15))
                         .build();
@@ -236,8 +243,8 @@ public class ProfileService {
                                 token.getToken()
                         )
                         .httpOnly(true)
-                        .secure(true)
-                        .sameSite("None")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/api/auth")
                         .maxAge(Duration.ofDays(7))
                         .build();
@@ -251,8 +258,8 @@ public class ProfileService {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-
         String refreshToken = null;
+        String accessToken = jwtUtil.extractToken(request);
 
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
@@ -263,30 +270,47 @@ public class ProfileService {
             }
         }
 
-        try {
-            if (refreshToken != null && !refreshToken.isBlank()) {
-
-                // Validate the refresh token before revoking it.
-                // Revoke the matching refresh-token record.
-                refreshTokenService.revokeRefreshToken(refreshToken);
+        RuntimeException revocationFailure = null;
+        if (accessToken != null && !accessToken.isBlank()) {
+            try {
+                Duration remaining = jwtUtil.getRemainingValidity(accessToken);
+                if (!remaining.isZero() && !remaining.isNegative()) {
+                    blacklistService.blacklistToken(accessToken, remaining);
+                }
+            } catch (JwtException | IllegalArgumentException invalidOrExpiredAccessToken) {
+                // An absent/invalid/expired access cookie needs no blacklist entry.
+            } catch (RuntimeException redisFailure) {
+                revocationFailure = redisFailure;
             }
-        } finally {
-            clearCookies(response);
         }
-    }    private void clearCookies(HttpServletResponse response) {
+
+        if (refreshToken != null && !refreshToken.isBlank()) {
+            try {
+                refreshTokenService.revokeRefreshToken(refreshToken);
+            } catch (RuntimeException refreshRevocationFailure) {
+                if (revocationFailure == null) revocationFailure = refreshRevocationFailure;
+                else revocationFailure.addSuppressed(refreshRevocationFailure);
+            }
+        }
+
+        clearCookies(response);
+        if (revocationFailure != null) throw revocationFailure;
+    }
+
+    private void clearCookies(HttpServletResponse response) {
 
             ResponseCookie accessCookie =
                     ResponseCookie.from("AccessToken","")
                             .httpOnly(true)
-                            .secure(true)
-                            .sameSite("None")
+                            .secure(cookieSecure)
+                            .sameSite(cookieSameSite)
                             .path("/")
                             .maxAge(0)
                             .build();
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", "")
                         .httpOnly(true)
-                        .secure(true)
-                        .sameSite("None")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/api/auth")
                         .maxAge(0)
                         .build();

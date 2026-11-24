@@ -28,7 +28,7 @@ public class JobDescriptionController {
 
     @PostMapping
     public ResponseEntity<JobDescriptionResponse> createJobDescription(
-            @RequestHeader(value = AUTH_USER_ID_HEADER, required = false) UUID userId,
+            @RequestHeader(value = AUTH_USER_ID_HEADER) UUID userId,
             @Valid @RequestBody CreateJobDescriptionRequest request) {
 
         log.info("POST /api/job-descriptions — user={}, title={}", userId, request.getTitle());
@@ -38,10 +38,11 @@ public class JobDescriptionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<JobDescriptionResponse> getJobDescription(
+            @RequestHeader(AUTH_USER_ID_HEADER) UUID userId,
             @PathVariable("id") UUID id) {
 
-        log.info("GET /api/job-descriptions/{}", id);
-        return ResponseEntity.ok(jobDescriptionService.getJobDescription(id));
+        log.info("GET /api/job-descriptions/{} — user={}", id, userId);
+        return ResponseEntity.ok(jobDescriptionService.getJobDescription(id, userId));
     }
 
     @GetMapping("/me")
@@ -54,10 +55,11 @@ public class JobDescriptionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJobDescription(
+            @RequestHeader(AUTH_USER_ID_HEADER) UUID userId,
             @PathVariable("id") UUID id) {
 
-        log.info("DELETE /api/job-descriptions/{}", id);
-        jobDescriptionService.deleteJobDescription(id);
+        log.info("DELETE /api/job-descriptions/{} — user={}", id, userId);
+        jobDescriptionService.deleteJobDescription(id, userId);
         return ResponseEntity.noContent().build();
     }
 }

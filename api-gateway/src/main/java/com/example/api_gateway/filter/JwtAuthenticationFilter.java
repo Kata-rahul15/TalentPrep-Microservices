@@ -28,6 +28,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     private static final String[] PUBLIC_PATHS = {
             "/api/auth/**",
+            "/api/csrf",
             "/actuator/health",
             "/actuator/**",
             "/health"
@@ -37,7 +38,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             "X-Authenticated-User-Id",
             "X-Authenticated-User-Email",
             "X-User-Id",
-            "X-User-Email"
+            "X-User-Email",
+            "X-Authenticated-Token-Expires-At"
     };
 
     private final JwtUtil jwtUtil;
@@ -50,59 +52,72 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
 
-        // Check if route is public
+        // Always remove identity headers supplied by the caller before making any trust decision.
+        ServerHttpRequest sanitizedRequest = exchange.getRequest().mutate()
+                .headers(headers -> {
+                    for (String header : IDENTITY_HEADERS) {
+                        headers.remove(header);
+                    }
+                })
+                .build();
+        ServerWebExchange sanitizedExchange = exchange.mutate().request(sanitizedRequest).build();
+
+        if (exchange.getRequest().getMethod() == org.springframework.http.HttpMethod.OPTIONS) {
+            return chain.filter(sanitizedExchange);
+        }
+
         for (String publicPath : PUBLIC_PATHS) {
             if (pathMatcher.match(publicPath, path)) {
-                // Anti-spoofing: Strip client-supplied identity headers on public routes
-                ServerHttpRequest cleanedRequest = exchange.getRequest().mutate()
-                        .headers(headers -> {
-                            for (String header : IDENTITY_HEADERS) {
-                                headers.remove(header);
-                            }
-                        })
-                        .build();
-                return chain.filter(exchange.mutate().request(cleanedRequest).build());
+                return chain.filter(sanitizedExchange);
             }
         }
 
-        // Protected route logic: Extract token from cookie (AccessToken or accessToken)
-        String token = extractTokenFromCookie(exchange.getRequest());
-
+        // The same filter protects ordinary HTTP routes and the WebSocket HTTP handshake.
+        String token = extractTokenFromCookie(sanitizedRequest);
         if (token == null || token.isBlank()) {
-            log.debug("Protected request to {} missing AccessToken cookie.", path);
-            return handleUnauthorized(exchange, "Authentication required");
+            log.debug("Protected request to {} is missing AccessToken cookie.", path);
+            return handleUnauthorized(sanitizedExchange, "Authentication required");
         }
 
         return jwtUtil.validateToken(token)
                 .flatMap(jwt -> {
                     String email = jwt.getSubject();
                     Object userIdClaim = jwt.getClaim("userId");
-                    String userId = userIdClaim != null ? userIdClaim.toString() : null;
+                    String userId = userIdClaim == null ? null : userIdClaim.toString();
 
-                    log.debug("JWT validated successfully for email: {}, userId: {}", email, userId);
+                    // A valid signature alone is insufficient for TalentPrep: downstream services
+                    // require a stable UUID and subject to establish resource ownership.
+                    if (email == null || email.isBlank() || userId == null || userId.isBlank()) {
+                        return handleUnauthorized(sanitizedExchange, "Token is missing required identity claims");
+                    }
+                    try {
+                        java.util.UUID.fromString(userId);
+                    } catch (IllegalArgumentException invalidUserId) {
+                        return handleUnauthorized(sanitizedExchange, "Token contains an invalid user identity");
+                    }
 
-                    // Anti-spoofing: Remove client identity headers and inject validated identity
-                    ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+                    log.debug("JWT validated for authenticated user id {}", userId);
+                    ServerHttpRequest authenticatedRequest = sanitizedRequest.mutate()
                             .headers(headers -> {
-                                for (String header : IDENTITY_HEADERS) {
-                                    headers.remove(header);
-                                }
-                                if (userId != null) {
-                                    headers.set("X-Authenticated-User-Id", userId);
-                                    headers.set("X-User-Id", userId);
-                                }
-                                if (email != null) {
-                                    headers.set("X-Authenticated-User-Email", email);
-                                    headers.set("X-User-Email", email);
+                                headers.set("X-Authenticated-User-Id", userId);
+                                headers.set("X-User-Id", userId);
+                                headers.set("X-Authenticated-User-Email", email);
+                                headers.set("X-User-Email", email);
+                                if (jwt.getExpiresAt() != null) {
+                                    headers.set("X-Authenticated-Token-Expires-At",
+                                            Long.toString(jwt.getExpiresAt().getEpochSecond()));
                                 }
                             })
                             .build();
-
-                    return chain.filter(exchange.mutate().request(mutatedRequest).build());
+                    return chain.filter(sanitizedExchange.mutate().request(authenticatedRequest).build());
                 })
                 .onErrorResume(ex -> {
-                    log.debug("JWT validation failed for path {}: {}", path, ex.getMessage());
-                    return handleUnauthorized(exchange, "Invalid or expired token");
+                    log.warn("JWT validation failed for path {}: {}", path, ex.getClass().getSimpleName());
+                    if (ex instanceof com.example.api_gateway.security.TokenRevocationStoreUnavailableException) {
+                        return handleServiceUnavailable(sanitizedExchange,
+                                "Authentication revocation checks are temporarily unavailable");
+                    }
+                    return handleUnauthorized(sanitizedExchange, "Invalid, expired, or revoked token");
                 });
     }
 
@@ -122,6 +137,16 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         String jsonBody = String.format("{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"%s\"}", message);
+        DataBuffer buffer = response.bufferFactory().wrap(jsonBody.getBytes(StandardCharsets.UTF_8));
+        return response.writeWith(Mono.just(buffer));
+    }
+
+
+    private Mono<Void> handleServiceUnavailable(ServerWebExchange exchange, String message) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        String jsonBody = String.format("{\"status\":503,\"error\":\"Service Unavailable\",\"message\":\"%s\"}", message);
         DataBuffer buffer = response.bufferFactory().wrap(jsonBody.getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(buffer));
     }

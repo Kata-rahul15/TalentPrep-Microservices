@@ -57,3 +57,10 @@ jwt:
 app:
   url-redirect: ${Url_redirect:http://localhost:5173/home}
   url-frontend: ${Url_frontend:http://localhost:5173}
+
+
+# Cookie policy is configurable per environment. Keep Secure=true in production.
+auth:
+  cookies:
+    secure: ${AUTH_COOKIE_SECURE:true}
+    same-site: ${AUTH_COOKIE_SAME_SITE:None}

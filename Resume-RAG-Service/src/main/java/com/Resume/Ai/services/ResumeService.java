@@ -297,15 +297,6 @@ public class ResumeService {
     // =============================================================
 
     public ResumeResponse getResume(
-            UUID resumeId) {
-
-        return getResume(
-                resumeId,
-                null
-        );
-    }
-
-    public ResumeResponse getResume(
             UUID resumeId,
             UUID userId) {
 
@@ -738,17 +729,6 @@ public class ResumeService {
 
     public ResumeResponse updateResume(
             UUID resumeId,
-            UpdateResumeRequest request) {
-
-        return updateResume(
-                resumeId,
-                null,
-                request
-        );
-    }
-
-    public ResumeResponse updateResume(
-            UUID resumeId,
             UUID userId,
             UpdateResumeRequest request) {
 
@@ -787,15 +767,6 @@ public class ResumeService {
     // =============================================================
     // DELETE
     // =============================================================
-
-    public void deleteResume(
-            UUID resumeId) {
-
-        deleteResume(
-                resumeId,
-                null
-        );
-    }
 
     public void deleteResume(
             UUID resumeId,
@@ -917,12 +888,11 @@ public class ResumeService {
             Resume resume,
             UUID userId) {
 
-        if (
-                userId != null
-                        && !resume
-                        .getUserId()
-                        .equals(userId)
-        ) {
+        if (userId == null) {
+            throw new IllegalArgumentException("Authenticated user identity is required.");
+        }
+
+        if (!resume.getUserId().equals(userId)) {
 
             throw new ResumeUnauthorizedAccessException(
                     resume.getId(),

@@ -1,0 +1,70 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: interview-service
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/talentprep_interviews}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      max-lifetime: 300000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+#    properties:
+#      hibernate:
+#        format_sql: false
+
+#  flyway:
+#    enabled: true
+#    baseline-on-migrate: true
+#    locations: classpath:db/migration
+
+  ai:
+    model:
+      chat: openai
+    openai:
+      api-key: ${GROQ_API_KEY:}
+      base-url: ${GROQ_BASE_URL:https://api.groq.com/openai/v1}
+      chat:
+        options:
+          model: ${INTERVIEW_AI_MODEL:qwen/qwen3.8-27b}
+          temperature: ${INTERVIEW_AI_TEMPERATURE:0.3}
+          max-tokens: ${INTERVIEW_AI_MAX_TOKENS:4096}
+
+services:
+  resume:
+    url: ${RESUME_SERVICE_URL:http://localhost:8082}
+    internal-token: ${INTERVIEW_TO_RESUME_INTERNAL_TOKEN:}
+    connect-timeout-ms: 5000
+    read-timeout-ms: 10000
+
+code-execution:
+  provider: ${CODE_EXECUTION_PROVIDER:onlinecompiler}
+  base-url: ${CODE_EXECUTION_BASE_URL:https://api.onlinecompiler.io}
+  api-key: ${CODE_EXECUTION_API_KEY:}
+  connect-timeout: 5s
+  response-timeout: 35s
+  max-code-size-bytes: 65536
+
+talentprep:
+  entitlement:
+    enforced: ${ENTITLEMENT_ENFORCED:false}
+    free-tier-session-limit: 3
+    pro-tier-monthly-limit: 50
+  coding:
+    execution-timeout-seconds: 5
+    memory-limit-mb: 256
+  websocket:
+    allowed-origins: ${INTERVIEW_WEBSOCKET_ALLOWED_ORIGINS:http://localhost:5173}
