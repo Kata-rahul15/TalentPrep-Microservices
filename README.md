@@ -6,12 +6,10 @@ The backend is organized as independent services with clear responsibilities: **
 
 > **Repository scope:** This repository is the backend microservices monorepo. The frontend is a separate client application and communicates with backend services through the API Gateway.
 
+## 🏗️ Architecture Diagram
 
-## 🖼️ Architecture Diagram
+![TalentPrep Microservices Architecture](./docs/architecture/TalentPrep-overview.png)
 
-```markdown
-![TalentPrep Microservices Architecture](docs/architecture/TalentPrep-overview.png)
-```
 
 
 ## ✨ Core Capabilities
