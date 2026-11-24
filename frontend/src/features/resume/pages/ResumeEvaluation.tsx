@@ -18,9 +18,9 @@ import SkillBadge from '../components/SkillBadge'
 import type { ResumeSuggestion } from '../types/resume.types'
 
 const priorityStyles = {
-  high: 'bg-danger/10 text-danger border-danger/20',
-  medium: 'bg-warning/10 text-warning border-warning/20',
-  low: 'bg-primary/10 text-primary border-primary/20',
+  high: 'bg-red-500/10 text-red-600 border-red-500/20',
+  medium: 'bg-amber-500/10 text-amber-700 border-amber-500/20',
+  low: 'bg-[#080908]/5 text-[#080908] border-[#080908]/20',
 }
 
 function SuggestionCard({ suggestion }: { suggestion: ResumeSuggestion }) {
@@ -50,10 +50,10 @@ export default function ResumeEvaluation() {
   if (resumeFile?.status === 'processing') {
     return (
       <div className="max-w-md mx-auto py-10 text-center space-y-3">
-        <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto animate-pulse">
+        <div className="w-12 h-12 rounded-xl bg-[#080908]/5 text-[#080908] flex items-center justify-center mx-auto animate-pulse">
           <RefreshCw className="w-6 h-6 animate-spin" />
         </div>
-        <h2 className="font-heading font-bold text-base sm:text-lg text-foreground">Processing ATS Evaluation...</h2>
+        <h2 className="font-heading font-bold text-base sm:text-lg text-foreground">Processing ATS evaluation...</h2>
         <p className="text-xs text-muted-foreground">
           Our AI is currently performing ATS score calculation and keyword analysis. Evaluation will appear once processing completes.
         </p>
@@ -181,7 +181,7 @@ export default function ResumeEvaluation() {
           className="bg-card border border-border rounded-xl p-4"
         >
           <h3 className="font-heading font-semibold text-xs sm:text-sm text-foreground flex items-center gap-1.5 mb-2.5">
-            <Lightbulb className="w-3.5 h-3.5 text-primary" /> Improvement Suggestions
+            <Lightbulb className="w-3.5 h-3.5 text-[#080908]" /> Improvement Suggestions
           </h3>
           <div className="space-y-2">
             {suggestions.map((suggestion, i) => (
@@ -197,7 +197,7 @@ export default function ResumeEvaluation() {
           className="bg-card border border-border rounded-xl p-4"
         >
           <h3 className="font-heading font-semibold text-xs sm:text-sm text-foreground flex items-center gap-1.5 mb-2.5">
-            <Tag className="w-3.5 h-3.5 text-danger" /> Missing Keywords
+            <Tag className="w-3.5 h-3.5 text-red-600" /> Missing Keywords
             <span className="ml-auto text-[11px] text-muted-foreground font-normal">Add these to boost your ATS score</span>
           </h3>
           <div className="flex flex-wrap gap-1.5">
@@ -210,12 +210,12 @@ export default function ResumeEvaluation() {
 
       {/* Upgrade CTA */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-        className="bg-slate-950 text-white rounded-xl p-4 sm:p-5 flex items-center gap-3.5 flex-wrap"
+        className="bg-[#080908] text-[#FAF8F3] rounded-xl p-4 sm:p-5 flex items-center gap-3.5 flex-wrap border border-[#080908]"
       >
-        <TrendingUp className="w-6 h-6 text-primary flex-shrink-0" />
+        <TrendingUp className="w-6 h-6 text-[#CDF22B] flex-shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="font-heading font-bold text-xs sm:text-sm mb-0.5">Optimize your ATS score</p>
-          <p className="text-slate-400 text-xs leading-relaxed">Apply the suggestions above to significantly boost your resume ranking in automated tracking systems.</p>
+          <p className="font-heading font-bold text-xs sm:text-sm mb-0.5 text-[#FAF8F3]">Optimize your ATS score</p>
+          <p className="text-[#FAF8F3]/70 text-xs leading-relaxed">Apply the suggestions above to significantly boost your resume ranking in automated tracking systems.</p>
         </div>
       </motion.div>
     </div>

@@ -186,29 +186,29 @@ export default function InterviewSetupPage() {
   }
 
   return (
-    <div className="flex-1 w-full max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div className="flex-1 w-full min-w-0 px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* ── Top Header ── */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex items-center justify-between pb-4 border-b border-border">
         <div className="space-y-1">
           <button
             type="button"
             onClick={() => navigate('/interview')}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Interview studio</span>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-heading font-black text-foreground tracking-tight">
             Configure Interview Session
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Select round type, target role, difficulty, duration, and response mode.
           </p>
         </div>
       </div>
 
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 flex items-start gap-3 text-rose-700 dark:text-rose-300 text-xs sm:text-sm">
+        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-3 text-red-600 text-xs sm:text-sm">
           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <div className="space-y-0.5">
             <p className="font-semibold">Unable to create session</p>
@@ -218,7 +218,7 @@ export default function InterviewSetupPage() {
       )}
 
       {isSetupError && (
-        <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 flex items-start gap-2.5 text-amber-800 dark:text-amber-300 text-xs">
+        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-2.5 text-amber-700 text-xs">
           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <span>
             Resume context could not be loaded. You can still configure your target role, round type, and difficulty below.
@@ -236,15 +236,15 @@ export default function InterviewSetupPage() {
       />
 
       {/* ── Configuration Form Panel ── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 sm:p-6 space-y-6">
+      <div className="bg-card border border-border rounded-xl p-5 sm:p-6 space-y-6 shadow-2xs">
         {/* 1. Interview Type Selector */}
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Layers className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <h2 className="text-sm font-heading font-bold text-foreground flex items-center gap-2">
+              <Layers className="w-4 h-4 text-[#080908] dark:text-[#CDF22B]" />
               <span>1. Interview Round Type</span>
             </h2>
-            <span className="text-[11px] font-mono text-slate-400">
+            <span className="text-[11px] font-mono text-muted-foreground">
               Single round
             </span>
           </div>
@@ -255,15 +255,15 @@ export default function InterviewSetupPage() {
         </div>
 
         {/* 2. Target Job Role & Optional JD */}
-        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Briefcase className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <div className="space-y-4 pt-4 border-t border-border">
+          <h2 className="text-sm font-heading font-bold text-foreground flex items-center gap-2">
+            <Briefcase className="w-4 h-4 text-[#080908] dark:text-[#CDF22B]" />
             <span>2. Target Role & Context</span>
           </h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-foreground mb-1.5">
                 Target Role *
               </label>
               <JobRoleAutocomplete
@@ -271,31 +271,31 @@ export default function InterviewSetupPage() {
                 onChange={(val) => setRoleDraft(val)}
                 additionalSuggestions={setupData?.availableTargetRoles}
               />
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-muted-foreground mt-1">
                 Type to filter suggested roles or enter a custom title.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-foreground mb-1.5">
                 Job Description{' '}
-                <span className="text-slate-400 font-normal">(Optional context)</span>
+                <span className="text-muted-foreground font-normal">(Optional context)</span>
               </label>
               <textarea
                 rows={3}
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
                 placeholder="Paste key responsibilities or tech stack requirements to tailor questions..."
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-600"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#080908]"
               />
             </div>
           </div>
         </div>
 
         {/* 3. Difficulty & Duration */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
           <div className="space-y-2">
-            <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
+            <label className="text-xs font-semibold text-foreground block">
               3. Difficulty Level
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -304,10 +304,11 @@ export default function InterviewSetupPage() {
                   key={level}
                   type="button"
                   onClick={() => setDifficulty(level)}
-                  className={`py-2 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${difficulty === level
-                    ? 'bg-slate-900 text-white border-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/60'
-                    }`}
+                  className={`py-2 rounded-lg border text-xs font-semibold transition-colors cursor-pointer ${
+                    difficulty === level
+                      ? 'bg-[#080908] text-[#CDF22B] border-[#080908] font-bold shadow-2xs'
+                      : 'bg-card border-border text-foreground hover:bg-secondary-bg/60'
+                  }`}
                 >
                   {level.charAt(0) + level.slice(1).toLowerCase()}
                 </button>
@@ -316,43 +317,45 @@ export default function InterviewSetupPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-slate-400" />
+            <label className="text-xs font-semibold text-foreground block flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-muted-foreground" />
               <span>4. Duration</span>
             </label>
             <div
-              className={`grid gap-2 ${durationOptions.length === 5 ? 'grid-cols-5' : 'grid-cols-4'
-                }`}
+              className={`grid gap-2 ${
+                durationOptions.length === 5 ? 'grid-cols-5' : 'grid-cols-4'
+              }`}
             >
               {durationOptions.map((mins) => (
                 <button
                   key={mins}
                   type="button"
                   onClick={() => setDurationMinutes(mins)}
-                  className={`py-2 rounded-lg border text-xs font-mono font-medium transition-colors cursor-pointer ${durationMinutes === mins
-                    ? 'bg-slate-900 text-white border-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/60'
-                    }`}
+                  className={`py-2 rounded-lg border text-xs font-mono font-medium transition-colors cursor-pointer ${
+                    durationMinutes === mins
+                      ? 'bg-[#080908] text-[#CDF22B] border-[#080908] font-bold shadow-2xs'
+                      : 'bg-card border-border text-foreground hover:bg-secondary-bg/60'
+                  }`}
                 >
                   {mins}m
                 </button>
               ))}
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-muted-foreground font-mono">
               Timer tracks active turns, pause intervals, and auto wrap-up.
             </p>
           </div>
         </div>
 
         {/* 4. Interaction Mode */}
-        <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <div className="space-y-3 pt-4 border-t border-border">
           <div className="flex items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <h2 className="text-sm font-heading font-bold text-foreground flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-[#080908] dark:text-[#CDF22B]" />
               <span>5. Response Mode</span>
             </h2>
             {selectedType === 'CODING' && (
-              <span className="text-[11px] font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+              <span className="text-[11px] font-mono text-foreground bg-secondary-bg px-2 py-0.5 rounded border border-border">
                 Code editor active
               </span>
             )}
@@ -363,29 +366,31 @@ export default function InterviewSetupPage() {
             <button
               type="button"
               onClick={() => setInteractionMode('CHAT')}
-              className={`p-4 rounded-xl border text-left transition-colors cursor-pointer flex items-start gap-3 ${interactionMode === 'CHAT'
-                ? 'bg-slate-50 dark:bg-slate-800/90 border-blue-600 dark:border-blue-500 shadow-2xs'
-                : 'bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                }`}
+              className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-3 ${
+                interactionMode === 'CHAT'
+                  ? 'bg-card border-[#080908] dark:border-[#CDF22B] ring-1 ring-[#080908] dark:ring-[#CDF22B] shadow-2xs'
+                  : 'bg-card border-border hover:border-[#080908]/30'
+              }`}
             >
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${interactionMode === 'CHAT'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-                  }`}
+                className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
+                  interactionMode === 'CHAT'
+                    ? 'bg-[#080908] text-[#CDF22B]'
+                    : 'bg-secondary-bg text-muted-foreground'
+                }`}
               >
                 <MessageSquare className="w-4 h-4" />
               </div>
               <div className="space-y-0.5 min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-900 dark:text-white">
+                  <span className="text-xs font-heading font-bold text-foreground">
                     Chat Mode
                   </span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded">
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 bg-secondary-bg text-muted-foreground rounded">
                     Text
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
                   Type your answers with markdown and code snippets support.
                 </p>
               </div>
@@ -395,29 +400,31 @@ export default function InterviewSetupPage() {
             <button
               type="button"
               onClick={() => setInteractionMode('VOICE')}
-              className={`p-4 rounded-xl border text-left transition-colors cursor-pointer flex items-start gap-3 ${interactionMode === 'VOICE'
-                ? 'bg-slate-50 dark:bg-slate-800/90 border-blue-600 dark:border-blue-500 shadow-2xs'
-                : 'bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                }`}
+              className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-3 ${
+                interactionMode === 'VOICE'
+                  ? 'bg-card border-[#080908] dark:border-[#CDF22B] ring-1 ring-[#080908] dark:ring-[#CDF22B] shadow-2xs'
+                  : 'bg-card border-border hover:border-[#080908]/30'
+              }`}
             >
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${interactionMode === 'VOICE'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-                  }`}
+                className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
+                  interactionMode === 'VOICE'
+                    ? 'bg-[#080908] text-[#CDF22B]'
+                    : 'bg-secondary-bg text-muted-foreground'
+                }`}
               >
                 <Mic className="w-4 h-4" />
               </div>
               <div className="space-y-0.5 min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-900 dark:text-white">
+                  <span className="text-xs font-heading font-bold text-foreground">
                     Voice Mode
                   </span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded">
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 bg-secondary-bg text-muted-foreground rounded">
                     Audio STT
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
                   Hear questions aloud, speak your response, and review live transcription.
                 </p>
               </div>
@@ -425,16 +432,16 @@ export default function InterviewSetupPage() {
           </div>
 
           {selectedType === 'CODING' && (
-            <p className="text-[11px] text-slate-400 pt-1 flex items-center gap-1.5">
-              <Code2 className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+            <p className="text-[11px] text-muted-foreground pt-1 flex items-center gap-1.5">
+              <Code2 className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
               <span>Coding rounds automatically open the live sandbox workspace with syntax highlighting and tests.</span>
             </p>
           )}
         </div>
 
         {/* ── Submit Action ── */}
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <span className="text-xs text-slate-500">
+        <div className="pt-4 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <span className="text-xs text-muted-foreground">
             Session opens in a prepared lobby.
           </span>
 
@@ -442,11 +449,11 @@ export default function InterviewSetupPage() {
             type="button"
             onClick={handleCreateSession}
             disabled={createSessionMutation.isPending || isSubmitting}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium text-xs sm:text-sm rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#CDF22B] hover:bg-[#bce022] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-[#080908] font-bold text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-2xs"
           >
             {createSessionMutation.isPending || isSubmitting ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#080908] border-t-transparent rounded-full animate-spin" />
                 <span>Creating Session...</span>
               </>
             ) : (
@@ -461,16 +468,16 @@ export default function InterviewSetupPage() {
 
       {/* ── Change Resume Modal ── */}
       {showResumeModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl w-full max-w-md p-5 space-y-4 shadow-xl">
+        <div className="fixed inset-0 z-50 bg-[#080908]/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl w-full max-w-md p-5 space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-sm text-slate-900 dark:text-white">
+              <h3 className="font-heading font-bold text-sm text-foreground">
                 Select Active Resume Context
               </h3>
               <button
                 type="button"
                 onClick={() => setShowResumeModal(false)}
-                className="text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -485,23 +492,23 @@ export default function InterviewSetupPage() {
                       setShowResumeModal(false)
                     }}
                     className={`p-3 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-colors ${(selectedResumeId === r.id || (!selectedResumeId && (r as { isPrimary?: boolean }).isPrimary))
-                      ? 'bg-slate-50 dark:bg-slate-800 border-blue-600 dark:border-blue-500 font-medium'
-                      : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      ? 'bg-[#080908]/5 border-[#080908] dark:border-[#CDF22B] font-medium'
+                      : 'border-border hover:bg-secondary-bg'
                       }`}
                   >
                     <div className="space-y-0.5 truncate">
-                      <p className="text-slate-900 dark:text-slate-100 font-medium truncate">{r.fileName}</p>
-                      <p className="text-slate-400 text-[11px] font-mono">
+                      <p className="text-foreground font-semibold truncate">{r.fileName}</p>
+                      <p className="text-muted-foreground text-[11px] font-mono">
                         {new Date(r.uploadedAt).toLocaleDateString()}
                       </p>
                     </div>
                     {(selectedResumeId === r.id || (!selectedResumeId && (r as { isPrimary?: boolean }).isPrimary)) && (
-                      <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                      <Check className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B] flex-shrink-0" />
                     )}
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-slate-400 py-3 text-center">
+                <p className="text-xs text-muted-foreground py-3 text-center">
                   No uploaded resumes found.
                 </p>
               )}
@@ -510,7 +517,7 @@ export default function InterviewSetupPage() {
               <button
                 type="button"
                 onClick={() => setShowResumeModal(false)}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 cursor-pointer"
+                className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:bg-secondary-bg cursor-pointer"
               >
                 Close
               </button>

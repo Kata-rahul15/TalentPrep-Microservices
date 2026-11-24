@@ -6,6 +6,7 @@ import {
 
 import { resumeApi } from '../api/resumeApi'
 import { useResumeContext } from '../context/ResumeContext'
+import { getErrorMessage } from '@/api/apiClient'
 
 import type {
   ChatMessage,
@@ -331,18 +332,21 @@ export function useJobMatchStatus(
 // useResumeChat
 // ─────────────────────────────────────────────────────────────
 
-export function useResumeChat() {
-  const { selectedResumeId } = useResumeContext()
+export function useResumeChat(initialMessages?: ChatMessage[]) {
+  const { selectedResumeId, setSelectedResumeId } = useResumeContext()
   const [conversationId, setConversationId] = useState<string | undefined>()
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'welcome',
-      role: 'assistant',
-      content:
-        "👋 Hi! I'm your **Resume AI Assistant**. I've analyzed your resume and I'm ready to answer questions about your experience, skills, projects, and how to improve your profile. What would you like to know?",
-      timestamp: new Date().toISOString(),
-    },
-  ])
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (initialMessages !== undefined) return initialMessages
+    return [
+      {
+        id: 'welcome',
+        role: 'assistant',
+        content:
+          "👋 Hi! I'm your **Resume AI Assistant**. I've analyzed your resume and I'm ready to answer questions about your experience, skills, projects, and how to improve your profile. What would you like to know?",
+        timestamp: new Date().toISOString(),
+      },
+    ]
+  })
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -367,33 +371,58 @@ export function useResumeChat() {
       setError(null)
 
       try {
-        if (!selectedResumeId) throw new Error('Select or create a resume before using the AI agent.')
-        const response = await resumeApi.chat(selectedResumeId, trimmedContent, conversationId)
-        if (response.conversationId) setConversationId(response.conversationId)
+        // 1. Resolve active resume ID
+        let resumeId = selectedResumeId
+        if (!resumeId) {
+          resumeId = localStorage.getItem('talentprep_selected_resume_id')
+        }
+        if (!resumeId) {
+          const latestResume = await resumeApi.getResume()
+          if (latestResume?.id) {
+            resumeId = latestResume.id
+            setSelectedResumeId(latestResume.id)
+          }
+        }
+
+        if (!resumeId) {
+          throw new Error('A resume is required for Career Agent. Please upload or create a resume to get personalized advice.')
+        }
+
+        // 2. Dispatch API request through Gateway
+        const response = await resumeApi.chat(resumeId, trimmedContent, conversationId)
+        if (response.conversationId) {
+          setConversationId(response.conversationId)
+        }
         setMessages((prev) => [...prev, response])
-      } catch (err) {
-        console.error('[Resume Chat] Failed:', err)
-        setError('Failed to get a response. Please try again.')
+      } catch (err: unknown) {
+        console.error('[Career Agent Chat] Failed:', err)
+        const errorMsg =
+          getErrorMessage(err) ||
+          (err instanceof Error ? err.message : 'Failed to get a response from Career Agent. Please try again.')
+        setError(errorMsg)
       } finally {
         setIsLoading(false)
       }
     },
-    [isLoading, selectedResumeId, conversationId]
+    [isLoading, selectedResumeId, conversationId, setSelectedResumeId]
   )
 
-  const clearHistory = useCallback(() => {
-    setMessages([
-      {
-        id: 'welcome',
-        role: 'assistant',
-        content:
-          "👋 Hi! I'm your **Resume AI Assistant**. I've analyzed your resume and I'm ready to answer questions about your experience, skills, projects, and how to improve your profile. What would you like to know?",
-        timestamp: new Date().toISOString(),
-      },
-    ])
+  const clearHistory = useCallback(async () => {
+    let resumeId = selectedResumeId
+    if (!resumeId) {
+      resumeId = localStorage.getItem('talentprep_selected_resume_id')
+    }
+    if (resumeId && conversationId) {
+      try {
+        await resumeApi.clearAgentConversation(resumeId, conversationId)
+      } catch (err) {
+        console.warn('[Career Agent] Could not clear conversation on server:', err)
+      }
+    }
+    setMessages(initialMessages !== undefined ? initialMessages : [])
     setError(null)
     setConversationId(undefined)
-  }, [])
+  }, [selectedResumeId, conversationId, initialMessages])
 
   return {
     messages,
@@ -401,5 +430,6 @@ export function useResumeChat() {
     error,
     sendMessage,
     clearHistory,
+    selectedResumeId,
   }
 }

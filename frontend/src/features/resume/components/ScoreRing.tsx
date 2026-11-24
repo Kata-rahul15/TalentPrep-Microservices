@@ -9,15 +9,15 @@ interface ScoreRingProps {
 }
 
 const sizeMap = {
-  sm: { outer: 48, stroke: 4, font: 'text-xs font-bold', labelFont: 'text-[8px]' },
-  md: { outer: 60, stroke: 5, font: 'text-sm sm:text-base font-extrabold', labelFont: 'text-[9px]' },
-  lg: { outer: 84, stroke: 6.5, font: 'text-xl font-black', labelFont: 'text-[11px]' },
+  sm: { outer: 48, stroke: 4, font: 'text-xs font-mono font-bold', labelFont: 'text-[8px] font-mono' },
+  md: { outer: 60, stroke: 5, font: 'text-sm font-mono font-bold', labelFont: 'text-[9px] font-mono' },
+  lg: { outer: 84, stroke: 6, font: 'text-xl font-mono font-black', labelFont: 'text-[11px] font-mono' },
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 75) return '#2563EB' // blue
-  if (score >= 60) return '#3B82F6' // medium blue
-  return '#F59E0B' // amber
+  if (score >= 75) return '#080908'
+  if (score >= 50) return '#383B36'
+  return '#DC2626'
 }
 
 export default function ScoreRing({
@@ -46,7 +46,7 @@ export default function ScoreRing({
           fill="none"
           stroke="currentColor"
           strokeWidth={stroke}
-          className="text-slate-100 dark:text-slate-800"
+          className="text-[#E5E0D5] dark:text-[#232621]"
         />
         {/* Progress */}
         <circle
@@ -59,18 +59,19 @@ export default function ScoreRing({
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          style={{ transition: 'stroke-dashoffset 0.8s ease-in-out' }}
+          className="dark:stroke-[#CDF22B]"
+          style={{ transition: 'stroke-dashoffset 0.6s ease-out' }}
         />
       </svg>
       {/* Center text overlay */}
       <div
         className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
       >
-        <span className={cn('font-heading leading-none text-slate-900 dark:text-white', font)}>
+        <span className={cn('leading-none text-[#080908] dark:text-[#FAF8F3] tabular-nums', font)}>
           {score}
         </span>
         {label && (
-          <span className={cn('text-slate-400 font-medium leading-none mt-0.5', labelFont)}>
+          <span className={cn('text-[#383B36] dark:text-[#BDB9AF] leading-none mt-0.5', labelFont)}>
             {label}
           </span>
         )}
@@ -79,7 +80,6 @@ export default function ScoreRing({
   )
 }
 
-// Wrapper that handles the positioning
 export function ScoreRingContainer({
   score,
   size = 'md',

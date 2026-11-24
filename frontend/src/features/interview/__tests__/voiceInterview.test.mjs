@@ -523,3 +523,147 @@ test('Test 9 – Complete Interview: Consecutive question-and-answer cycles', as
   assert.equal(submittedAnswers[1].questionId, 'q2')
   assert.equal(submittedAnswers[2].questionId, 'q3')
 })
+
+test('Test 10 – STT Deduplication: Multi-sentence accumulation across recognition pause and restarts', () => {
+  // Simulating the exact accumulation logic inside useSpeechRecognition
+  let baseTranscript = ''
+  let currentSessionFinal = ''
+  let finalTranscript = ''
+  let interimTranscript = ''
+
+  const onResult = (results) => {
+    let sessionFinal = ''
+    let sessionInterim = ''
+    for (let i = 0; i < results.length; i++) {
+      const res = results[i]
+      if (res.isFinal) {
+        sessionFinal += (sessionFinal ? ' ' : '') + res[0].transcript.trim()
+      } else {
+        sessionInterim += (sessionInterim ? ' ' : '') + res[0].transcript.trim()
+      }
+    }
+    currentSessionFinal = sessionFinal.trim()
+    const base = baseTranscript.trim()
+    finalTranscript = base
+      ? sessionFinal.trim()
+        ? `${base} ${sessionFinal.trim()}`
+        : base
+      : sessionFinal.trim()
+    interimTranscript = sessionInterim.trim()
+  }
+
+  const onEnd = () => {
+    if (currentSessionFinal) {
+      const base = baseTranscript.trim()
+      baseTranscript = base
+        ? `${base} ${currentSessionFinal.trim()}`
+        : currentSessionFinal.trim()
+      currentSessionFinal = ''
+    }
+    interimTranscript = ''
+  }
+
+  // Session 1: User says "I implemented a microservice architecture"
+  const s1Results = [
+    createMockResult('I implemented a microservice architecture', true),
+  ]
+  onResult(s1Results)
+  assert.equal(finalTranscript, 'I implemented a microservice architecture')
+
+  // User pauses, recognition session ends and cycles
+  onEnd()
+  assert.equal(baseTranscript, 'I implemented a microservice architecture')
+  assert.equal(currentSessionFinal, '')
+
+  // Session 2: User continues speaking "using Spring Cloud and Kafka."
+  const s2Results = [
+    createMockResult('using Spring Cloud and Kafka.', true),
+  ]
+  onResult(s2Results)
+  assert.equal(
+    finalTranscript,
+    'I implemented a microservice architecture using Spring Cloud and Kafka.',
+    'Should concatenate cleanly without duplicating sentence 1'
+  )
+
+  onEnd()
+  assert.equal(
+    baseTranscript,
+    'I implemented a microservice architecture using Spring Cloud and Kafka.'
+  )
+})
+
+test('Test 11 – TTS Deduplication & Completion Callback Invocation', () => {
+  let callbackInvoked = false
+  const spokenUtteranceIds = new Set()
+
+  const speak = (text, utteranceId, onEnd) => {
+    if (spokenUtteranceIds.has(utteranceId)) {
+      // If utterance was already spoken, do not repeat it, but invoke onEnd so downstream orchestration does not hang!
+      if (onEnd) onEnd()
+      return
+    }
+    spokenUtteranceIds.add(utteranceId)
+    // Simulate speech finish
+    if (onEnd) onEnd()
+  }
+
+  // First speech
+  speak('First utterance', 'id-1', () => {
+    callbackInvoked = true
+  })
+  assert.equal(callbackInvoked, true)
+
+  // Duplicate speech with same ID
+  let duplicateCallbackInvoked = false
+  speak('First utterance', 'id-1', () => {
+    duplicateCallbackInvoked = true
+  })
+  assert.equal(
+    duplicateCallbackInvoked,
+    true,
+    'Callback MUST be invoked even if utterance is deduplicated, preventing pipeline stall'
+  )
+})
+
+test('Test 12 – TTS Natural Voice Selection Fallback Chain', () => {
+  const selectVoice = (availableVoices) => {
+    const preferredVoices = [
+      'Samantha',
+      'Karen',
+      'Victoria',
+      'Google UK English Female',
+      'Google US English',
+      'Microsoft Zira',
+      'Microsoft David',
+      'Daniel',
+      'Alex',
+    ]
+
+    for (const name of preferredVoices) {
+      const match = availableVoices.find(
+        (v) => v.name.toLowerCase().includes(name.toLowerCase()) && v.lang.startsWith('en')
+      )
+      if (match) return match
+    }
+
+    const englishVoice = availableVoices.find((v) => v.lang.startsWith('en'))
+    return englishVoice || availableVoices[0] || null
+  }
+
+  const voices1 = [
+    { name: 'Microsoft Ravi - English (India)', lang: 'en-IN' },
+    { name: 'Google US English', lang: 'en-US' },
+    { name: 'Microsoft David Desktop', lang: 'en-US' },
+  ]
+  assert.equal(selectVoice(voices1)?.name, 'Google US English')
+
+  const voices2 = [
+    { name: 'Random Synth', lang: 'fr-FR' },
+    { name: 'Generic English', lang: 'en-AU' },
+  ]
+  assert.equal(selectVoice(voices2)?.name, 'Generic English')
+
+  const voicesEmpty = []
+  assert.equal(selectVoice(voicesEmpty), null)
+})

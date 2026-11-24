@@ -167,7 +167,7 @@ export default function VerifyOtp() {
       <AuthCard>
         <form onSubmit={handleVerify} className="flex flex-col gap-3">
           {state?.message && !error && (
-            <div className="p-2.5 bg-primary/5 border border-primary/20 text-primary text-xs font-semibold rounded-xl text-center" role="status">
+            <div className="p-2.5 bg-[#FAF8F3] dark:bg-[#1A1C18] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#FAF8F3] text-xs font-semibold rounded-lg text-center" role="status">
               {state.message}
             </div>
           )}
@@ -176,7 +176,7 @@ export default function VerifyOtp() {
 
           {/* OTP inputs container */}
           <div className="flex flex-col gap-1 text-center">
-            <label id="otp-label" className="text-[13px] font-semibold text-secondary-foreground select-none">
+            <label id="otp-label" className="text-xs font-semibold text-[#2C2E2B] dark:text-[#E2DFD7] select-none">
               Enter verification code
             </label>
             <OTPInput
@@ -191,40 +191,40 @@ export default function VerifyOtp() {
           <button
             type="submit"
             disabled={!isOtpComplete || isVerifying}
-            className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary hover:bg-primary-hover disabled:bg-secondary-bg disabled:text-muted-foreground text-white font-bold text-sm rounded-lg shadow-sm disabled:shadow-none transition-all duration-200 hover:-translate-y-0.5 disabled:translate-y-0 disabled:cursor-not-allowed cursor-pointer border border-transparent disabled:border-border"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#CDF22B] hover:bg-[#BCE01E] disabled:bg-[#F2EFE9] dark:disabled:bg-[#1A1C18] disabled:text-[#383B36]/60 dark:disabled:text-[#BDB9AF]/60 text-[#080908] font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition-colors duration-150 disabled:cursor-not-allowed cursor-pointer border border-transparent disabled:border-[#E5E0D5] dark:disabled:border-[#232621]"
           >
             {isVerifying ? (
               <>
-                <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                <div className="w-4 h-4 border-2 border-[#080908] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                 <span>Verifying...</span>
               </>
             ) : (
-              'Verify Code'
+              'Verify code'
             )}
           </button>
 
           {/* Resend text timer */}
-          <div className="text-center text-xs font-semibold text-muted-foreground select-none mt-0.5">
+          <div className="text-center text-xs text-[#2C2E2B] dark:text-[#E2DFD7] select-none mt-0.5">
             Didn't receive the code?{' '}
             {canResend ? (
               <button
                 type="button"
                 onClick={handleResend}
                 disabled={isResending}
-                className="inline-flex items-center gap-1.5 font-bold text-primary hover:text-primary-hover disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors focus:outline-none cursor-pointer"
+                className="inline-flex items-center gap-1.5 font-bold text-[#080908] dark:text-[#CDF22B] hover:underline disabled:text-[#383B36]/60 dark:disabled:text-[#BDB9AF]/60 disabled:cursor-not-allowed transition-colors focus:outline-none cursor-pointer"
               >
                 {isResending ? (
                   <>
-                    <div className="w-3.5 h-3.5 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                    <div className="w-3.5 h-3.5 border-2 border-[#383B36] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                     <span>Sending...</span>
                   </>
                 ) : (
-                  'Resend Code'
+                  'Resend code'
                 )}
               </button>
             ) : (
-              <span className="text-muted-foreground">
-                Resend code in <strong className="font-bold text-secondary-foreground">{timer}s</strong>
+              <span>
+                Resend in <strong className="font-mono font-bold text-[#080908] dark:text-[#FAF8F3]">{timer}s</strong>
               </span>
             )}
           </div>

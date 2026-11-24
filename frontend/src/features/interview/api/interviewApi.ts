@@ -12,6 +12,8 @@ import type {
   CodeRunResult,
   InterviewTranscriptResponse,
   InterviewReportResponse,
+  InterviewHistoryItem,
+  InterviewDetailReview,
 } from '../types/interview.types'
 
 export const interviewApi = {
@@ -125,7 +127,7 @@ export const interviewApi = {
 
   /**
    * POST /api/interviews/{id}/code/run
-   * Requests code execution. Backend reports unavailable notice rather than pretending tests passed.
+   * Executes source code against visible sample test cases.
    */
   runCode: async (id: string, data: CodeSubmissionRequest): Promise<CodeRunResult> => {
     const response = await api.post(`/api/interviews/${id}/code/run`, data)
@@ -134,7 +136,7 @@ export const interviewApi = {
 
   /**
    * POST /api/interviews/{id}/code/submit
-   * Submits source code text directly for AI review and scoring.
+   * Submits source code for authoritative judging against complete test suite (visible + hidden).
    */
   submitCode: async (
     id: string,
@@ -196,5 +198,22 @@ export const interviewApi = {
     const response = await api.get(`/api/interviews/${id}/report`)
     return response.data
   },
-}
 
+  /**
+   * GET /api/interviews/history
+   * Retrieves past interview sessions for the authenticated user.
+   */
+  getInterviewHistory: async (): Promise<InterviewHistoryItem[]> => {
+    const response = await api.get('/api/interviews/history')
+    return response.data
+  },
+
+  /**
+   * GET /api/interviews/{id}/detail
+   * Retrieves full details, questions, submitted answers/code, and report for review.
+   */
+  getInterviewDetail: async (id: string): Promise<InterviewDetailReview> => {
+    const response = await api.get(`/api/interviews/${id}/detail`)
+    return response.data
+  },
+}

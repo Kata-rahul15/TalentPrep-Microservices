@@ -128,8 +128,8 @@ export default function ResumeChat() {
                   className={cn(
                     'w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5',
                     msg.role === 'user'
-                      ? 'bg-primary/10 text-primary'
-                      : 'bg-secondary-bg border border-border text-muted-foreground'
+                      ? 'bg-[#080908] text-[#CDF22B]'
+                      : 'bg-card border border-border text-foreground'
                   )}
                 >
                   {msg.role === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
@@ -140,18 +140,18 @@ export default function ResumeChat() {
                   className={cn(
                     'max-w-[80%] px-3.5 py-2.5 rounded-xl text-xs sm:text-[13px] leading-relaxed',
                     msg.role === 'user'
-                      ? 'bg-primary text-white rounded-tr-xs'
-                      : 'bg-secondary-bg/50 border border-border text-secondary-foreground rounded-tl-xs'
+                      ? 'bg-[#080908] text-[#FAF8F3] rounded-tr-xs shadow-2xs'
+                      : 'bg-card border border-border text-foreground rounded-tl-xs shadow-2xs'
                   )}
                 >
                   {renderMarkdown(msg.content)}
 
                   {msg.role === 'assistant' && msg.toolTrace && msg.toolTrace.length > 0 && (
                     <div className="mt-2 pt-2 border-t border-border/60">
-                      <p className="text-[9px] font-bold uppercase tracking-wider text-primary mb-1">Tools used</p>
+                      <p className="text-[9px] font-mono font-bold uppercase tracking-wider text-muted-foreground mb-1">Tools used</p>
                       <div className="flex flex-wrap gap-1">
                         {msg.toolTrace.map((tool) => (
-                          <span key={tool} className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[9px] font-medium">{tool}</span>
+                          <span key={tool} className="px-1.5 py-0.5 rounded bg-[#080908]/5 text-[#080908] text-[9px] font-mono">{tool}</span>
                         ))}
                       </div>
                     </div>
@@ -159,8 +159,8 @@ export default function ResumeChat() {
 
                   <p
                     className={cn(
-                      'text-[9px] mt-1',
-                      msg.role === 'user' ? 'text-white/60' : 'text-muted-foreground'
+                      'text-[9px] font-mono mt-1',
+                      msg.role === 'user' ? 'text-[#FAF8F3]/60' : 'text-muted-foreground'
                     )}
                   >
                     {new Intl.DateTimeFormat('en-IN', {
@@ -179,11 +179,11 @@ export default function ResumeChat() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex gap-2.5"
               >
-                <div className="w-7 h-7 rounded-full bg-secondary-bg border border-border text-muted-foreground flex items-center justify-center flex-shrink-0">
+                <div className="w-7 h-7 rounded-full bg-card border border-border text-foreground flex items-center justify-center flex-shrink-0">
                   <Bot className="w-3.5 h-3.5" />
                 </div>
-                <div className="px-3 py-2 bg-secondary-bg/50 border border-border rounded-xl rounded-tl-xs flex items-center gap-1.5">
-                  <Loader2 className="w-3 h-3 text-primary animate-spin" />
+                <div className="px-3 py-2 bg-card border border-border rounded-xl rounded-tl-xs flex items-center gap-1.5">
+                  <Loader2 className="w-3 h-3 text-[#080908] animate-spin" />
                   <span className="text-xs text-muted-foreground">Thinking...</span>
                 </div>
               </motion.div>
@@ -191,7 +191,7 @@ export default function ResumeChat() {
           </AnimatePresence>
 
           {error && (
-            <div className="p-2.5 bg-danger/5 border border-danger/20 rounded-lg text-xs text-danger">
+            <div className="p-2.5 bg-red-500/5 border border-red-500/20 rounded-lg text-xs text-red-600">
               {error}
             </div>
           )}
@@ -202,7 +202,7 @@ export default function ResumeChat() {
         {/* Suggested questions */}
         {messages.length === 1 && (
           <div className="px-4 py-2 border-t border-divider">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
               Suggested Questions
             </p>
             <div className="flex gap-1.5 flex-wrap">
@@ -211,7 +211,7 @@ export default function ResumeChat() {
                   key={q}
                   onClick={() => handleSuggestion(q)}
                   disabled={isLoading}
-                  className="text-[11px] px-2.5 py-1 rounded-md bg-secondary-bg border border-border text-secondary-foreground hover:border-primary hover:text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="text-[11px] px-2.5 py-1 rounded-md bg-secondary-bg border border-border text-secondary-foreground hover:border-[#080908] hover:text-[#080908] transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {q}
                 </button>
@@ -231,7 +231,7 @@ export default function ResumeChat() {
                 onKeyDown={handleKeyDown}
                 placeholder="Ask anything about your resume... (Enter to send)"
                 rows={1}
-                className="w-full resize-none bg-background border border-border rounded-lg px-3 py-2 text-xs sm:text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all leading-relaxed min-h-[38px] max-h-24"
+                className="w-full resize-none bg-background border border-border rounded-lg px-3 py-2 text-xs sm:text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#080908] focus:ring-1 focus:ring-[#080908]/20 transition-all leading-relaxed min-h-[38px] max-h-24"
                 disabled={isLoading}
                 aria-label="Chat message input"
               />
@@ -240,7 +240,7 @@ export default function ResumeChat() {
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="w-9 h-9 rounded-lg bg-primary hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
+              className="w-9 h-9 rounded-lg bg-[#CDF22B] hover:bg-[#bce022] text-[#080908] font-bold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer shadow-2xs"
               aria-label="Send message"
             >
               {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
@@ -249,7 +249,7 @@ export default function ResumeChat() {
 
           <p className="text-[10px] text-muted-foreground mt-1.5">
             <MessageSquare className="w-3 h-3 inline mr-1" />
-            Press <kbd className="px-1 py-0.2 bg-secondary-bg border border-border rounded text-[9px]">Enter</kbd> to send, <kbd className="px-1 py-0.2 bg-secondary-bg border border-border rounded text-[9px]">Shift+Enter</kbd> for new line
+            Press <kbd className="px-1 py-0.2 bg-secondary-bg border border-border rounded text-[9px] font-mono">Enter</kbd> to send, <kbd className="px-1 py-0.2 bg-secondary-bg border border-border rounded text-[9px] font-mono">Shift+Enter</kbd> for new line
           </p>
         </div>
       </div>

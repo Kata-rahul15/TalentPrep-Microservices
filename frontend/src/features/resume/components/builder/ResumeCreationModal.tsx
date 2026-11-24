@@ -95,35 +95,35 @@ export default function ResumeCreationModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080908]/70 backdrop-blur-xs">
+      <div className="bg-card border border-border rounded-2xl w-full max-w-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div>
-            <h2 className="font-heading font-extrabold text-base sm:text-lg text-slate-900 dark:text-white">
+            <h2 className="font-heading font-extrabold text-base sm:text-lg text-foreground">
               Create / Import Resume
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Choose an uploaded resume or start with a pre-formatted template.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+            className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-secondary-bg cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Option Tabs */}
-        <div className="grid grid-cols-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/50 p-1.5 gap-1.5">
+        <div className="grid grid-cols-3 border-b border-border bg-secondary-bg/50 p-1.5 gap-1.5">
           <button
             type="button"
             onClick={() => setActiveTab('import')}
             className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'import'
-                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                ? 'bg-[#080908] text-[#CDF22B] shadow-2xs'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -135,8 +135,8 @@ export default function ResumeCreationModal({
             onClick={() => setActiveTab('template')}
             className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'template'
-                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                ? 'bg-[#080908] text-[#CDF22B] shadow-2xs'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <LayoutTemplate className="w-3.5 h-3.5" />
@@ -148,8 +148,8 @@ export default function ResumeCreationModal({
             onClick={() => setActiveTab('scratch')}
             className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'scratch'
-                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                ? 'bg-[#080908] text-[#CDF22B] shadow-2xs'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <FilePlus className="w-3.5 h-3.5" />
@@ -163,25 +163,25 @@ export default function ResumeCreationModal({
           {activeTab === 'import' && (
             <div className="space-y-4">
               {availableResumes.length === 0 ? (
-                <div className="text-center py-8 space-y-2 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-4">
-                  <FileText className="w-8 h-8 text-slate-400 mx-auto" />
-                  <p className="font-semibold text-xs text-slate-700 dark:text-slate-300">
+                <div className="text-center py-8 space-y-2 border border-dashed border-border rounded-xl p-4">
+                  <FileText className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+                  <p className="font-semibold text-xs text-foreground">
                     No uploaded resumes found
                   </p>
-                  <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+                  <p className="text-[11px] text-muted-foreground max-w-sm mx-auto">
                     You haven&apos;t uploaded any resumes yet. You can choose a template or build from scratch.
                   </p>
                   <button
                     type="button"
                     onClick={() => setActiveTab('template')}
-                    className="text-xs font-bold text-blue-600 hover:underline pt-2 inline-block cursor-pointer"
+                    className="text-xs font-bold text-foreground hover:underline pt-2 inline-block cursor-pointer"
                   >
                     Choose a Template Instead
                   </button>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-muted-foreground">
                     Select an uploaded resume. The builder will automatically populate with its structured sections:
                   </p>
 
@@ -191,8 +191,8 @@ export default function ResumeCreationModal({
                         key={r.id}
                         className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
                           selectedResumeId === r.id
-                            ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-950/40'
-                            : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                            ? 'border-[#080908] bg-[#080908]/5 dark:border-[#CDF22B]'
+                            : 'border-border hover:bg-secondary-bg/60'
                         }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
@@ -202,18 +202,18 @@ export default function ResumeCreationModal({
                             value={r.id}
                             checked={selectedResumeId === r.id}
                             onChange={() => setSelectedResumeId(r.id)}
-                            className="text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            className="text-[#080908] focus:ring-[#080908] cursor-pointer"
                           />
                           <div className="min-w-0">
-                            <div className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                            <div className="font-bold text-xs text-foreground truncate">
                               {r.fileName}
                             </div>
-                            <div className="text-[11px] text-slate-500">
+                            <div className="text-[11px] font-mono text-muted-foreground">
                               Uploaded {r.uploadedAt ? new Date(r.uploadedAt).toLocaleDateString() : 'Recently'}
                             </div>
                           </div>
                         </div>
-                        <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200">
+                        <span className="text-[10px] font-mono font-semibold uppercase px-1.5 py-0.5 rounded bg-secondary-bg text-foreground border border-border">
                           {r.status}
                         </span>
                       </label>
@@ -221,21 +221,21 @@ export default function ResumeCreationModal({
                   </div>
 
                   {importError && (
-                    <p className="text-xs text-rose-500 bg-rose-50 p-2 rounded-lg">
+                    <p className="text-xs text-red-600 bg-red-500/10 p-2 rounded-lg">
                       {importError}
                     </p>
                   )}
 
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                  <div className="pt-3 border-t border-border flex justify-end">
                     <button
                       type="button"
                       disabled={isImporting || !selectedResumeId}
                       onClick={handleImportExisting}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-secondary-bg disabled:text-muted-foreground disabled:border disabled:border-border disabled:cursor-not-allowed rounded-xl shadow-xs cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-[#080908] bg-[#CDF22B] hover:bg-[#bce022] disabled:bg-secondary-bg disabled:text-muted-foreground disabled:border disabled:border-border disabled:cursor-not-allowed rounded-xl shadow-xs cursor-pointer"
                     >
                       {isImporting ? (
                         <>
-                          <div className="w-3.5 h-3.5 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                          <div className="w-3.5 h-3.5 border-2 border-[#080908] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                           <span>Importing & Parsing...</span>
                         </>
                       ) : (
@@ -261,40 +261,40 @@ export default function ResumeCreationModal({
                     onClick={() => setSelectedTemplate(tpl.id)}
                     className={`p-3 rounded-xl border text-left cursor-pointer transition-all space-y-1.5 ${
                       selectedTemplate === tpl.id
-                        ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-950/40 ring-1 ring-blue-600'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                        ? 'border-[#080908] bg-[#080908]/5 dark:border-[#CDF22B] ring-1 ring-[#080908] dark:ring-[#CDF22B]'
+                        : 'border-border hover:border-[#080908]/30'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-secondary-bg text-foreground">
                         {tpl.badge}
                       </span>
                       {selectedTemplate === tpl.id && (
-                        <Check className="w-3.5 h-3.5 text-blue-600" />
+                        <Check className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
                       )}
                     </div>
-                    <div className="font-heading font-bold text-xs text-slate-900 dark:text-white truncate">
+                    <div className="font-heading font-bold text-xs text-foreground truncate">
                       {tpl.name}
                     </div>
-                    <p className="text-[11px] text-slate-500 line-clamp-2 leading-tight">
+                    <p className="text-[11px] text-muted-foreground line-clamp-2 leading-tight">
                       {tpl.description}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
+              <div className="pt-3 border-t border-border flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => handleStartFromTemplate(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl cursor-pointer"
+                  className="px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-secondary-bg rounded-xl cursor-pointer"
                 >
                   Start with Empty Form
                 </button>
                 <button
                   type="button"
                   onClick={() => handleStartFromTemplate(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-[#080908] bg-[#CDF22B] hover:bg-[#bce022] rounded-xl shadow-xs cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Start with Sample Content</span>
@@ -306,14 +306,14 @@ export default function ResumeCreationModal({
           {/* ── TAB 3: Start from Scratch ── */}
           {activeTab === 'scratch' && (
             <div className="space-y-4 text-center py-4">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto border border-blue-200/60">
+              <div className="w-12 h-12 rounded-2xl bg-[#080908]/5 text-[#080908] flex items-center justify-center mx-auto border border-border">
                 <FilePlus className="w-6 h-6" />
               </div>
               <div className="space-y-1 max-w-sm mx-auto">
-                <h3 className="font-heading font-bold text-sm text-slate-900 dark:text-white">
+                <h3 className="font-heading font-bold text-sm text-foreground">
                   Blank Slate Resume
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Start with clean, structured sections and fill in your details step-by-step with real-time previewing.
                 </p>
               </div>
@@ -322,7 +322,7 @@ export default function ResumeCreationModal({
                 <button
                   type="button"
                   onClick={handleStartFromScratch}
-                  className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-bold text-[#080908] bg-[#CDF22B] hover:bg-[#bce022] rounded-xl shadow-xs cursor-pointer"
                 >
                   <span>Create Blank Resume</span>
                   <ArrowRight className="w-3.5 h-3.5" />

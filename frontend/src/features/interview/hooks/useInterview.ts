@@ -15,6 +15,8 @@ export const interviewKeys = {
   question: (sessionId?: string | null) => [...interviewKeys.all, 'question', sessionId || ''] as const,
   transcript: (id?: string | null) => [...interviewKeys.all, 'transcript', id || ''] as const,
   report: (id?: string | null) => [...interviewKeys.all, 'report', id || ''] as const,
+  history: () => [...interviewKeys.all, 'history'] as const,
+  detail: (id?: string | null) => [...interviewKeys.all, 'detail', id || ''] as const,
 }
 
 // ─── Queries ────────────────────────────────────────────────────
@@ -84,6 +86,30 @@ export function useInterviewTranscript(sessionId?: string) {
     queryFn: () => interviewApi.getTranscript(sessionId!),
     enabled: Boolean(sessionId),
     staleTime: 5 * 60 * 1000,
+  })
+}
+
+/**
+ * Fetches past interview sessions for the authenticated user.
+ */
+export function useInterviewHistory(enabled = true) {
+  return useQuery({
+    queryKey: interviewKeys.history(),
+    queryFn: () => interviewApi.getInterviewHistory(),
+    enabled,
+    staleTime: 30 * 1000,
+  })
+}
+
+/**
+ * Fetches full review details for a specific interview session.
+ */
+export function useInterviewDetail(sessionId?: string, enabled = true) {
+  return useQuery({
+    queryKey: interviewKeys.detail(sessionId),
+    queryFn: () => interviewApi.getInterviewDetail(sessionId!),
+    enabled: Boolean(sessionId && sessionId.trim()) && enabled,
+    staleTime: 60 * 1000,
   })
 }
 

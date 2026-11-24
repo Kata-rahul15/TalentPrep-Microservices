@@ -4,9 +4,16 @@ interface TalentPrepLogoProps {
   className?: string
   iconOnly?: boolean
   size?: 'sm' | 'md' | 'lg'
+  inverted?: boolean
 }
 
-export function TalentPrepIcon({ className }: { className?: string }) {
+export function TalentPrepIcon({
+  className,
+  inverted = false,
+}: {
+  className?: string
+  inverted?: boolean
+}) {
   return (
     <svg
       viewBox="0 0 32 32"
@@ -14,35 +21,29 @@ export function TalentPrepIcon({ className }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       className={cn('w-full h-full', className)}
     >
-      <defs>
-        <linearGradient id="tp-grad-top" x1="4" y1="4" x2="28" y2="14" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3B82F6" />
-          <stop offset="100%" stopColor="#1D4ED8" />
-        </linearGradient>
-        <linearGradient id="tp-grad-mid" x1="4" y1="12" x2="28" y2="22" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#60A5FA" />
-          <stop offset="100%" stopColor="#2563EB" />
-        </linearGradient>
-        <linearGradient id="tp-grad-bot" x1="4" y1="20" x2="28" y2="30" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#93C5FD" />
-          <stop offset="100%" stopColor="#3B82F6" />
-        </linearGradient>
-      </defs>
-      
-      {/* Top Layer */}
-      <path
-        d="M16 3L4 9L16 15L28 9L16 3Z"
-        fill="url(#tp-grad-top)"
+      {/* Precision geometric architectural mark */}
+      <rect
+        x="3"
+        y="3"
+        width="26"
+        height="26"
+        rx="6"
+        fill={inverted ? '#FAF8F3' : '#080908'}
       />
-      {/* Middle Layer */}
+      {/* Inner angled preparation dynamic chevron */}
       <path
-        d="M4 14L16 20L28 14L25 12.5L16 17L7 12.5L4 14Z"
-        fill="url(#tp-grad-mid)"
+        d="M10 22L16 10L22 22"
+        stroke={inverted ? '#080908' : '#FAF8F3'}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      {/* Bottom Layer */}
-      <path
-        d="M4 21L16 27L28 21L25 19.5L16 24L7 19.5L4 21Z"
-        fill="url(#tp-grad-bot)"
+      {/* Neon Lime Accent pip: precision focal moment */}
+      <circle
+        cx="16"
+        cy="15"
+        r="2.5"
+        fill="#CDF22B"
       />
     </svg>
   )
@@ -52,6 +53,7 @@ export default function TalentPrepLogo({
   className,
   iconOnly = false,
   size = 'md',
+  inverted = false,
 }: TalentPrepLogoProps) {
   const sizeClasses = {
     sm: { icon: 'w-6 h-6', text: 'text-sm' },
@@ -62,16 +64,18 @@ export default function TalentPrepLogo({
   return (
     <div className={cn('flex items-center gap-2.5 select-none', className)}>
       <div className={cn('flex-shrink-0 flex items-center justify-center', sizeClasses[size].icon)}>
-        <TalentPrepIcon />
+        <TalentPrepIcon inverted={inverted} />
       </div>
       {!iconOnly && (
         <span
           className={cn(
-            'font-heading font-extrabold tracking-tight text-slate-900 dark:text-white',
+            'font-heading font-black tracking-tight',
+            inverted ? 'text-[#FAF8F3]' : 'text-[#080908] dark:text-[#FAF8F3]',
             sizeClasses[size].text
           )}
         >
-          TalentPrep
+          Talent<span className="text-[#080908] dark:text-[#FAF8F3]">Prep</span>
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#CDF22B] ml-1 mb-0.5" />
         </span>
       )}
     </div>

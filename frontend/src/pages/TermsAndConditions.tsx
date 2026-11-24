@@ -38,7 +38,7 @@ export default function TermsAndConditions() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors">
+    <div className="min-h-screen flex flex-col bg-[#FAF8F3] dark:bg-[#080908] text-[#080908] dark:text-[#FAF8F3] transition-colors">
       {user ? <AuthenticatedNavbar /> : <Navbar />}
 
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
@@ -48,9 +48,9 @@ export default function TermsAndConditions() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-10 text-center sm:text-left"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">
-            <FileCheck className="w-3.5 h-3.5" />
-            <span>Service Agreement & Policies</span>
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#080908] text-[#FAF8F3] text-xs font-mono mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" />
+            Service Agreement & Policies
           </div>
 
           <h1 className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl text-foreground tracking-tight">

@@ -32,7 +32,7 @@ export default function AchievementsEditor({ achievements, onChange }: Props) {
           <h3 className="font-heading font-bold text-sm text-slate-900 dark:text-white">
             Honors & Achievements
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-[#383B36] dark:text-[#BDB9AF] mt-0.5">
             List hackathon victories, academic honors, peer recognition, and major career milestones.
           </p>
         </div>
@@ -40,7 +40,7 @@ export default function AchievementsEditor({ achievements, onChange }: Props) {
         <button
           type="button"
           onClick={addAchievement}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-2xs cursor-pointer h-7.5"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#FAF8F3] bg-[#080908] hover:bg-[#1f201e] rounded-lg transition-colors shadow-2xs cursor-pointer h-7.5"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add Achievement</span>
@@ -56,7 +56,7 @@ export default function AchievementsEditor({ achievements, onChange }: Props) {
           <button
             type="button"
             onClick={addAchievement}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline pt-1"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-foreground hover:underline pt-1"
           >
             <Plus className="w-3 h-3" /> Add achievement
           </button>
@@ -75,7 +75,7 @@ export default function AchievementsEditor({ achievements, onChange }: Props) {
                 <button
                   type="button"
                   onClick={() => removeItem(ach.id)}
-                  className="p-1 text-slate-400 hover:text-rose-600 rounded transition-colors cursor-pointer"
+                  className="p-1 text-[#484B46] dark:text-[#BDB9AF] hover:text-rose-600 rounded transition-colors cursor-pointer"
                   title="Remove"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

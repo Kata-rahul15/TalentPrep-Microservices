@@ -93,7 +93,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
               <TalentPrepLogo size="sm" />
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-secondary-bg transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-[#383B36] hover:text-[#080908] dark:text-[#BDB9AF] dark:hover:text-[#FAF8F3] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
                 aria-label="Close navigation menu"
               >
                 <X className="w-5 h-5" />
@@ -103,7 +103,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
             {/* Navigation Body */}
             <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto overscroll-contain">
               <div className="px-2 mb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#383B36] dark:text-[#BDB9AF]">
                   Account & Preferences
                 </span>
               </div>
@@ -116,8 +116,8 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                     className={cn(
                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold border border-blue-200/60 dark:border-blue-900/50'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-secondary-bg'
+                        ? 'bg-[#CDF22B] text-[#080908] font-bold shadow-xs border border-[#b8dc22]'
+                        : 'text-[#2C2E2B] dark:text-[#E2DFD7] hover:bg-black/5 dark:hover:bg-white/5'
                     )}
                   >
                     <item.icon className="w-4.5 h-4.5 flex-shrink-0" />
@@ -127,7 +127,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
               })}
 
               <div className="pt-4 pb-2 px-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#383B36] dark:text-[#BDB9AF]">
                   Support & Legal
                 </span>
               </div>
@@ -140,8 +140,8 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                     className={cn(
                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold border border-blue-200/60 dark:border-blue-900/50'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-secondary-bg'
+                        ? 'bg-[#CDF22B] text-[#080908] font-bold shadow-xs border border-[#b8dc22]'
+                        : 'text-[#2C2E2B] dark:text-[#E2DFD7] hover:bg-black/5 dark:hover:bg-white/5'
                     )}
                   >
                     <item.icon className="w-4.5 h-4.5 flex-shrink-0" />
@@ -168,16 +168,16 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
 
             {/* User card footer */}
             {user && (
-              <div className="px-4 py-3 border-t border-border bg-secondary-bg/40 flex-shrink-0">
+              <div className="px-4 py-3 border-t border-border bg-[#080908]/[0.02] dark:bg-white/[0.02] flex-shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase border border-primary/20 flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-[#CDF22B] text-[#080908] flex items-center justify-center font-bold text-xs uppercase flex-shrink-0">
                     {user.username?.slice(0, 2) || 'TP'}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                    <p className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3] truncate">
                       {user.username || 'User'}
                     </p>
-                    <p className="text-[10px] text-muted-foreground truncate">
+                    <p className="text-[10px] text-[#383B36] dark:text-[#BDB9AF] font-medium truncate">
                       {user.email || ''}
                     </p>
                   </div>

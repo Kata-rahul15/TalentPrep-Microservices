@@ -70,7 +70,7 @@ export default function ResumePreview({
             <span className="font-heading font-bold text-sm text-slate-100">
               Live Resume Preview
             </span>
-            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 uppercase">
+            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-[#CDF22B]/20 text-[#CDF22B] border border-[#CDF22B]/30 uppercase">
               A4 • {data.selectedTemplate}
             </span>
           </div>
@@ -99,7 +99,7 @@ export default function ResumePreview({
             <button
               type="button"
               onClick={handleResetZoom}
-              className="p-1.5 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800 cursor-pointer transition-colors"
+              className="p-1.5 text-[#BDB9AF] hover:text-[#FAF8F3] rounded-lg hover:bg-slate-800 cursor-pointer transition-colors"
               title="Reset Zoom (90%)"
             >
               <RotateCcw className="w-4 h-4" />
@@ -151,10 +151,10 @@ export default function ResumePreview({
       {/* Normal Preview Header Toolbar */}
       <div className="flex items-center justify-between px-3.5 py-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-slate-200/80 dark:border-slate-800 text-xs flex-shrink-0">
         <div className="flex items-center gap-2">
-          <span className="font-heading font-bold text-slate-800 dark:text-slate-200">
+          <span className="font-heading font-bold text-foreground">
             Live Preview
           </span>
-          <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60 uppercase">
+          <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-[#080908]/5 dark:bg-[#FAF8F3]/10 text-foreground border border-border uppercase">
             A4 • {data.selectedTemplate}
           </span>
         </div>
@@ -164,18 +164,18 @@ export default function ResumePreview({
           <button
             type="button"
             onClick={handleZoomOut}
-            className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+            className="p-1 text-[#2C2E2B] hover:text-[#080908] dark:text-[#E2DFD7] dark:hover:text-[#FAF8F3] rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
             title="Zoom Out"
           >
             <ZoomOut className="w-3.5 h-3.5" />
           </button>
-          <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 w-10 text-center select-none">
+          <span className="text-[11px] font-mono font-bold text-[#080908] dark:text-[#FAF8F3] w-10 text-center select-none">
             {Math.round(zoomLevel * 100)}%
           </span>
           <button
             type="button"
             onClick={handleZoomIn}
-            className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+            className="p-1 text-[#2C2E2B] hover:text-[#080908] dark:text-[#E2DFD7] dark:hover:text-[#FAF8F3] rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
             title="Zoom In"
           >
             <ZoomIn className="w-3.5 h-3.5" />
@@ -183,7 +183,7 @@ export default function ResumePreview({
           <button
             type="button"
             onClick={handleResetZoom}
-            className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+            className="p-1 text-[#383B36] hover:text-[#080908] dark:text-[#BDB9AF] dark:hover:text-[#FAF8F3] rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
             title="Reset Zoom (90%)"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -193,7 +193,7 @@ export default function ResumePreview({
             <button
               type="button"
               onClick={onToggleFullscreen}
-              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer ml-1 transition-colors"
+              className="p-1 text-[#2C2E2B] hover:text-[#080908] dark:text-[#E2DFD7] dark:hover:text-[#FAF8F3] rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer ml-1 transition-colors"
               title="Fullscreen Preview"
             >
               <Maximize2 className="w-3.5 h-3.5" />

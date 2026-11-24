@@ -275,10 +275,10 @@ export default function LegalConsentModal({
                   type="button"
                   onClick={handleOK}
                   disabled={!hasScrolledToBottom || !isConsentChecked}
-                  className="inline-flex items-center gap-1.5 px-5 py-2 bg-primary hover:bg-primary-hover disabled:bg-secondary-bg disabled:text-muted-foreground text-white font-bold text-xs rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#CDF22B] hover:bg-[#BCE01E] disabled:bg-[#F2EFE9] dark:disabled:bg-[#1A1C18] disabled:text-[#383B36]/60 dark:disabled:text-[#BDB9AF]/60 text-[#080908] font-bold text-xs rounded-lg shadow-2xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <Check className="w-4 h-4" />
-                  <span>OK</span>
+                  <span>Agree & continue</span>
                 </button>
               </div>
             </div>

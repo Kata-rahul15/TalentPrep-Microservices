@@ -1,6 +1,8 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { motion } from 'framer-motion'
+import TalentPrepLogo from '@/components/common/TalentPrepLogo'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -10,62 +12,48 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-center py-2 sm:py-4 sm:px-6 lg:px-8 relative overflow-x-hidden overflow-y-auto font-sans select-none">
+    <div className="min-h-screen bg-[#FAF8F3] dark:bg-[#080908] text-[#080908] dark:text-[#FAF8F3] flex flex-col justify-center py-6 sm:py-10 px-4 sm:px-6 lg:px-8 relative overflow-x-hidden overflow-y-auto selection:bg-[#CDF22B] selection:text-[#080908]">
       
-      {/* ── Ambient background blur circles ── */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-primary/5 filter blur-[100px]" />
-        <div className="absolute bottom-[-10%] left-[-8%] w-[500px] h-[500px] rounded-full bg-primary/5 filter blur-[100px]" />
-      </div>
+      {/* Subtle architectural grid pattern */}
+      <div className="absolute inset-0 pointer-events-none z-0 bg-grid-pattern opacity-40" />
 
-      <div className="relative z-10 w-full max-w-[400px] mx-auto px-4 sm:px-0">
-        {/* ── Top Header/Nav ── */}
-        <div className="flex flex-col items-center mb-4">
-          {/* Logo */}
+      <div className="relative z-10 w-full max-w-[420px] mx-auto">
+        {/* ── Top Header / Logo ── */}
+        <div className="flex flex-col items-center mb-5 text-center">
           <Link
             to="/"
-            className="flex items-center gap-2 cursor-pointer group mb-2"
+            className="flex items-center cursor-pointer mb-3"
           >
-            <div className="w-7.5 h-7.5 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <span className="font-heading font-extrabold text-[1.15rem] tracking-tight text-foreground">
-              TalentPrep
-            </span>
+            <TalentPrepLogo size="md" />
           </Link>
 
-          {/* Heading */}
-          <h2 className="font-heading font-extrabold text-lg sm:text-xl text-foreground tracking-tight text-center">
+          <h1 className="font-heading font-black text-xl sm:text-2xl text-[#080908] dark:text-[#FAF8F3] tracking-tight">
             {title}
-          </h2>
+          </h1>
           {subtitle && (
-            <p className="mt-0.5 text-[11px] text-muted-foreground text-center max-w-[320px]">
+            <p className="mt-1 text-xs text-[#2C2E2B] dark:text-[#E2DFD7] max-w-[340px] leading-relaxed">
               {subtitle}
             </p>
           )}
         </div>
 
-        {/* ── Card/Forms Wrapper ── */}
+        {/* ── Card Container ── */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+          transition={{ duration: 0.18 }}
         >
           {children}
         </motion.div>
 
         {/* ── Back to Home Link ── */}
-        <div className="mt-3 text-center">
+        <div className="mt-5 text-center">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#383B36] hover:text-[#080908] dark:text-[#BDB9AF] dark:hover:text-[#FAF8F3] transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Back to home page
+            Back to home
           </Link>
         </div>
       </div>

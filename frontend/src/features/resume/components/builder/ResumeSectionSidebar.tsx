@@ -76,22 +76,22 @@ export default function ResumeSectionSidebar({
         'flex-shrink-0 space-y-3',
         embedded
           ? 'w-full'
-          : 'w-full md:w-56 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl p-3 shadow-2xs'
+          : 'w-full md:w-56 bg-card border border-border rounded-xl p-3 shadow-2xs'
       )}
     >
       {/* Completeness Meter */}
-      <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 rounded-lg p-2.5 space-y-1.5">
+      <div className="bg-secondary-bg/50 border border-border rounded-lg p-2.5 space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+          <span className="text-[11px] font-semibold text-foreground">
             Resume Strength
           </span>
-          <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+          <span className="text-xs font-mono font-bold text-[#080908] dark:text-[#CDF22B]">
             {completeness.overall}%
           </span>
         </div>
-        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-secondary-bg rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-600 dark:bg-blue-500 rounded-full transition-all duration-300"
+            className="h-full bg-[#080908] dark:bg-[#CDF22B] rounded-full transition-all duration-300"
             style={{ width: `${completeness.overall}%` }}
           />
         </div>
@@ -99,7 +99,7 @@ export default function ResumeSectionSidebar({
 
       {/* Sections List */}
       <div>
-        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-1 mb-1.5">
+        <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-wider px-1 mb-1.5">
           Resume Sections
         </p>
 
@@ -118,8 +118,8 @@ export default function ResumeSectionSidebar({
                 className={cn(
                   'group flex items-center justify-between gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all',
                   isActive
-                    ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/80 dark:border-blue-900/60'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900'
+                    ? 'bg-[#080908] text-[#CDF22B] font-semibold border border-[#080908]'
+                    : 'text-muted-foreground hover:bg-secondary-bg/80 hover:text-foreground'
                 )}
               >
                 {/* Clickable section select button */}
@@ -131,7 +131,7 @@ export default function ResumeSectionSidebar({
                   <Icon
                     className={cn(
                       'w-3.5 h-3.5 flex-shrink-0',
-                      isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'
+                      isActive ? 'text-[#CDF22B]' : 'text-muted-foreground'
                     )}
                   />
                   <span className="truncate text-xs">{config.label}</span>
@@ -153,7 +153,7 @@ export default function ResumeSectionSidebar({
                     title={isVisible ? 'Hide from resume' : 'Show on resume'}
                   >
                     {isVisible ? (
-                      <Eye className="w-3 h-3 text-slate-400" />
+                      <Eye className="w-3 h-3 text-[#484B46] dark:text-[#BDB9AF]" />
                     ) : (
                       <EyeOff className="w-3 h-3 text-slate-300" />
                     )}

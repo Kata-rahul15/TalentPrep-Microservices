@@ -38,7 +38,7 @@ export default function Toast({ message, type, onClose }: ToastProps) {
       </div>
       <button
         onClick={onClose}
-        className="p-1 rounded-lg hover:bg-black/5 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+        className="p-1 rounded-lg hover:bg-black/5 text-[#383B36] hover:text-[#080908] dark:text-[#BDB9AF] dark:hover:text-[#FAF8F3] transition-colors cursor-pointer"
         aria-label="Close notification"
       >
         <X className="w-4 h-4" />

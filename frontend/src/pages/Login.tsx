@@ -224,25 +224,25 @@ export default function Login() {
           <button
             type="submit"
             disabled={!isFormValid || isSubmitting}
-            className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary hover:bg-primary-hover disabled:bg-secondary-bg disabled:text-muted-foreground text-white font-bold text-sm rounded-lg shadow-sm disabled:shadow-none transition-all duration-200 hover:-translate-y-0.5 disabled:translate-y-0 disabled:cursor-not-allowed cursor-pointer border border-transparent disabled:border-border"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#CDF22B] hover:bg-[#BCE01E] disabled:bg-[#F2EFE9] dark:disabled:bg-[#1A1C18] disabled:text-[#383B36]/60 dark:disabled:text-[#BDB9AF]/60 text-[#080908] font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition-colors duration-150 disabled:cursor-not-allowed cursor-pointer border border-transparent disabled:border-[#E5E0D5] dark:disabled:border-[#232621]"
           >
             {isSubmitting ? (
               <>
-                <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                <div className="w-4 h-4 border-2 border-[#080908] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                 <span>Signing in...</span>
               </>
             ) : (
-              'Sign In'
+              'Sign in'
             )}
           </button>
 
           {/* Social login divider */}
           <div className="relative my-1">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-divider" />
+              <div className="w-full border-t border-[#E5E0D5] dark:border-[#232621]" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-card text-muted-foreground font-semibold uppercase tracking-wider">
+              <span className="px-2.5 bg-[#FFFFFF] dark:bg-[#121311] text-[#383B36] dark:text-[#BDB9AF] font-medium text-[11px]">
                 Or continue with
               </span>
             </div>
@@ -252,13 +252,13 @@ export default function Login() {
           <SocialLoginButtons onSuccess={handleSocialSuccess} />
 
           {/* Signup link */}
-          <p className="mt-1 text-center text-xs font-semibold text-muted-foreground">
+          <p className="mt-1 text-center text-xs text-[#2C2E2B] dark:text-[#E2DFD7]">
             Don't have an account?{' '}
             <Link
               to="/signup"
-              className="font-bold text-primary hover:text-primary-hover transition-colors"
+              className="font-bold text-[#080908] dark:text-[#FAF8F3] hover:underline transition-colors"
             >
-              Sign up for free
+              Sign up free
             </Link>
           </p>
         </form>

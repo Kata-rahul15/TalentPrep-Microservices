@@ -29,6 +29,6 @@ PROJECT_CONTEXT.md
 .agents/
 .archify/
 TALENTPREP_INTERVIEW_MODULE_CHANGELOG.md
-docs/
+/docs/
 skills-lock.json
 src.zip

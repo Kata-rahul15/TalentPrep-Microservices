@@ -4,7 +4,7 @@ export function SkeletonBox({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'bg-slate-200/80 dark:bg-slate-800 animate-pulse rounded-md',
+        'bg-[#E5E0D5]/50 dark:bg-neutral-800 animate-pulse rounded-md',
         className
       )}
     />

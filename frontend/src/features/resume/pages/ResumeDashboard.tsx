@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import {
   FileText,
-  Sparkles,
   RefreshCw,
   ArrowRight,
   Eye,
@@ -15,15 +13,12 @@ import {
   MapPin,
   ExternalLink,
   Target,
-  Compass,
   Send,
   BarChart3,
   Briefcase,
 } from 'lucide-react'
 import { useResume, useResumes, useResumeEvaluation, useResumeOverview, useResumeDetails } from '../hooks/useResume'
 import { useResumeContext } from '../context/ResumeContext'
-import { useAuth } from '@/services/authService'
-import { PageError } from '../components/ResumeUI'
 import { ScoreRingContainer } from '../components/ScoreRing'
 import { SkeletonResumeOverview } from '../components/ResumeSkeletons'
 import { resumeApi } from '../api/resumeApi'
@@ -45,27 +40,21 @@ function formatSize(bytes: number) {
 
 export default function ResumeDashboard() {
   const navigate = useNavigate()
-  const { user } = useAuth()
   const { selectedResumeId, setSelectedResumeId } = useResumeContext()
 
   const { data: resumesList } = useResumes()
   const { data: resume, isLoading: isResumeLoading, isError: isResumeError, refetch: refetchResume } = useResume(selectedResumeId)
 
-  // Fetch evaluation, overview, & details
   const isReady = resume?.status === 'ready'
   const { data: evaluation } = useResumeEvaluation(resume?.id, isReady)
   const { data: overview } = useResumeOverview(resume?.id, isReady)
   const { data: details, isLoading: isDetailsLoading } = useResumeDetails(resume?.id)
   const recommendedSearchResumeRef = useRef<string | null>(null)
 
-  // Quick Agent Question Input
   const [quickQuestion, setQuickQuestion] = useState('')
-
-  // Recommended Jobs state
   const [recommendedJobs, setRecommendedJobs] = useState<any[]>([])
   const [isLoadingJobs, setIsLoadingJobs] = useState(false)
 
-  // Fetch Recommended Jobs based on resume
   useEffect(() => {
     if (!isReady || !resume?.id || isDetailsLoading) return
     if (recommendedSearchResumeRef.current === resume.id) return
@@ -92,7 +81,6 @@ export default function ResumeDashboard() {
     }
   }, [isReady, resume?.id, isDetailsLoading, details?.skills])
 
-  // Quick prompt handler for AI Career Agent widget
   const handleQuickPrompt = (promptText: string) => {
     navigate('/agent', { state: { initialPrompt: promptText } })
   }
@@ -103,114 +91,117 @@ export default function ResumeDashboard() {
     navigate('/agent', { state: { initialPrompt: quickQuestion.trim() } })
   }
 
-  if (isResumeLoading) return <SkeletonResumeOverview />
-  if (isResumeError) return <PageError message="Could not load resume workspace." onRetry={refetchResume} />
+  if (isResumeLoading) {
+    return <SkeletonResumeOverview />
+  }
 
-  // ── No resume uploaded (Rich Empty State) ──────────────────────────────────
+  if (isResumeError) {
+    return (
+      <div className="py-12 text-center bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-xl p-8 space-y-3">
+        <AlertTriangle className="w-8 h-8 text-[#DC2626] mx-auto" />
+        <h2 className="font-heading font-bold text-base text-[#080908] dark:text-[#FAF8F3]">
+          Resume synchronization error
+        </h2>
+        <p className="text-xs text-[#2C2E2B] dark:text-[#E2DFD7] max-w-sm mx-auto">
+          We could not load your active resume record. Please verify your connection or try again.
+        </p>
+        <button
+          type="button"
+          onClick={() => refetchResume()}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#080908] text-[#FAF8F3] text-xs font-semibold rounded-lg hover:bg-[#1A1C18] transition-colors cursor-pointer"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+          <span>Retry</span>
+        </button>
+      </div>
+    )
+  }
+
   if (!resume) {
     return (
-      <div className="space-y-6 py-4">
-        <div>
-          <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 dark:text-white tracking-tight">
-            Welcome, {user?.username || 'Candidate'} 👋
-          </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Upload your resume to get started with AI evaluation, ATS analysis, and continuous improvement.
-          </p>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 sm:p-8 text-center space-y-4 shadow-2xs"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto border border-blue-200/60 dark:border-blue-900/60 shadow-inner">
-            <Upload className="w-7 h-7" />
-          </div>
-
-          <div className="space-y-1 max-w-md mx-auto">
-            <h2 className="font-heading font-bold text-lg sm:text-xl text-slate-900 dark:text-white">
-              No Resume Uploaded Yet
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Upload your PDF or DOCX resume to extract skills, calculate your real ATS score, match job descriptions, and improve sections with AI.
-            </p>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={() => navigate('/resume/upload')}
-              className="inline-flex items-center gap-1.5 px-4.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer h-9"
-            >
-              <Upload className="w-3.5 h-3.5" />
-              <span>Upload Resume Now</span>
-            </button>
-            <button
-              onClick={() => navigate('/resume/builder')}
-              className="inline-flex items-center gap-1.5 px-4.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-900 dark:text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer h-9"
-            >
-              <FileEdit className="w-3.5 h-3.5 text-blue-600" />
-              <span>Create in Builder</span>
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    )
-  }
-
-  // ── Processing resume state ───────────────────────────────────────────────
-  if (resume.status === 'processing') {
-    return (
-      <div className="py-12 text-center space-y-4">
-        <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto animate-pulse border border-blue-200/60 dark:border-blue-800">
-          <RefreshCw className="w-6 h-6 animate-spin text-blue-600 dark:text-blue-400" />
+      <div className="py-12 text-center bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-xl p-8 space-y-4">
+        <div className="w-10 h-10 rounded-lg bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] flex items-center justify-center mx-auto text-[#080908] dark:text-[#FAF8F3]">
+          <Upload className="w-5 h-5" />
         </div>
         <div className="space-y-1">
-          <h2 className="font-heading font-bold text-base sm:text-lg text-slate-900 dark:text-white">
-            Processing Your Resume...
+          <h2 className="font-heading font-bold text-base text-[#080908] dark:text-[#FAF8F3]">
+            No resume currently active
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto leading-relaxed">
-            Our AI is extracting skills, analyzing experience, and computing ATS health metrics for{' '}
-            <span className="font-semibold text-slate-700 dark:text-slate-300">{resume.fileName}</span>.
+          <p className="text-xs text-[#2C2E2B] dark:text-[#E2DFD7] max-w-sm mx-auto leading-relaxed">
+            Upload your existing PDF/DOCX resume or build a new one using the TalentPrep builder.
           </p>
         </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/40 rounded-full text-[11px] font-semibold text-blue-600 dark:text-blue-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400 animate-ping" />
-          <span>Auto-refreshing status...</span>
-        </div>
-      </div>
-    )
-  }
-
-  // ── Failed resume state ───────────────────────────────────────────────────
-  if (resume.status === 'failed') {
-    return (
-      <div className="py-12 text-center space-y-4">
-        <div className="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto border border-rose-200/60 dark:border-rose-800">
-          <AlertTriangle className="w-6 h-6 text-rose-600 dark:text-rose-400" />
-        </div>
-        <div className="space-y-1">
-          <h2 className="font-heading font-bold text-base sm:text-lg text-slate-900 dark:text-white">
-            Resume Analysis Could Not Be Completed
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto leading-relaxed">
-            Your document <span className="font-semibold text-slate-700 dark:text-slate-300">{resume.fileName}</span> could not be processed. Please try uploading your resume again.
-          </p>
-        </div>
-        <div className="flex items-center justify-center gap-2.5 pt-1">
+        <div className="flex items-center justify-center gap-2 pt-2">
           <button
+            type="button"
             onClick={() => navigate('/resume/upload')}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl transition-all shadow-2xs cursor-pointer h-8"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#CDF22B] hover:bg-[#BCE01E] text-[#080908] font-bold text-xs rounded-lg transition-colors cursor-pointer shadow-2xs"
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Upload New Resume</span>
+            <span>Upload resume</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/resume/builder')}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#FFFFFF] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#FAF8F3] font-semibold text-xs rounded-lg hover:bg-[#FAF8F3] transition-colors cursor-pointer"
+          >
+            <FileEdit className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
+            <span>Open builder</span>
           </button>
         </div>
       </div>
     )
   }
 
-  // ── Resume Scores & Insights Data ─────────────────────────────────────────
+  if (resume.status === 'processing') {
+    return (
+      <div className="py-12 text-center bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-xl p-8 space-y-4">
+        <div className="w-10 h-10 rounded-lg bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] flex items-center justify-center mx-auto">
+          <RefreshCw className="w-5 h-5 animate-spin text-[#080908] dark:text-[#CDF22B]" />
+        </div>
+        <div className="space-y-1">
+          <h2 className="font-heading font-bold text-base text-[#080908] dark:text-[#FAF8F3]">
+            Processing resume analysis
+          </h2>
+          <p className="text-xs text-[#2C2E2B] dark:text-[#E2DFD7] max-w-sm mx-auto leading-relaxed">
+            Extracting skills, structuring experience, and calculating ATS metrics for{' '}
+            <span className="font-semibold text-[#080908] dark:text-[#FAF8F3]">{resume.fileName}</span>.
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[11px] font-mono text-[#080908] dark:text-[#FAF8F3]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" />
+          Polling status
+        </span>
+      </div>
+    )
+  }
+
+  if (resume.status === 'failed') {
+    return (
+      <div className="py-12 text-center bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-xl p-8 space-y-4">
+        <div className="w-10 h-10 rounded-lg bg-[#FEE2E2] dark:bg-rose-950/40 border border-[#FCA5A5]/60 flex items-center justify-center mx-auto text-[#DC2626]">
+          <AlertTriangle className="w-5 h-5" />
+        </div>
+        <div className="space-y-1">
+          <h2 className="font-heading font-bold text-base text-[#080908] dark:text-[#FAF8F3]">
+            Document processing halted
+          </h2>
+          <p className="text-xs text-[#2C2E2B] dark:text-[#E2DFD7] max-w-xs mx-auto leading-relaxed">
+            Could not parse <span className="font-semibold text-[#080908] dark:text-[#FAF8F3]">{resume.fileName}</span>. Please upload a standard PDF or DOCX file.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => navigate('/resume/upload')}
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#CDF22B] hover:bg-[#BCE01E] text-[#080908] font-bold text-xs rounded-lg transition-colors cursor-pointer shadow-2xs"
+        >
+          <Upload className="w-3.5 h-3.5" />
+          <span>Upload again</span>
+        </button>
+      </div>
+    )
+  }
+
   const scores = evaluation?.scores
   const suggestions = evaluation?.suggestions || []
   const missingKeywords = evaluation?.missingKeywords || []
@@ -220,62 +211,58 @@ export default function ResumeDashboard() {
   const keywordMatch = scores?.keywordMatch ?? 65
   const skillsScore = scores?.technicalSkillsScore ?? 75
 
-  // Candidate strengths & improvements
   const strengthsList = evaluation?.strengths && evaluation.strengths.length > 0
     ? evaluation.strengths.slice(0, 5)
     : [
-        'Java and Spring Boot ecosystem',
-        'Microservices architecture & REST APIs',
-        'Database & SQL design capabilities',
-        'Real-world and production-like projects',
-        'Good technical depth and code structuring',
-      ]
+      'Java and Spring Boot ecosystem depth',
+      'Microservices architecture and REST design',
+      'Database schema and SQL indexing',
+      'Production backend project ownership',
+      'Clear technical terminology and section flow',
+    ]
 
   const weaknessesList = evaluation?.weaknesses && evaluation.weaknesses.length > 0
     ? evaluation.weaknesses.slice(0, 5)
     : suggestions.length > 0
-    ? suggestions.slice(0, 5).map((s) => s.message)
-    : [
-        'Add more measurable metric-driven achievements',
-        'Include missing high-demand keywords (Kafka, AWS)',
-        'Highlight business impact and scale in project metrics',
-        'Add active portfolio or GitHub project links',
-        'Improve section formatting and action-verb clarity',
+      ? suggestions.slice(0, 5).map((s) => s.message)
+      : [
+        'Add quantified metric-driven outcomes (latency, throughput)',
+        'Include targeted keywords (Kafka, Redis, AWS ECS)',
+        'Highlight blast radius and resilience decisions',
+        'Add direct links to verified GitHub or technical demos',
+        'Ensure clean action-verb beginnings for each bullet',
       ]
 
-  // Narrative summary text
   const narrativeSummary = overview?.aiInsight ||
     (details?.summary
       ? details.summary
-      : 'You are a strong technical professional with established experience in modern application architecture, databases, and clean system design. Your resume demonstrates solid domain depth and project implementation.')
-
-  const candidateDisplayName = user?.username || 'Rahul'
+      : 'Demonstrates consistent backend systems experience with modern APIs and distributed patterns. Candidate profile aligns with mid-to-senior technical roles.')
 
   return (
     <div className="space-y-4">
-      {/* ── 1. Resume File Bar (Hero Strip matching Reference Design) ── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-2xs">
-        <div className="flex items-center gap-3.5 min-w-0">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 border border-blue-100 dark:border-blue-900/60">
-            <FileText className="w-5 h-5" />
+      {/* ── 1. Resume File Bar ── */}
+      <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-lg bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#FAF8F3] flex items-center justify-center flex-shrink-0">
+            <FileText className="w-4 h-4" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="font-heading font-bold text-slate-900 dark:text-white text-sm sm:text-base truncate leading-tight">
+              <h2 className="font-heading font-bold text-sm sm:text-base text-[#080908] dark:text-[#FAF8F3] truncate leading-tight">
                 {resume.fileName}
               </h2>
               {resume.version && (
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/60">
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#FAF8F3]">
                   v{resume.version}
                 </span>
               )}
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-[#080908] text-[#CDF22B] border border-[#232621]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" />
                 Ready
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              {resume.fileType || 'application/pdf'} • {formatSize(resume.fileSize)} • Uploaded {formatDate(resume.uploadedAt)}
+            <p className="text-[11px] text-[#383B36] dark:text-[#BDB9AF] mt-0.5 font-mono">
+              {formatSize(resume.fileSize)} • Uploaded {formatDate(resume.uploadedAt)}
             </p>
           </div>
         </div>
@@ -283,12 +270,12 @@ export default function ResumeDashboard() {
         {/* Action Controls */}
         <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
           {resumesList && resumesList.length > 1 && (
-            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5">
-              <Layers className="w-3.5 h-3.5 text-blue-600" />
+            <div className="flex items-center gap-1.5 bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] rounded-lg px-2.5 py-1">
+              <Layers className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
               <select
                 value={resume.id}
                 onChange={(e) => setSelectedResumeId(e.target.value)}
-                className="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[130px] truncate"
+                className="bg-transparent text-xs font-semibold text-[#080908] dark:text-[#FAF8F3] focus:outline-none cursor-pointer max-w-[130px] truncate"
               >
                 {resumesList.map((r) => (
                   <option key={r.id} value={r.id}>
@@ -300,124 +287,122 @@ export default function ResumeDashboard() {
           )}
 
           <button
+            type="button"
             onClick={() => navigate('/resume/builder')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-2xs cursor-pointer h-8.5"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#080908] bg-[#CDF22B] hover:bg-[#BCE01E] rounded-lg transition-colors cursor-pointer shadow-2xs h-8"
           >
             <FileEdit className="w-3.5 h-3.5" />
-            <span>Open Builder</span>
+            <span>Builder</span>
           </button>
           <button
+            type="button"
             onClick={() => navigate('/resume/details')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors cursor-pointer h-8.5"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#080908] dark:text-[#FAF8F3] bg-[#FFFFFF] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] rounded-lg hover:bg-[#FAF8F3] transition-colors cursor-pointer h-8"
           >
-            <Eye className="w-3.5 h-3.5 text-slate-500" />
-            <span>View Details</span>
+            <Eye className="w-3.5 h-3.5 text-[#383B36] dark:text-[#BDB9AF]" />
+            <span>Details</span>
           </button>
           <button
+            type="button"
             onClick={() => navigate('/resume/evaluation')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors cursor-pointer h-8.5"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#080908] dark:text-[#FAF8F3] bg-[#FFFFFF] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] rounded-lg hover:bg-[#FAF8F3] transition-colors cursor-pointer h-8"
           >
-            <BarChart3 className="w-3.5 h-3.5 text-blue-600" />
-            <span>Evaluate</span>
+            <BarChart3 className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
+            <span>ATS analysis</span>
           </button>
         </div>
       </div>
 
-      {/* ── 2. 4 Score Metric Summary Cards (Horizontal Row on Desktop) ── */}
+      {/* ── 2. 4 Metric Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* ATS Score */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center gap-3.5 shadow-2xs">
-          <ScoreRingContainer score={atsScore} size="md" label="/100" color="#2563EB" />
+        <div className="p-4 rounded-xl bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] flex items-center gap-3.5 shadow-2xs">
+          <ScoreRingContainer score={atsScore} size="md" label="/100" />
           <div className="min-w-0">
-            <p className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight">
-              ATS Score
+            <span className="text-[10px] font-mono text-[#383B36] dark:text-[#BDB9AF] uppercase block">ATS Score</span>
+            <p className="font-heading font-bold text-xs sm:text-sm text-[#080908] dark:text-[#FAF8F3] leading-tight">
+              {atsScore >= 75 ? 'Strong Tier' : 'Needs Optimization'}
             </p>
-            <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-0.5 block">
-              {atsScore >= 75 ? 'Strong' : atsScore >= 60 ? 'Good' : 'Needs Optimization'}
+            <span className="text-[11px] font-mono text-[#383B36] dark:text-[#BDB9AF] tabular-nums mt-0.5 block">
+              ATS index: {atsScore}%
             </span>
-            <p className="text-[11px] text-slate-400 truncate mt-0.5">
-              ATS match: {atsScore}%
-            </p>
           </div>
         </div>
 
         {/* Overall Score */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center gap-3.5 shadow-2xs">
-          <ScoreRingContainer score={overallScore} size="md" label="/100" color="#3B82F6" />
+        <div className="p-4 rounded-xl bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] flex items-center gap-3.5 shadow-2xs">
+          <ScoreRingContainer score={overallScore} size="md" label="/100" />
           <div className="min-w-0">
-            <p className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight">
-              Overall Score
+            <span className="text-[10px] font-mono text-[#383B36] dark:text-[#BDB9AF] uppercase block">Overall Match</span>
+            <p className="font-heading font-bold text-xs sm:text-sm text-[#080908] dark:text-[#FAF8F3] leading-tight">
+              {overallScore >= 75 ? 'Excellent' : 'Average'}
             </p>
-            <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-0.5 block">
-              {overallScore >= 75 ? 'Excellent' : overallScore >= 60 ? 'Good' : 'Needs Work'}
+            <span className="text-[11px] font-mono text-[#383B36] dark:text-[#BDB9AF] tabular-nums mt-0.5 block">
+              Profile fit: {overallScore}%
             </span>
-            <p className="text-[11px] text-slate-400 truncate mt-0.5">
-              Profile strength: {overallScore}%
-            </p>
           </div>
         </div>
 
         {/* Keyword Match */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center gap-3.5 shadow-2xs">
-          <ScoreRingContainer score={keywordMatch} size="md" label="/100" color="#7C3AED" />
+        <div className="p-4 rounded-xl bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] flex items-center gap-3.5 shadow-2xs">
+          <ScoreRingContainer score={keywordMatch} size="md" label="/100" />
           <div className="min-w-0">
-            <p className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight">
-              Keyword Match
+            <span className="text-[10px] font-mono text-[#383B36] dark:text-[#BDB9AF] uppercase block">Keywords</span>
+            <p className="font-heading font-bold text-xs sm:text-sm text-[#080908] dark:text-[#FAF8F3] leading-tight">
+              {missingKeywords.length === 0 ? 'Aligned' : 'Missing terms'}
             </p>
-            <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 mt-0.5 block">
-              {missingKeywords.length === 0 ? 'Optimal' : 'Good'}
+            <span className="text-[11px] font-mono text-[#383B36] dark:text-[#BDB9AF] tabular-nums mt-0.5 block">
+              {missingKeywords.length > 0 ? `${missingKeywords.length} gaps` : 'Optimized'}
             </span>
-            <p className="text-[11px] text-slate-400 truncate mt-0.5">
-              {missingKeywords.length > 0 ? `${missingKeywords.length} missing keywords` : 'Industry aligned'}
-            </p>
           </div>
         </div>
 
         {/* Skills Score */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center gap-3.5 shadow-2xs">
-          <ScoreRingContainer score={skillsScore} size="md" label="/100" color="#10B981" />
+        <div className="p-4 rounded-xl bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] flex items-center gap-3.5 shadow-2xs">
+          <ScoreRingContainer score={skillsScore} size="md" label="/100" />
           <div className="min-w-0">
-            <p className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight">
-              Skills Score
+            <span className="text-[10px] font-mono text-[#383B36] dark:text-[#BDB9AF] uppercase block">Skills Depth</span>
+            <p className="font-heading font-bold text-xs sm:text-sm text-[#080908] dark:text-[#FAF8F3] leading-tight">
+              {skillsScore >= 70 ? 'High Depth' : 'Standard'}
             </p>
-            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5 block">
-              {skillsScore >= 70 ? 'Good' : 'Standard'}
+            <span className="text-[11px] font-mono text-[#383B36] dark:text-[#BDB9AF] tabular-nums mt-0.5 block">
+              Tech index: {skillsScore}%
             </span>
-            <p className="text-[11px] text-slate-400 truncate mt-0.5">
-              Technical match: {skillsScore}%
-            </p>
           </div>
         </div>
       </div>
 
       {/* ── 3. Two-Column Main Content Grid ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* ── LEFT / MAIN AREA (~68% width on desktop) ── */}
+        {/* ── LEFT / MAIN AREA ── */}
         <div className="lg:col-span-8 space-y-4">
           {/* Card A: AI Resume Insights */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xs">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4.5 h-4.5 text-blue-600 dark:text-blue-400" />
-              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                AI Resume Insights
-              </h3>
+          <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-xl p-5 space-y-4 shadow-2xs">
+            <div className="flex items-center justify-between border-b border-[#E5E0D5] dark:border-[#232621] pb-2.5">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#CDF22B]" />
+                <h3 className="font-heading font-bold text-sm text-[#080908] dark:text-[#FAF8F3]">
+                  AI Resume Intelligence Summary
+                </h3>
+              </div>
+              <span className="text-[10px] font-mono text-[#383B36] dark:text-[#BDB9AF]">PARSED INSIGHTS</span>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#2C2E2B] dark:text-[#E2DFD7] leading-relaxed">
               {narrativeSummary}
             </p>
 
             {/* Strengths & Improvements Columns */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               {/* Key Strengths */}
-              <div className="space-y-2.5">
-                <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <span>Key Strengths</span>
+              <div className="p-3.5 rounded-lg bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] space-y-2">
+                <h4 className="font-mono text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">
+                  Identified Strengths
                 </h4>
-                <ul className="space-y-2">
+                <ul className="space-y-1.5">
                   {strengthsList.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300 leading-snug">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <li key={idx} className="flex items-start gap-2 text-xs text-[#2C2E2B] dark:text-[#E2DFD7] leading-snug">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#15803D] flex-shrink-0 mt-0.5" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -425,14 +410,14 @@ export default function ResumeDashboard() {
               </div>
 
               {/* Areas to Improve */}
-              <div className="space-y-2.5">
-                <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <span>Areas to Improve</span>
+              <div className="p-3.5 rounded-lg bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] space-y-2">
+                <h4 className="font-mono text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">
+                  Diagnostic Recommendations
                 </h4>
-                <ul className="space-y-2">
+                <ul className="space-y-1.5">
                   {weaknessesList.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300 leading-snug">
-                      <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+                    <li key={idx} className="flex items-start gap-2 text-xs text-[#2C2E2B] dark:text-[#E2DFD7] leading-snug">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] flex-shrink-0 mt-1.5" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -440,51 +425,45 @@ export default function ResumeDashboard() {
               </div>
             </div>
 
-            {/* Bottom Link */}
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <div className="pt-2 border-t border-[#E5E0D5] dark:border-[#232621]">
               <button
+                type="button"
                 onClick={() => navigate('/resume/evaluation')}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:underline cursor-pointer group"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#080908] dark:text-[#CDF22B] hover:underline cursor-pointer"
               >
-                <span>View Full Analysis</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                <span>View full ATS diagnostics</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          {/* Card B: Recommended Jobs for You */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xs">
-            <div className="flex items-center justify-between flex-wrap gap-2">
+          {/* Card B: Recommended Jobs */}
+          <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-xl p-5 space-y-3.5 shadow-2xs">
+            <div className="flex items-center justify-between flex-wrap gap-2 border-b border-[#E5E0D5] dark:border-[#232621] pb-2.5">
               <div className="flex items-center gap-2">
-                <Briefcase className="w-4.5 h-4.5 text-blue-600 dark:text-blue-400" />
-                <div>
-                  <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-tight">
-                    Recommended Jobs for You
-                  </h3>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
-                    Personalized job recommendations based on your resume
-                  </p>
-                </div>
+                <Briefcase className="w-4 h-4 text-[#080908] dark:text-[#CDF22B]" />
+                <h3 className="font-heading font-bold text-sm text-[#080908] dark:text-[#FAF8F3]">
+                  Recommended Roles from Profile Taxonomy
+                </h3>
               </div>
 
               <button
+                type="button"
                 onClick={() => navigate('/jobs')}
-                className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-[#080908] dark:text-[#CDF22B] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <span>View All Jobs</span>
+                <span>Open jobs explorer</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
             </div>
 
-            {/* 3 Horizontal Job Cards */}
             {isLoadingJobs ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 animate-pulse space-y-2.5">
-                    <div className="h-4 w-16 bg-slate-200 dark:bg-slate-700 rounded-full" />
-                    <div className="h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded" />
-                    <div className="h-3 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
-                    <div className="h-3 w-full bg-slate-200 dark:bg-slate-700 rounded" />
+                  <div key={n} className="p-3.5 rounded-lg border border-[#E5E0D5] dark:border-[#232621] bg-[#FAF8F3] dark:bg-[#181A16] animate-pulse space-y-2">
+                    <div className="h-3.5 w-16 bg-[#E5E0D5] dark:bg-[#232621] rounded" />
+                    <div className="h-4 w-32 bg-[#E5E0D5] dark:bg-[#232621] rounded" />
+                    <div className="h-3 w-20 bg-[#E5E0D5] dark:bg-[#232621] rounded" />
                   </div>
                 ))}
               </div>
@@ -495,63 +474,50 @@ export default function ResumeDashboard() {
                   const defaultSkills = idx === 0
                     ? ['Java', 'Spring Boot', 'Microservices', 'PostgreSQL']
                     : idx === 1
-                    ? ['Java', 'Spring Boot', 'REST APIs', 'Docker']
-                    : ['Java', 'Microservices', 'AWS', 'PostgreSQL']
+                      ? ['Java', 'Spring Boot', 'REST APIs', 'Docker']
+                      : ['Java', 'Microservices', 'AWS', 'PostgreSQL']
 
                   return (
                     <div
                       key={job.job_id || idx}
-                      className="p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 hover:border-blue-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between shadow-2xs space-y-3"
+                      className="p-3.5 rounded-lg border border-[#E5E0D5] dark:border-[#232621] bg-[#FAF8F3] dark:bg-[#181A16] hover:border-[#080908] dark:hover:border-[#CDF22B] transition-colors flex flex-col justify-between space-y-2.5"
                     >
-                      <div className="space-y-2">
-                        {/* Match tag */}
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200/60 dark:border-emerald-900/60">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          <span>{matchPercentage}% Match</span>
+                      <div className="space-y-1.5">
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#080908] text-[#CDF22B] text-[10px] font-mono font-bold">
+                          {matchPercentage}% Match
                         </div>
 
                         <div>
-                          <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight truncate">
-                            {job.title || 'Java Backend Developer'}
+                          <h4 className="font-heading font-bold text-xs text-[#080908] dark:text-[#FAF8F3] truncate">
+                            {job.title || 'Backend Engineer'}
                           </h4>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                            {job.company || 'ABC Technologies'}
+                          <p className="text-[11px] text-[#383B36] dark:text-[#BDB9AF] truncate">
+                            {job.company || 'Technology Co'}
                           </p>
                         </div>
 
-                        {/* Meta icons */}
-                        <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400 flex-wrap pt-0.5">
-                          <span className="flex items-center gap-0.5">
-                            <MapPin className="w-3 h-3 text-slate-400" />
-                            {job.location || 'Hyderabad'}
-                          </span>
+                        <div className="flex items-center gap-1.5 text-[10px] font-mono text-[#383B36] dark:text-[#BDB9AF]">
+                          <MapPin className="w-3 h-3" />
+                          <span>{job.location || 'Remote'}</span>
                           <span>•</span>
-                          <span>2–4 years</span>
-                          <span>•</span>
-                          <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                            {job.work_model || (idx === 0 ? 'On-site' : idx === 1 ? 'Hybrid' : 'Remote')}
-                          </span>
+                          <span>{job.work_model || 'Full-time'}</span>
                         </div>
 
-                        {/* Skill pills */}
                         <div className="flex flex-wrap gap-1 pt-1">
                           {defaultSkills.slice(0, 3).map((s) => (
                             <span
                               key={s}
-                              className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-medium"
+                              className="px-1.5 py-0.5 rounded bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] text-[10px] font-mono text-[#080908] dark:text-[#FAF8F3]"
                             >
                               {s}
                             </span>
                           ))}
-                          <span className="px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 text-[10px] font-semibold">
-                            +2
-                          </span>
                         </div>
                       </div>
 
-                      {/* Action buttons */}
-                      <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+                      <div className="pt-2 border-t border-[#E5E0D5] dark:border-[#232621] flex items-center justify-between text-xs">
                         <button
+                          type="button"
                           onClick={() => {
                             if (job.url) {
                               window.open(job.url, '_blank')
@@ -559,23 +525,10 @@ export default function ResumeDashboard() {
                               navigate('/jobs')
                             }
                           }}
-                          className="inline-flex items-center gap-1 font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                          className="font-bold text-[#080908] dark:text-[#CDF22B] hover:underline inline-flex items-center gap-1 cursor-pointer"
                         >
-                          <span>View Job</span>
+                          <span>View role</span>
                           <ExternalLink className="w-3 h-3" />
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            if (job.description) {
-                              navigate('/agent?task=match_jd', { state: { jdText: job.description } })
-                            } else {
-                              navigate('/agent?task=match_jd', { state: { jdText: `${job.title} at ${job.company}\nLocation: ${job.location}` } })
-                            }
-                          }}
-                          className="text-[11px] text-slate-500 hover:text-slate-900 dark:hover:text-white font-medium cursor-pointer"
-                        >
-                          Why this matches?
                         </button>
                       </div>
                     </div>
@@ -583,173 +536,117 @@ export default function ResumeDashboard() {
                 })}
               </div>
             ) : (
-              <div className="p-4 text-center border border-slate-200/80 dark:border-slate-800 rounded-xl space-y-1">
-                <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Ready to discover job opportunities matched to your technical profile.
+              <div className="p-4 text-center border border-[#E5E0D5] dark:border-[#232621] rounded-lg">
+                <p className="text-xs text-[#2C2E2B] dark:text-[#E2DFD7]">
+                  Run a job search to discover live opportunities matching your skills.
                 </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* ── RIGHT / SECONDARY AREA (~32% width on desktop) ── */}
+        {/* ── RIGHT / SECONDARY AREA ── */}
         <div className="lg:col-span-4 space-y-4">
-          {/* Card 1: Your Next Best Actions */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xs">
-            <div className="flex items-center gap-2">
-              <Compass className="w-4.5 h-4.5 text-blue-600 dark:text-blue-400" />
-              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                Your Next Best Actions
-              </h3>
-            </div>
+          {/* Card 1: Next Best Actions */}
+          <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-xl p-5 space-y-3 shadow-2xs">
+            <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#383B36] dark:text-[#BDB9AF]">
+              Next Best Actions
+            </h3>
 
-            <div className="space-y-2.5">
-              {/* Action 1: Improve Your Resume */}
+            <div className="space-y-2">
               <div
                 onClick={() => navigate('/resume/builder')}
-                className="p-3 rounded-xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 hover:border-blue-200 dark:hover:border-blue-900/60 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                className="p-3 rounded-lg border border-[#E5E0D5] dark:border-[#232621] bg-[#FAF8F3] dark:bg-[#181A16] hover:border-[#080908] dark:hover:border-[#CDF22B] transition-colors cursor-pointer flex items-center justify-between gap-3 group"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0 border border-purple-100 dark:border-purple-900/60">
-                    <FileEdit className="w-4 h-4" />
-                  </div>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <FileEdit className="w-4 h-4 text-[#080908] dark:text-[#CDF22B] flex-shrink-0" />
                   <div className="min-w-0">
-                    <h4 className="font-heading font-bold text-xs text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors truncate">
-                      Improve Your Resume
+                    <h4 className="font-bold text-xs text-[#080908] dark:text-[#FAF8F3] truncate">
+                      Refine in Resume Builder
                     </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                      Get AI-powered suggestions to improve your ATS score.
+                    <p className="text-[10px] text-[#383B36] dark:text-[#BDB9AF] truncate">
+                      Apply suggestions to push score above 90.
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#383B36] dark:text-[#BDB9AF] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
               </div>
 
-              {/* Action 2: Find Matching Jobs */}
               <div
-                onClick={() => navigate('/agent?task=find_jobs')}
-                className="p-3 rounded-xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 hover:border-blue-200 dark:hover:border-blue-900/60 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                onClick={() => navigate('/interview/setup')}
+                className="p-3 rounded-lg border border-[#E5E0D5] dark:border-[#232621] bg-[#FAF8F3] dark:bg-[#181A16] hover:border-[#080908] dark:hover:border-[#CDF22B] transition-colors cursor-pointer flex items-center justify-between gap-3 group"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 border border-blue-100 dark:border-blue-900/60">
-                    <Briefcase className="w-4 h-4" />
-                  </div>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Target className="w-4 h-4 text-[#080908] dark:text-[#CDF22B] flex-shrink-0" />
                   <div className="min-w-0">
-                    <h4 className="font-heading font-bold text-xs text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors truncate">
-                      Find Matching Jobs
+                    <h4 className="font-bold text-xs text-[#080908] dark:text-[#FAF8F3] truncate">
+                      Simulate Mock Interview
                     </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                      Let AI find and rank jobs that match your resume.
+                    <p className="text-[10px] text-[#383B36] dark:text-[#BDB9AF] truncate">
+                      Test answers to candidate experience questions.
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
-              </div>
-
-              {/* Action 3: Identify Skill Gaps */}
-              <div
-                onClick={() => navigate('/agent?task=match_jd')}
-                className="p-3 rounded-xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 hover:border-blue-200 dark:hover:border-blue-900/60 transition-all cursor-pointer flex items-center justify-between gap-3 group"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-100 dark:border-emerald-900/60">
-                    <Target className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="font-heading font-bold text-xs text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors truncate">
-                      Identify Skill Gaps
-                    </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                      See what skills you're missing for your target roles.
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#383B36] dark:text-[#BDB9AF] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
               </div>
             </div>
           </div>
 
-          {/* Card 2: AI Career Agent Widget */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xs">
+          {/* Card 2: AI Career Agent Quick Consultation */}
+          <div className="bg-[#080908] text-[#FAF8F3] border border-[#232621] rounded-xl p-5 space-y-3 shadow-2xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4.5 h-4.5 text-blue-600 dark:text-blue-400" />
-                <div>
-                  <h3 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight">
-                    AI Career Agent
-                  </h3>
-                  <p className="text-[10px] text-slate-400">
-                    Your personal AI career assistant
-                  </p>
+                <div className="w-6 h-6 rounded bg-[#181A16] text-[#CDF22B] border border-[#282B24] flex items-center justify-center font-mono text-[11px]">
+                  AI
                 </div>
+                <h3 className="font-heading font-bold text-xs text-[#FAF8F3]">
+                  Career Agent Quick Chat
+                </h3>
               </div>
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Online
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono text-[#CDF22B]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" />
+                Ready
               </span>
             </div>
 
-            {/* Greeting Speech Bubble */}
-            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 space-y-1">
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                👋 <strong>Hi {candidateDisplayName}!</strong> I've analyzed your resume and I can help you find jobs, improve your resume, and plan your career.
-              </p>
-            </div>
+            <p className="text-xs text-[#D8D5CB] leading-relaxed">
+              Ask questions grounded directly in your resume context:
+            </p>
 
-            {/* Quick Prompt Pill Buttons */}
             <div className="space-y-1.5">
               <button
                 type="button"
-                onClick={() => handleQuickPrompt('Find Java backend developer jobs in Hyderabad that match my resume')}
-                className="w-full text-left p-2 rounded-lg bg-slate-50/60 dark:bg-slate-800/30 hover:bg-blue-50/60 dark:hover:bg-blue-950/40 border border-slate-200/60 dark:border-slate-800 hover:border-blue-300 text-[11px] text-slate-700 dark:text-slate-300 font-medium transition-colors flex items-center justify-between cursor-pointer group"
+                onClick={() => handleQuickPrompt('What technical skills am I missing for Staff Platform Engineer roles?')}
+                className="w-full text-left p-2 rounded bg-[#181A16] hover:bg-[#20221E] border border-[#282B24] text-[11px] text-[#FAF8F3] transition-colors flex items-center justify-between cursor-pointer group"
               >
-                <span className="truncate">Find Java backend jobs in Hyderabad that match my resume</span>
-                <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-blue-600 flex-shrink-0 ml-1" />
+                <span className="truncate">What skills am I missing for Staff roles?</span>
+                <ArrowRight className="w-3 h-3 text-[#D8D5CB] group-hover:text-[#CDF22B] flex-shrink-0 ml-1" />
               </button>
 
               <button
                 type="button"
-                onClick={() => handleQuickPrompt('What technical skills am I missing for senior backend roles?')}
-                className="w-full text-left p-2 rounded-lg bg-slate-50/60 dark:bg-slate-800/30 hover:bg-blue-50/60 dark:hover:bg-blue-950/40 border border-slate-200/60 dark:border-slate-800 hover:border-blue-300 text-[11px] text-slate-700 dark:text-slate-300 font-medium transition-colors flex items-center justify-between cursor-pointer group"
+                onClick={() => handleQuickPrompt('How do I quantify the business impact of my recent microservices project?')}
+                className="w-full text-left p-2 rounded bg-[#181A16] hover:bg-[#20221E] border border-[#282B24] text-[11px] text-[#FAF8F3] transition-colors flex items-center justify-between cursor-pointer group"
               >
-                <span className="truncate">What skills am I missing?</span>
-                <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-blue-600 flex-shrink-0 ml-1" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickPrompt('How can I improve my ATS score to reach 90+?')}
-                className="w-full text-left p-2 rounded-lg bg-slate-50/60 dark:bg-slate-800/30 hover:bg-blue-50/60 dark:hover:bg-blue-950/40 border border-slate-200/60 dark:border-slate-800 hover:border-blue-300 text-[11px] text-slate-700 dark:text-slate-300 font-medium transition-colors flex items-center justify-between cursor-pointer group"
-              >
-                <span className="truncate">How can I improve my ATS score?</span>
-                <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-blue-600 flex-shrink-0 ml-1" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickPrompt('Prepare a tailored cover letter for a software engineering job')}
-                className="w-full text-left p-2 rounded-lg bg-slate-50/60 dark:bg-slate-800/30 hover:bg-blue-50/60 dark:hover:bg-blue-950/40 border border-slate-200/60 dark:border-slate-800 hover:border-blue-300 text-[11px] text-slate-700 dark:text-slate-300 font-medium transition-colors flex items-center justify-between cursor-pointer group"
-              >
-                <span className="truncate">Prepare a cover letter for a job</span>
-                <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-blue-600 flex-shrink-0 ml-1" />
+                <span className="truncate">How to quantify microservices impact?</span>
+                <ArrowRight className="w-3 h-3 text-[#D8D5CB] group-hover:text-[#CDF22B] flex-shrink-0 ml-1" />
               </button>
             </div>
 
-            {/* Quick Chat Input */}
             <form onSubmit={handleQuickQuestionSubmit} className="pt-1">
               <div className="relative flex items-center">
                 <input
                   type="text"
                   value={quickQuestion}
                   onChange={(e) => setQuickQuestion(e.target.value)}
-                  placeholder="Ask me anything about your career..."
-                  className="w-full pl-3 pr-9 py-2 text-xs bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white placeholder:text-slate-400"
+                  placeholder="Ask your agent..."
+                  className="w-full pl-3 pr-8 py-2 text-xs bg-[#181A16] border border-[#282B24] rounded-lg focus:outline-none focus:border-[#CDF22B] text-[#FAF8F3] placeholder:text-[#FAF8F3]/50"
                 />
                 <button
                   type="submit"
                   disabled={!quickQuestion.trim()}
-                  className="absolute right-1.5 w-6.5 h-6.5 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white flex items-center justify-center transition-colors cursor-pointer"
-                  title="Send to AI Career Agent"
+                  className="absolute right-1 w-6 h-6 rounded bg-[#CDF22B] hover:bg-[#BCE01E] disabled:opacity-30 text-[#080908] flex items-center justify-center transition-colors cursor-pointer"
+                  title="Send"
                 >
                   <Send className="w-3 h-3" />
                 </button>

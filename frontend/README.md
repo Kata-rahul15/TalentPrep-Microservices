@@ -114,6 +114,31 @@ The frontend provides the interaction layer; the backend agent and its configure
 
 ---
 
+## 🎙️ AI Video Interview Studio
+
+- Pre-interview device setup: camera feed preview, microphone volume level meter (Web Audio API `AnalyserNode`), and speaker test chime
+- Hybrid virtual meeting room layout (35% left video section with digital human AI interviewer avatar and candidate webcam, 65% right interview workspace)
+- Curated practice tracks: Technical, System Design, Coding (embedded Monaco editor with multi-language switching), and HR (STAR methodology)
+- **Synchronized 4-Step Startup Sequence:**
+  - Order: Introductory greeting → spoken transition (*"Alright, let's get started with your interview."*) → first backend question → candidate listening
+  - Newly started interviews are protected against premature `IN_PROGRESS` transitions so the greeting is never skipped
+  - First backend question is staged (via WebSocket or REST reconciliation) until greeting and spoken transition complete
+  - Candidate microphone auto-listening is strictly suppressed during the greeting and transition window
+- **Camera Lifecycle & Resource Management:**
+  - Camera-off stops active video tracks (`MediaStreamTrack.stop()`), removes them from the stream, and retains an audio-only stream when audio remains available
+  - Camera-on requests a fresh video track via `navigator.mediaDevices.getUserMedia` and combines it with existing audio tracks
+  - Intended to release webcam hardware capture resources; physical laptop camera LED behavior is hardware/device-dependent and remains manually unverified
+- **Voice Synthesis & Recognition Reliability:**
+  - Client-side Web Speech API recognition with continuous and interim transcript streaming, auto-restart on user recording intent, manual editing, and typing fallback
+  - Browser TTS synthesis with sequential FIFO queue, speech stall watchdog timer, cancelled/replaced utterance callback guards (preventing cancellation from auto-triggering speech recognition), and preferred female English voice selection (subject to OS/browser voice availability)
+- **Interview Transcript Review:**
+  - In-app turn-by-turn dialogue log displaying prompts, responses, scores, evaluation feedback, and ideal model answers
+  - Print Transcript action has been removed (review is conducted in-app)
+  - Resume PDF download, template export (via `jspdf` / `html2canvas`), and resume printing remain completely functional and unaffected
+- **Testing Scope:** Automated mock tests verify video room layout, sequencing, and voice state transitions (25 mock tests pass). Live microphone hardware, STT/TTS audio acoustics, and physical camera LED status require manual device validation.
+
+---
+
 ## 👤 Profile and Account Pages
 
 - Home/dashboard page
@@ -442,6 +467,11 @@ npm run preview
 - [ ] AI Find Jobs for Me uses the intended backend endpoint.
 - [ ] Resume Builder loads saved data, recovers drafts, and exports PDFs.
 - [ ] AI Agent and resume chat handle loading and failure states.
+- [ ] Interview setup initializes tracks and verifies camera/mic device setup.
+- [ ] Interview startup sequence follows greeting → spoken transition → first question → candidate listening.
+- [ ] Interview camera toggle stops video tracks, retains audio stream, and re-acquires fresh video track on camera-on.
+- [ ] Interview transcript displays turn-by-turn dialogue in-app without print controls (resume PDF export and print unchanged).
+- [ ] Automated mock test suite passes (`videoInterviewRoom.test.mjs`, `voiceInterview.test.mjs`: 25 passed). Note: physical webcam LED, live STT transcription, and live TTS audio require manual device validation.
 - [ ] Production build and lint complete successfully.
 
 ---
@@ -457,6 +487,7 @@ npm run preview
 - Resume workflow UX for long-running processing
 - Resume editor, templates, and PDF export
 - AI-agent and job-discovery user experiences
+- AI Video Interview Studio with synchronized conversational startup, Web Speech STT/TTS, and Monaco code editing
 - Responsive layouts and reusable UI components
 - Frontend/backend integration for a microservices platform
 
@@ -468,6 +499,7 @@ The frontend communicates with TalentPrep's backend through the API Gateway:
 
 - **Authentication-Service** — accounts, JWT, OAuth2, OTP, and profile APIs
 - **Resume-RAG-Service** — resume processing, RAG, AI agent, job discovery, matching, and builder APIs
+- **Interview-Service** — interview session lifecycle, real-time STOMP WebSocket events, question strategies, code execution, and evaluation
 - **API Gateway** — central routing, JWT validation, identity propagation, and service readiness
 
 ---

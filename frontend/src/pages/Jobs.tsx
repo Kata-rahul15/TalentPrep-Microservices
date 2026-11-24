@@ -129,15 +129,15 @@ function JobsExplorerInner() {
         }
         return fetchedJobs[0] || null
       })
-    } catch (err: any) {
-      if (axios.isCancel(err) || err?.name === 'CanceledError' || controller.signal.aborted) {
+    } catch (err: unknown) {
+      if (axios.isCancel(err) || (err as { name?: string })?.name === 'CanceledError' || controller.signal.aborted) {
         // Request was replaced or aborted; ignore without setting error state
         return
       }
       console.error('[JobsExplorer] Search failed:', err)
       setError(
-        err?.response?.data?.message ||
-        err?.message ||
+        (err as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message ||
+        (err as { message?: string })?.message ||
         'Failed to fetch jobs. Please verify search parameters or network connectivity.'
       )
       setJobs([])
@@ -243,22 +243,22 @@ function JobsExplorerInner() {
       {/* ── Page Header ── */}
       <div className="flex items-center justify-between flex-wrap gap-2.5">
         <div>
-          <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 text-[11px] font-bold uppercase tracking-wider mb-0.5">
-            <Briefcase className="w-3.5 h-3.5" />
-            <span>TALENTPREP JOB EXPLORER</span>
+          <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] font-mono uppercase tracking-wider mb-0.5">
+            <Briefcase className="w-3.5 h-3.5 text-foreground" />
+            <span>TalentPrep Job Discovery</span>
           </div>
-          <h1 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight leading-tight">
-            Job Explorer
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight leading-tight">
+            Job Opportunities
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
-            Search, discover, and match with opportunities aligned with your skills and experience.
+          <p className="text-xs text-muted-foreground mt-0.5 leading-tight">
+            Search, discover, and match with opportunities aligned with your verified skills.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate('/agent?task=find_jobs')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-lg transition-all shadow-2xs cursor-pointer h-8"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#080908] bg-[#CDF22B] hover:bg-[#b8da25] active:scale-98 rounded-lg transition-all cursor-pointer h-8"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>AI Find Jobs For Me</span>
@@ -267,29 +267,29 @@ function JobsExplorerInner() {
       </div>
 
       {/* ── Search & Filter Controls ── */}
-      <form onSubmit={handleSearchSubmit} className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl p-3 sm:p-3.5 space-y-2.5 shadow-2xs">
+      <form onSubmit={handleSearchSubmit} className="bg-card border border-border rounded-xl p-3 sm:p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-2">
           {/* Query input */}
           <div className="md:col-span-5 relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by job title, technologies, or keywords..."
-              className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white placeholder:text-slate-400"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-secondary-bg/60 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#080908] focus:border-[#080908] text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Location input */}
           <div className="md:col-span-3 relative">
-            <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <MapPin className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="City, State, or Country"
-              className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white placeholder:text-slate-400"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-secondary-bg/60 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#080908] focus:border-[#080908] text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
@@ -298,7 +298,7 @@ function JobsExplorerInner() {
             <select
               value={days}
               onChange={(e) => handleDaysChange(Number(e.target.value))}
-              className="w-full px-2.5 py-2 text-xs bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white cursor-pointer"
+              className="w-full px-2.5 py-2 text-xs bg-secondary-bg/60 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#080908] text-foreground cursor-pointer"
             >
               <option value={7}>Last 7 Days</option>
               <option value={14}>Last 14 Days</option>
@@ -312,11 +312,11 @@ function JobsExplorerInner() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-secondary-bg disabled:text-muted-foreground disabled:border disabled:border-border disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer h-full"
+              className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold text-[#080908] bg-[#CDF22B] hover:bg-[#b8da25] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer h-full"
             >
               {isLoading ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                  <div className="w-3.5 h-3.5 border-2 border-[#080908] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                   <span>Searching...</span>
                 </>
               ) : (
@@ -330,9 +330,9 @@ function JobsExplorerInner() {
         </div>
 
         {/* Quick Filter Tags */}
-        <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+        <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-border text-xs">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1">
+            <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
               <Filter className="w-3 h-3" /> Work Model:
             </span>
             {(['ALL', 'Remote', 'Hybrid', 'On-site'] as const).map((model) => (
@@ -341,10 +341,10 @@ function JobsExplorerInner() {
                 type="button"
                 onClick={() => setWorkModelFilter(model)}
                 className={cn(
-                  'px-2.5 py-0.5 rounded-full text-[11px] font-medium transition-colors cursor-pointer',
+                  'px-2.5 py-0.5 rounded-md text-[11px] transition-colors cursor-pointer',
                   workModelFilter === model
-                    ? 'bg-blue-50 text-blue-600 border border-blue-200 dark:bg-blue-950/60 dark:border-blue-800 font-semibold'
-                    : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-[#080908] text-[#CDF22B] font-bold'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary-bg'
                 )}
               >
                 {model === 'ALL' ? 'All Models' : model}
@@ -352,31 +352,31 @@ function JobsExplorerInner() {
             ))}
           </div>
 
-          <div className="text-[11px] text-slate-500">
-            Showing <strong className="text-slate-900 dark:text-white">{filteredJobs.length}</strong> opportunities
+          <div className="text-[11px] text-muted-foreground font-mono">
+            Showing <strong className="text-foreground tabular-nums">{filteredJobs.length}</strong> opportunities
           </div>
         </div>
       </form>
 
       {/* ── Error message ── */}
       {error && (
-        <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 rounded-xl text-xs text-rose-600 dark:text-rose-400 flex items-start gap-2">
+        <div className="p-3 bg-card border border-destructive/40 rounded-xl text-xs text-destructive flex items-start gap-2">
           <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>
       )}
 
       {/* ── Main Two-Column Jobs Master-Detail Layout ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* Left List of Jobs */}
         <div className="lg:col-span-5 space-y-2.5 max-h-[750px] overflow-y-auto pr-1">
           {isLoading ? (
             <SkeletonJobList />
           ) : filteredJobs.length === 0 ? (
-            <div className="p-8 text-center bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl space-y-2">
-              <Briefcase className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">No jobs found</p>
-              <p className="text-[11px] text-slate-500">Try broadening your search term or adjusting filters.</p>
+            <div className="p-8 text-center bg-card border border-border rounded-xl space-y-2">
+              <Briefcase className="w-8 h-8 text-muted-foreground opacity-50 mx-auto" />
+              <p className="text-xs font-semibold text-foreground">No jobs found</p>
+              <p className="text-[11px] text-muted-foreground">Try broadening your search term or adjusting filters.</p>
             </div>
           ) : (
             filteredJobs.map((job) => {
@@ -390,41 +390,41 @@ function JobsExplorerInner() {
                   className={cn(
                     'p-3.5 rounded-xl border transition-all cursor-pointer relative overflow-hidden',
                     isSelected
-                      ? 'bg-blue-50/50 dark:bg-blue-950/30 border-blue-400 dark:border-blue-700 shadow-2xs'
-                      : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-blue-300 dark:hover:border-slate-700'
+                      ? 'bg-card border-[#080908] ring-1 ring-[#080908] shadow-xs'
+                      : 'bg-card border-border hover:border-foreground/40'
                   )}
                 >
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <h3 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight truncate">
+                        <h3 className="font-bold text-xs sm:text-sm text-foreground leading-tight truncate">
                           {job.title}
                         </h3>
                         {job.work_model && (
-                          <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary-bg text-muted-foreground border border-border">
                             {job.work_model}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400 mt-0.5 truncate">
+                      <p className="text-xs font-medium text-muted-foreground mt-0.5 truncate">
                         {job.company}
                       </p>
                     </div>
 
                     {/* Match Gauge Pill */}
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800 flex-shrink-0 text-[11px] font-bold">
+                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#080908] text-[#CDF22B] flex-shrink-0 text-[11px] font-mono font-bold tabular-nums">
                       <span>{analysis.score}%</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-2 flex-wrap">
+                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-2 flex-wrap">
                     <span className="flex items-center gap-1 truncate max-w-[150px]">
-                      <MapPin className="w-3 h-3 text-slate-400" />
+                      <MapPin className="w-3 h-3 text-muted-foreground" />
                       {job.location}
                     </span>
                     {job.posted_date && (
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-slate-400" />
+                        <Clock className="w-3 h-3 text-muted-foreground" />
                         {job.posted_date}
                       </span>
                     )}
@@ -436,38 +436,38 @@ function JobsExplorerInner() {
         </div>
 
         {/* Right Selected Job Detailed View */}
-        <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl p-4 sm:p-5 shadow-2xs sticky top-4 min-h-[500px]">
+        <div className="lg:col-span-7 bg-card border border-border rounded-xl p-4 sm:p-5 shadow-xs sticky top-4 min-h-[500px]">
           {selectedJob ? (
             <div className="space-y-4">
               {/* Job Header */}
-              <div className="flex items-start justify-between flex-wrap gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
+              <div className="flex items-start justify-between flex-wrap gap-3 border-b border-border pb-3.5">
                 <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h2 className="font-heading font-extrabold text-base sm:text-lg text-slate-900 dark:text-white leading-tight">
+                    <h2 className="font-bold text-base sm:text-lg text-foreground leading-tight">
                       {selectedJob.title}
                     </h2>
-                    <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 text-[10px] font-bold border border-blue-200 dark:border-blue-900">
-                      LIVE
+                    <span className="px-2 py-0.5 rounded-md bg-[#080908] text-[#CDF22B] text-[10px] font-bold font-mono uppercase">
+                      Active
                     </span>
                   </div>
 
-                  <p className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  <p className="text-xs sm:text-sm font-semibold text-muted-foreground">
                     {selectedJob.company} • {selectedJob.location}
                   </p>
 
-                  <div className="flex items-center gap-3 text-xs text-slate-500 pt-1 flex-wrap">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground pt-1 flex-wrap">
                     {selectedJob.work_model && (
-                      <span className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-[11px] font-medium">
+                      <span className="bg-secondary-bg border border-border px-2 py-0.5 rounded text-[11px] font-medium text-foreground">
                         {selectedJob.work_model}
                       </span>
                     )}
                     {selectedJob.employment_type && (
-                      <span className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-[11px] font-medium">
+                      <span className="bg-secondary-bg border border-border px-2 py-0.5 rounded text-[11px] font-medium text-foreground">
                         {selectedJob.employment_type}
                       </span>
                     )}
                     {selectedJob.salary && (
-                      <span className="text-emerald-600 font-semibold text-[11px]">
+                      <span className="text-foreground font-mono font-bold text-[11px] tabular-nums">
                         {selectedJob.salary}
                       </span>
                     )}
@@ -480,7 +480,7 @@ function JobsExplorerInner() {
                       href={selectedJob.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-lg transition-colors shadow-2xs h-8"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#CDF22B] hover:bg-[#b8da25] text-[#080908] font-bold text-xs rounded-lg transition-colors h-8"
                     >
                       <span>Apply on Site</span>
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -494,9 +494,9 @@ function JobsExplorerInner() {
                         navigate('/agent?task=match_jd', { state: { jdText: `${selectedJob.title} at ${selectedJob.company}\nLocation: ${selectedJob.location}` } })
                       }
                     }}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-lg transition-colors h-8"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-card border border-border hover:bg-secondary-bg text-foreground font-semibold text-xs rounded-lg transition-colors h-8 cursor-pointer"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                    <Sparkles className="w-3.5 h-3.5 text-foreground" />
                     <span>Match with AI</span>
                   </button>
                 </div>
@@ -504,22 +504,22 @@ function JobsExplorerInner() {
 
               {/* Match Insights Breakdown Box */}
               {candidateSkills.length > 0 && (
-                <div className="p-3 bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/70 dark:border-blue-900/50 rounded-lg space-y-2">
+                <div className="p-3 bg-secondary-bg/60 border border-border rounded-lg space-y-2">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
-                      <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                      <Sparkles className="w-3.5 h-3.5 text-foreground" />
                       <span>Resume Match Analysis</span>
                     </div>
-                    <span className="text-xs font-extrabold text-blue-600 dark:text-blue-400">
+                    <span className="text-xs font-mono font-bold text-foreground tabular-nums">
                       {getJobMatchAnalysis(selectedJob).score}% Compatibility
                     </span>
                   </div>
 
                   {getJobMatchAnalysis(selectedJob).matched.length > 0 && (
                     <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                      <span className="text-[11px] text-slate-600 dark:text-slate-400">Matching Skills:</span>
+                      <span className="text-[11px] text-muted-foreground">Matching Skills:</span>
                       {getJobMatchAnalysis(selectedJob).matched.map((skill) => (
-                        <span key={skill} className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
+                        <span key={skill} className="px-2 py-0.5 rounded text-[10px] font-semibold bg-card border border-border text-foreground">
                           ✓ {skill}
                         </span>
                       ))}
@@ -530,19 +530,19 @@ function JobsExplorerInner() {
 
               {/* Job Description Body */}
               <div className="space-y-2">
-                <h3 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+                <h3 className="font-bold text-xs sm:text-sm text-foreground">
                   Job Description & Qualifications
                 </h3>
-                <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed max-h-[420px] overflow-y-auto whitespace-pre-line p-3 bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800 rounded-lg">
+                <div className="text-xs text-foreground/90 leading-relaxed max-h-[420px] overflow-y-auto whitespace-pre-line p-3 bg-secondary-bg/40 border border-border rounded-lg">
                   {selectedJob.description ||
                     'Detailed description is available via the direct application link above.'}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-2 text-slate-400">
+            <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-2 text-muted-foreground">
               <Briefcase className="w-8 h-8 opacity-40" />
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">Select a job from the list to view specifications</p>
+              <p className="text-xs font-semibold text-foreground">Select a job from the list to view specifications</p>
             </div>
           )}
         </div>
@@ -553,7 +553,7 @@ function JobsExplorerInner() {
 
 export default function Jobs() {
   return (
-    <div className="w-full max-w-[1400px] px-4 sm:px-6 lg:px-8 py-5">
+    <div className="flex-1 w-full min-w-0 px-4 sm:px-6 lg:px-8 py-5">
       <JobsExplorerInner />
     </div>
   )

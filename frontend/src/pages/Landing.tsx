@@ -1,10 +1,8 @@
 import Navbar from '@/components/layout/Navbar'
 import Hero from '@/components/sections/Hero'
-import JobSearchSection from '@/components/sections/JobSearchSection'
-import AIAgentSection from '@/components/sections/AIAgentSection'
+import ThreeFeaturesSection from '@/components/sections/ThreeFeaturesSection'
 import HowItWorks from '@/components/sections/HowItWorks'
 import FAQ from '@/components/sections/FAQ'
-import CTA from '@/components/sections/CTA'
 import Footer from '@/components/layout/Footer'
 import OAuthCallback from '@/pages/OAuthCallback'
 
@@ -21,34 +19,27 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
-      {/* Sticky Top Navigation Bar */}
+    <div className="min-h-screen bg-[#FAF8F3] dark:bg-[#080908] text-[#080908] dark:text-[#FAF8F3] antialiased selection:bg-[#CDF22B] selection:text-[#080908]">
+      {/* 1. Minimal Top Navbar */}
       <Navbar />
 
-      {/* Main Landing Page Sections */}
+      {/* Main Landing Sections */}
       <main>
-        {/* 1. Hero Section */}
+        {/* 2. Hero Section */}
         <Hero />
 
-        {/* 2. AI Job Search Section */}
-        <JobSearchSection />
+        {/* 3. Three Main Features */}
+        <ThreeFeaturesSection />
 
-        {/* 3. AI Career Agent Section */}
-        <AIAgentSection />
-
-        {/* 4. How It Works Section */}
+        {/* 4. How It Works Workflow */}
         <HowItWorks />
 
         {/* 5. Frequently Asked Questions */}
         <FAQ />
-
-        {/* 6. Final Call to Action */}
-        <CTA />
       </main>
 
-      {/* Footer */}
+      {/* 6. Minimal Footer */}
       <Footer />
     </div>
   )
 }
-

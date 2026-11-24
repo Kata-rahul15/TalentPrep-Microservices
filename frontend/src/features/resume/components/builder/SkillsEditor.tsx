@@ -231,15 +231,15 @@ export default function SkillsEditor({ skills, onChange }: Props) {
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="font-heading font-bold text-sm text-slate-900 dark:text-white">
+            <h3 className="font-heading font-bold text-sm text-foreground">
               Technical Skills
             </h3>
-            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 text-[10px] font-bold">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#080908] text-[#CDF22B] px-2 py-0.5 text-[10px] font-mono font-bold">
               <Sparkles className="w-3 h-3" />
               Smart categories
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-1 max-w-2xl leading-relaxed">
             TalentPrep automatically groups parsed skills into professional categories. Drag any skill to another category, remove it, or add new skills yourself.
           </p>
         </div>
@@ -247,7 +247,7 @@ export default function SkillsEditor({ skills, onChange }: Props) {
         <button
           type="button"
           onClick={addCategory}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-300 hover:text-blue-600 rounded-lg transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-foreground bg-card border border-border hover:border-[#080908] rounded-lg transition-colors shadow-2xs cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" />
           Custom category
@@ -255,9 +255,9 @@ export default function SkillsEditor({ skills, onChange }: Props) {
       </div>
 
       {orderedSkills.length === 0 ? (
-        <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-8 text-center space-y-2">
-          <Wrench className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
-          <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+        <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-2">
+          <Wrench className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+          <p className="text-xs font-semibold text-foreground">
             No skill categories available
           </p>
         </div>
@@ -277,14 +277,14 @@ export default function SkillsEditor({ skills, onChange }: Props) {
                 }}
                 onDragLeave={() => setDragOverCategory(null)}
                 onDrop={(event) => handleDrop(event, category.id)}
-                className={`group rounded-xl border bg-white dark:bg-slate-900 p-3.5 transition-all ${
+                className={`group rounded-xl border bg-card p-3.5 transition-all ${
                   isDropTarget
-                    ? 'border-blue-400 ring-2 ring-blue-100 shadow-md'
-                    : 'border-slate-200/90 dark:border-slate-800 shadow-2xs hover:border-slate-300 dark:hover:border-slate-700'
+                    ? 'border-[#080908] ring-2 ring-[#080908]/20 shadow-md'
+                    : 'border-border shadow-2xs hover:border-[#080908]/30'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-7 h-7 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                  <div className="w-7 h-7 rounded-lg bg-secondary-bg border border-border flex items-center justify-center text-foreground">
                     <Wrench className="w-3.5 h-3.5" />
                   </div>
 
@@ -303,14 +303,14 @@ export default function SkillsEditor({ skills, onChange }: Props) {
                   />
 
                   {isPredefined ? (
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-[#383B36] dark:text-[#BDB9AF]">
                       Recommended
                     </span>
                   ) : (
                     <button
                       type="button"
                       onClick={() => removeCategory(category.id)}
-                      className="p-1 text-slate-400 hover:text-rose-600 rounded transition-colors cursor-pointer"
+                      className="p-1 text-[#484B46] dark:text-[#BDB9AF] hover:text-rose-600 rounded transition-colors cursor-pointer"
                       title="Remove category (skills move to Other)"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -321,7 +321,7 @@ export default function SkillsEditor({ skills, onChange }: Props) {
                 <div
                   className={`min-h-[58px] rounded-lg border border-dashed p-2 transition-colors ${
                     isDropTarget
-                      ? 'border-blue-300 bg-blue-50/60'
+                      ? 'border-[#080908] dark:border-[#CDF22B] bg-[#CDF22B]/10'
                       : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30'
                   }`}
                 >
@@ -338,9 +338,9 @@ export default function SkillsEditor({ skills, onChange }: Props) {
                           setDragOverCategory(null)
                         }}
                         title="Drag to another category"
-                        className="group/skill inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-2xs cursor-grab active:cursor-grabbing hover:border-blue-300 hover:text-blue-700 transition-colors select-none"
+                        className="group/skill inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-2xs cursor-grab active:cursor-grabbing hover:border-[#080908] dark:hover:border-[#CDF22B] hover:text-[#080908] dark:hover:text-[#FAF8F3] transition-colors select-none"
                       >
-                        <GripVertical className="w-3 h-3 text-slate-300 group-hover/skill:text-blue-400" />
+                        <GripVertical className="w-3 h-3 text-[#484B46] dark:text-[#BDB9AF]" />
                         <span>{skill}</span>
                         <button
                           type="button"
@@ -349,7 +349,7 @@ export default function SkillsEditor({ skills, onChange }: Props) {
                             event.stopPropagation()
                             removeSkillFromCategory(category.id, skill)
                           }}
-                          className="text-slate-300 hover:text-rose-500 cursor-pointer"
+                          className="text-[#484B46] dark:text-[#BDB9AF] hover:text-rose-500 cursor-pointer"
                           title={`Remove ${skill}`}
                         >
                           <X className="w-3 h-3" />
@@ -359,7 +359,7 @@ export default function SkillsEditor({ skills, onChange }: Props) {
                   </div>
 
                   {category.skills.length === 0 && (
-                    <div className="h-10 flex items-center justify-center text-[10px] text-slate-400">
+                    <div className="h-10 flex items-center justify-center text-[10px] text-[#383B36] dark:text-[#BDB9AF]">
                       {isDropTarget ? 'Release to move skill here' : 'Drop skills here'}
                     </div>
                   )}
@@ -382,12 +382,12 @@ export default function SkillsEditor({ skills, onChange }: Props) {
                       }
                     }}
                     placeholder="Add a skill..."
-                    className="flex-1 min-w-0 px-2.5 py-1.5 text-[11px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white"
+                    className="flex-1 min-w-0 px-2.5 py-1.5 text-[11px] bg-card border border-border rounded-lg focus:outline-none focus:border-[#080908] text-foreground"
                   />
                   <button
                     type="button"
                     onClick={() => addSkillToCategory(category.id)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-100 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-[#080908] bg-[#CDF22B] hover:bg-[#bce022] rounded-lg transition-colors cursor-pointer"
                   >
                     <Plus className="w-3 h-3" />
                     Add
@@ -399,7 +399,7 @@ export default function SkillsEditor({ skills, onChange }: Props) {
         </div>
       )}
 
-      <div className="rounded-lg border border-blue-100 bg-blue-50/60 px-3 py-2.5 text-[10px] text-blue-800 leading-relaxed">
+      <div className="rounded-lg border border-[#E5E0D5] bg-[#FAF8F3] dark:bg-card px-3 py-2.5 text-[10px] text-foreground leading-relaxed">
         <strong>Tip:</strong> Drag skills between categories to tailor the resume for a specific role. Skills that TalentPrep cannot confidently classify are placed in <strong>Other</strong> so nothing gets lost.
       </div>
     </div>

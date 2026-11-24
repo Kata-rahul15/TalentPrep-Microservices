@@ -203,30 +203,30 @@ export default function VoiceInterviewWorkspace({
   return (
     <div className="w-full space-y-4">
       {/* ── Context & Voice Controls Bar ── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+      <div className="bg-card border border-border rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded">
+          <span className="text-xs font-semibold text-foreground bg-muted border border-border/80 px-2.5 py-1 rounded">
             {formatRoundTitle(question.roundType)}
           </span>
 
-          <span className="inline-flex items-center gap-1.5 text-xs font-mono text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/80 px-2 py-0.5 rounded">
-            <Radio className="w-3 h-3 text-blue-600 dark:text-blue-400 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-mono text-[#080908] bg-[#CDF22B] px-2 py-0.5 rounded font-bold">
+            <Radio className="w-3 h-3 text-[#080908] animate-pulse" />
             Voice Mode (en-IN)
           </span>
 
           {question.topic && (
-            <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+            <span className="text-xs text-foreground font-medium">
               {question.topic}
             </span>
           )}
 
-          <span className="text-xs font-mono text-slate-400">
+          <span className="text-xs font-mono text-muted-foreground tabular-nums">
             Q{question.questionOrder} of {question.targetQuestionCount}
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-mono">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono tabular-nums">
             <Clock className="w-3.5 h-3.5" />
             <span>Turn: {formatSec(elapsedSeconds)}</span>
           </div>
@@ -235,10 +235,10 @@ export default function VoiceInterviewWorkspace({
             <button
               type="button"
               onClick={handleSwitchToChat}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:bg-secondary-bg transition-colors cursor-pointer"
               title="Switch from Voice to Chat interaction mode"
             >
-              <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
+              <MessageSquare className="w-3.5 h-3.5 text-muted-foreground" />
               <span>Switch to Chat</span>
             </button>
           )}
@@ -246,16 +246,16 @@ export default function VoiceInterviewWorkspace({
       </div>
 
       {/* ── Question Presentation Card ── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 sm:p-7 space-y-4 shadow-xs">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+      <div className="bg-card border border-border rounded-xl p-6 sm:p-7 space-y-4 shadow-xs">
+        <div className="flex items-center justify-between pb-3 border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono text-slate-400 font-semibold tracking-wider">
-              INTERVIEWER PROMPT (AUDIO)
+            <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+              Interviewer Prompt (Audio)
             </span>
             {isInterviewerSpeaking && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400 animate-pulse">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-foreground animate-pulse">
                 <Volume2 className="w-3 h-3" />
-                Speaking question...
+                Speaking prompt...
               </span>
             )}
           </div>
@@ -264,7 +264,7 @@ export default function VoiceInterviewWorkspace({
             <button
               type="button"
               onClick={handleRepeatQuestion}
-              className="inline-flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-2 py-1 rounded hover:bg-secondary-bg"
               title="Read the question aloud again"
             >
               <Volume2 className="w-3.5 h-3.5" />
@@ -275,7 +275,7 @@ export default function VoiceInterviewWorkspace({
               <button
                 type="button"
                 onClick={handleSkipSpeech}
-                className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-2 py-1 rounded hover:bg-secondary-bg"
                 title="Stop interviewer audio and start answering"
               >
                 <VolumeX className="w-3.5 h-3.5" />
@@ -285,25 +285,25 @@ export default function VoiceInterviewWorkspace({
           </div>
         </div>
 
-        <p className="text-base sm:text-lg text-slate-900 dark:text-slate-100 leading-relaxed font-normal whitespace-pre-wrap">
+        <p className="text-base sm:text-lg text-foreground leading-relaxed font-normal whitespace-pre-wrap">
           {question.questionText}
         </p>
       </div>
 
       {/* ── Browser Compatibility Warning ── */}
       {!isSttSupported && (
-        <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-800 dark:text-amber-200 text-sm flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+        <div className="p-4 rounded-xl bg-card border border-border text-foreground text-sm flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-muted-foreground" />
           <div className="flex-1 space-y-2">
-            <p className="font-medium">Web Speech API not supported in this browser</p>
-            <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
-              Real-time voice transcription requires the Web Speech API, which is fully supported in Google Chrome, Chromium browsers, and Microsoft Edge on desktop. You can still type your answers by switching to Chat Mode.
+            <p className="font-semibold text-foreground">Web Speech API not supported in this browser</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Real-time voice transcription requires the Web Speech API, which is supported in Google Chrome and Microsoft Edge on desktop. You can still type your answers by switching to Chat Mode.
             </p>
             {handleSwitchToChat && (
               <button
                 type="button"
                 onClick={handleSwitchToChat}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#080908] hover:bg-[#1f211f] text-[#FAF8F3] font-medium text-xs cursor-pointer"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
                 <span>Switch to Chat Mode</span>
@@ -314,65 +314,65 @@ export default function VoiceInterviewWorkspace({
       )}
 
       {/* ── Audio State Machine Strip & Transcription Area ── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
+      <div className="bg-card border border-border rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
         {/* Status indicator bar */}
-        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 gap-2">
+        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-border gap-2">
           <div className="flex items-center gap-2.5">
             <div
               className={`w-2.5 h-2.5 rounded-full transition-colors ${
                 voiceState === 'LISTENING'
-                  ? 'bg-rose-500 animate-ping'
+                  ? 'bg-[#CDF22B] animate-ping'
                   : voiceState === 'INTERVIEWER_SPEAKING'
-                    ? 'bg-blue-500 animate-pulse'
+                    ? 'bg-[#080908] animate-pulse'
                     : voiceState === 'ANSWER_SUBMITTING' || voiceState === 'INTERVIEWER_THINKING'
-                      ? 'bg-amber-500 animate-pulse'
-                      : 'bg-emerald-500'
+                      ? 'bg-[#080908] animate-pulse'
+                      : 'bg-[#CDF22B]'
               }`}
             />
-            <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+            <span className="text-xs font-semibold text-foreground">
               {voiceState === 'INTERVIEWER_SPEAKING' && 'Interviewer is speaking prompt'}
-              {voiceState === 'LISTENING' && 'Microphone Active — Listening to your response...'}
-              {voiceState === 'TRANSCRIPT_REVIEW' && 'Microphone Paused — Review your transcribed response'}
+              {voiceState === 'LISTENING' && 'Microphone active — Listening to your response...'}
+              {voiceState === 'TRANSCRIPT_REVIEW' && 'Microphone paused — Review your transcribed response'}
               {voiceState === 'ANSWER_SUBMITTING' && 'Submitting candidate answer...'}
-              {voiceState === 'INTERVIEWER_THINKING' && 'AI Evaluating answer & preparing next question...'}
+              {voiceState === 'INTERVIEWER_THINKING' && 'AI evaluating answer and preparing next question...'}
             </span>
           </div>
 
           {/* Animated audio waveform & microphone status */}
           <div className="flex items-center gap-3">
             {permissionStatus === 'granted' && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono text-foreground">
+                <CheckCircle2 className="w-3 h-3 text-[#080908]" />
                 Mic Ready
               </span>
             )}
 
             {isListening && (
               <div
-                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900/60"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#080908] text-[#FAF8F3]"
                 title={isCandidateSpeaking ? 'Speech detected' : 'Microphone is open and waiting for speech'}
               >
                 <span
                   className={`w-1 rounded-full transition-all duration-150 ${
-                    isCandidateSpeaking ? 'h-4 bg-rose-600 animate-bounce' : 'h-2 bg-rose-400 animate-pulse'
+                    isCandidateSpeaking ? 'h-4 bg-[#CDF22B] animate-bounce' : 'h-2 bg-[#CDF22B]/60 animate-pulse'
                   }`}
                 />
                 <span
                   className={`w-1 rounded-full transition-all duration-150 ${
-                    isCandidateSpeaking ? 'h-6 bg-rose-600 animate-bounce [animation-delay:100ms]' : 'h-3.5 bg-rose-400 animate-pulse [animation-delay:100ms]'
+                    isCandidateSpeaking ? 'h-6 bg-[#CDF22B] animate-bounce [animation-delay:100ms]' : 'h-3.5 bg-[#CDF22B]/60 animate-pulse [animation-delay:100ms]'
                   }`}
                 />
                 <span
                   className={`w-1 rounded-full transition-all duration-150 ${
-                    isCandidateSpeaking ? 'h-3 bg-rose-600 animate-bounce [animation-delay:200ms]' : 'h-2 bg-rose-400 animate-pulse [animation-delay:200ms]'
+                    isCandidateSpeaking ? 'h-3 bg-[#CDF22B] animate-bounce [animation-delay:200ms]' : 'h-2 bg-[#CDF22B]/60 animate-pulse [animation-delay:200ms]'
                   }`}
                 />
                 <span
                   className={`w-1 rounded-full transition-all duration-150 ${
-                    isCandidateSpeaking ? 'h-5 bg-rose-600 animate-bounce [animation-delay:150ms]' : 'h-3 bg-rose-400 animate-pulse [animation-delay:150ms]'
+                    isCandidateSpeaking ? 'h-5 bg-[#CDF22B] animate-bounce [animation-delay:150ms]' : 'h-3 bg-[#CDF22B]/60 animate-pulse [animation-delay:150ms]'
                   }`}
                 />
-                <span className="ml-1 text-[10px] font-mono font-medium text-rose-700 dark:text-rose-300">
+                <span className="ml-1 text-[10px] font-mono font-bold text-[#CDF22B]">
                   {isCandidateSpeaking ? 'SPEAKING' : 'LISTENING'}
                 </span>
               </div>
@@ -382,7 +382,7 @@ export default function VoiceInterviewWorkspace({
 
         {/* ── Error Messages ── */}
         {sttError && (
-          <div className="p-3.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs flex items-start gap-3">
+          <div className="p-3.5 rounded-lg bg-card border border-destructive/40 text-destructive text-xs flex items-start gap-3">
             <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <div className="flex-1 space-y-2">
               <p className="font-medium">{sttError}</p>
@@ -390,7 +390,7 @@ export default function VoiceInterviewWorkspace({
                 <button
                   type="button"
                   onClick={handleRetryMicrophone}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-rose-600 text-white font-medium text-xs hover:bg-rose-700 cursor-pointer transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#080908] text-[#FAF8F3] font-medium text-xs hover:bg-[#1f211f] cursor-pointer transition-colors"
                 >
                   <RefreshCw className="w-3 h-3" />
                   <span>Retry Microphone</span>
@@ -399,7 +399,7 @@ export default function VoiceInterviewWorkspace({
                   <button
                     type="button"
                     onClick={handleSwitchToChat}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-rose-300 text-rose-700 dark:text-rose-300 font-medium text-xs hover:bg-rose-100 dark:hover:bg-rose-900/40 cursor-pointer transition-colors"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-border text-foreground font-medium text-xs hover:bg-secondary-bg cursor-pointer transition-colors"
                   >
                     <span>Switch to Chat</span>
                   </button>
@@ -410,18 +410,18 @@ export default function VoiceInterviewWorkspace({
         )}
 
         {submissionError && (
-          <div className="p-3.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-300 text-xs flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-lg bg-card border border-border text-foreground text-xs flex items-start gap-2.5">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-muted-foreground" />
             <p>{submissionError}</p>
           </div>
         )}
 
         {/* ── Live Interim Transcript Stream Pill ── */}
         {isListening && interimTranscript && (
-          <div className="p-3 rounded-lg bg-blue-50/90 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 text-blue-900 dark:text-blue-200 text-xs flex items-start gap-2 animate-fadeIn">
-            <Mic className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5 animate-pulse" />
+          <div className="p-3 rounded-lg bg-secondary-bg border border-border text-foreground text-xs flex items-start gap-2">
+            <Mic className="w-3.5 h-3.5 text-foreground flex-shrink-0 mt-0.5 animate-pulse" />
             <div className="flex-1">
-              <span className="font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wider text-[10px] mr-1.5">
+              <span className="font-semibold text-foreground uppercase tracking-wider text-[10px] mr-1.5">
                 Live Speech Stream:
               </span>
               <span className="italic font-normal">"{interimTranscript}"</span>
@@ -431,11 +431,11 @@ export default function VoiceInterviewWorkspace({
 
         {/* ── Live / Finalized Editable Transcript Area ── */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">
               {isListening ? 'Finalized Transcript (Accumulating)' : 'Your Transcribed Answer (Editable)'}
             </span>
-            <span className="font-mono text-[11px] text-slate-400">
+            <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
               {wordCount} words • {charCount} chars
             </span>
           </div>
@@ -450,12 +450,12 @@ export default function VoiceInterviewWorkspace({
             }
             rows={5}
             disabled={voiceState === 'ANSWER_SUBMITTING' || voiceState === 'INTERVIEWER_THINKING'}
-            className="w-full p-3.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 leading-relaxed resize-y transition-colors"
+            className="w-full p-3.5 rounded-lg border border-border bg-secondary-bg/60 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#080908] focus:border-[#080908] leading-relaxed resize-y transition-colors"
           />
         </div>
 
         {/* ── Control Action Bar ── */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border">
           <div className="flex items-center gap-2">
             {/* Start / Resume Listening Button */}
             {!isListening && isSttSupported && (
@@ -463,10 +463,10 @@ export default function VoiceInterviewWorkspace({
                 type="button"
                 onClick={handleStartListening}
                 disabled={voiceState === 'ANSWER_SUBMITTING' || voiceState === 'INTERVIEWER_THINKING'}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-xs sm:text-sm shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#080908] hover:bg-[#1f211f] active:bg-black text-[#FAF8F3] font-medium text-xs sm:text-sm shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Activate microphone and start recording your answer"
               >
-                <Mic className="w-4 h-4 text-white" />
+                <Mic className="w-4 h-4 text-[#CDF22B]" />
                 <span>{finalTranscript.trim() ? 'Resume Speaking' : 'Start Listening'}</span>
               </button>
             )}
@@ -476,10 +476,10 @@ export default function VoiceInterviewWorkspace({
               <button
                 type="button"
                 onClick={handleStopListening}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-medium text-xs sm:text-sm shadow-xs cursor-pointer transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-card border border-border hover:bg-secondary-bg text-foreground font-medium text-xs sm:text-sm shadow-xs cursor-pointer transition-colors"
                 title="Stop listening and review or edit your transcribed response"
               >
-                <MicOff className="w-4 h-4 text-white" />
+                <MicOff className="w-4 h-4 text-muted-foreground" />
                 <span>Stop Listening</span>
               </button>
             )}
@@ -491,7 +491,7 @@ export default function VoiceInterviewWorkspace({
                 <button
                   type="button"
                   onClick={resetTranscript}
-                  className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-secondary-bg cursor-pointer transition-colors"
                   title="Clear the current transcript"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
@@ -510,16 +510,16 @@ export default function VoiceInterviewWorkspace({
               voiceState === 'INTERVIEWER_THINKING' ||
               !wsConnected
             }
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-medium text-xs sm:text-sm shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#CDF22B] hover:bg-[#b8da25] active:bg-[#a6c521] text-[#080908] font-bold text-xs sm:text-sm shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
             {voiceState === 'ANSWER_SUBMITTING' ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#080908] border-t-transparent rounded-full animate-spin" />
                 <span>Submitting Answer...</span>
               </>
             ) : voiceState === 'INTERVIEWER_THINKING' ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#080908] border-t-transparent rounded-full animate-spin" />
                 <span>AI Evaluating Answer...</span>
               </>
             ) : (

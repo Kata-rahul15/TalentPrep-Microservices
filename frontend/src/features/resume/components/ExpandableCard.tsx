@@ -37,7 +37,7 @@ export default function ExpandableCard({
         aria-expanded={open}
       >
         {icon && (
-          <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-[#080908]/5 text-[#080908] dark:text-[#CDF22B] flex items-center justify-center flex-shrink-0">
             {icon}
           </div>
         )}

@@ -70,36 +70,39 @@ export default function InterviewTypeSelector({
             role="radio"
             aria-checked={isSelected}
             onClick={() => onChange(option.id)}
-            className={`group text-left p-4 rounded-xl border transition-colors cursor-pointer flex items-start gap-3.5 ${isSelected
-                ? 'bg-slate-50 dark:bg-slate-800/90 border-blue-600 dark:border-blue-500 shadow-2xs'
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-              }`}
+            className={`group text-left p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3.5 ${
+              isSelected
+                ? 'bg-card border-[#080908] dark:border-[#CDF22B] ring-1 ring-[#080908] dark:ring-[#CDF22B] shadow-2xs'
+                : 'bg-card border-border hover:border-[#080908]/30'
+            }`}
           >
             <div
-              className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${isSelected
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200'
-                }`}
+              className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
+                isSelected
+                  ? 'bg-[#080908] text-[#CDF22B]'
+                  : 'bg-secondary-bg text-muted-foreground group-hover:text-foreground'
+              }`}
             >
               <Icon className="w-4 h-4" />
             </div>
 
             <div className="min-w-0 flex-1 space-y-1">
               <div className="flex items-center justify-between gap-2">
-                <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                <span className="font-heading font-bold text-sm text-foreground">
                   {option.title}
                 </span>
                 <span
-                  className={`text-[10px] font-mono px-2 py-0.5 rounded ${isSelected
-                      ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-                    }`}
+                  className={`text-[10px] font-mono px-2 py-0.5 rounded ${
+                    isSelected
+                      ? 'bg-[#080908] text-[#CDF22B]'
+                      : 'bg-secondary-bg text-muted-foreground'
+                  }`}
                 >
                   {option.badge}
                 </span>
               </div>
 
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 {option.description}
               </p>
             </div>

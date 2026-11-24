@@ -79,22 +79,24 @@ export default function ResumeUpload() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-2"
+        className="bg-card border border-[#E5E0D5] rounded-xl p-4 sm:p-5 space-y-3"
       >
-        <h3 className="font-semibold text-xs text-primary">Tips for a better ATS score</h3>
-        <ul className="space-y-1 text-xs text-secondary-foreground">
+        <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#080908]">
+          Tips for a higher ATS score
+        </h3>
+        <ul className="space-y-2 text-xs text-muted-foreground">
           {[
-            'Use a single-column layout — multi-column resumes confuse most ATS parsers.',
-            'Avoid headers, footers, tables, and text boxes — use simple sections.',
-            'Include full job title keywords matching the roles you\'re applying for.',
-            'Keep file names clean: FirstName_LastName_Resume.pdf works best.',
-            'Ensure your contact details (email, phone, LinkedIn) are at the top.',
+            'Use a clean single-column layout — multi-column tables fail ATS parsing.',
+            'Avoid headers, footers, graphic tables, and text boxes.',
+            'Include exact job title keywords matching target job listings.',
+            'Use consistent naming: FirstName_LastName_Resume.pdf.',
+            'Ensure contact coordinates (email, phone, LinkedIn) are prominent at top.',
           ].map((tip, i) => (
-            <li key={i} className="flex items-start gap-2">
-              <span className="w-3.5 h-3.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+            <li key={i} className="flex items-start gap-2.5">
+              <span className="w-4 h-4 rounded-full bg-[#080908] text-[#CDF22B] text-[10px] font-mono font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                 {i + 1}
               </span>
-              <span className="text-[11px] leading-relaxed">{tip}</span>
+              <span className="text-[12px] leading-relaxed text-foreground">{tip}</span>
             </li>
           ))}
         </ul>

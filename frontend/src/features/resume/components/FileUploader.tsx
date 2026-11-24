@@ -84,14 +84,14 @@ export default function FileUploader({ onFileSelect, isUploading, uploadProgress
           className={cn(
             'relative border-2 border-dashed rounded-xl p-6 sm:p-7 flex flex-col items-center gap-3.5 transition-all cursor-pointer',
             isDragOver
-              ? 'border-primary bg-primary/5 scale-[1.01]'
-              : 'border-border bg-card hover:border-primary/50 hover:bg-secondary-bg/30'
+              ? 'border-[#080908] bg-[#080908]/5 scale-[1.01]'
+              : 'border-[#E5E0D5] bg-card hover:border-[#080908]/40 hover:bg-[#FAF8F3]'
           )}
         >
           <div
             className={cn(
               'w-12 h-12 rounded-xl flex items-center justify-center transition-all',
-              isDragOver ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
+              isDragOver ? 'bg-[#080908] text-[#CDF22B]' : 'bg-[#080908]/5 text-[#080908]'
             )}
           >
             <Upload className="w-5.5 h-5.5" />
@@ -105,10 +105,10 @@ export default function FileUploader({ onFileSelect, isUploading, uploadProgress
 
             <label
               htmlFor="resume-upload-input"
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-lg cursor-pointer transition-colors shadow-2xs h-8"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#080908] hover:bg-[#1f201e] text-[#FAF8F3] text-xs font-semibold rounded-lg cursor-pointer transition-colors shadow-2xs h-8"
             >
               <FileText className="w-3.5 h-3.5" />
-              <span>Browse Files</span>
+              <span>Browse files</span>
               <input
                 id="resume-upload-input"
                 type="file"
@@ -119,8 +119,8 @@ export default function FileUploader({ onFileSelect, isUploading, uploadProgress
             </label>
           </div>
 
-          <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1">
+          <div className="flex items-center gap-3 text-[11px] text-muted-foreground font-mono">
+            <span className="flex items-center gap-1 font-sans">
               <FileText className="w-3 h-3" />
               PDF, DOCX
             </span>
@@ -129,50 +129,47 @@ export default function FileUploader({ onFileSelect, isUploading, uploadProgress
           </div>
 
           {fileError && (
-            <div className="flex items-center gap-2 p-2.5 bg-danger/5 border border-danger/20 rounded-lg w-full">
-              <AlertCircle className="w-3.5 h-3.5 text-danger flex-shrink-0" />
-              <p className="text-xs text-danger">{fileError}</p>
+            <div className="flex items-center gap-2 p-2.5 bg-red-500/5 border border-red-500/20 rounded-lg w-full">
+              <AlertCircle className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
+              <p className="text-xs text-red-600">{fileError}</p>
             </div>
           )}
         </div>
       ) : (
-        <div className="border border-border rounded-xl bg-card p-4">
+        <div className="border border-[#E5E0D5] rounded-xl bg-card p-4">
           {/* File info row */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-[#080908]/5 text-[#080908] flex items-center justify-center flex-shrink-0">
               <FileText className="w-4.5 h-4.5" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-xs text-foreground truncate leading-tight">{selectedFile.name}</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5 leading-tight">{formatSize(selectedFile.size)}</p>
+              <p className="text-[11px] font-mono text-muted-foreground mt-0.5 leading-tight">{formatSize(selectedFile.size)}</p>
             </div>
             {!isUploading && (
               <button
                 onClick={clearFile}
-                className="p-1 rounded-lg hover:bg-secondary-bg text-muted-foreground hover:text-danger transition-colors cursor-pointer"
+                className="p-1 rounded-lg hover:bg-secondary-bg text-muted-foreground hover:text-red-600 transition-colors cursor-pointer"
                 aria-label="Remove file"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
             {isUploading && uploadProgress >= 100 && (
-              <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#080908] flex-shrink-0" />
             )}
           </div>
 
           {/* Upload progress */}
           {isUploading && (
             <div className="mt-3 space-y-1.5">
-              <div className="flex justify-between text-[11px] text-muted-foreground">
-                <span>{uploadProgress >= 100 ? 'Upload complete!' : 'Uploading...'}</span>
+              <div className="flex justify-between text-[11px] font-mono text-muted-foreground">
+                <span>{uploadProgress >= 100 ? 'Upload complete' : 'Uploading...'}</span>
                 <span>{uploadProgress}%</span>
               </div>
-              <div className="h-1.5 bg-secondary-bg rounded-full overflow-hidden">
+              <div className="h-1.5 bg-[#E5E0D5]/50 rounded-full overflow-hidden">
                 <div
-                  className={cn(
-                    'h-full rounded-full transition-all duration-300',
-                    uploadProgress >= 100 ? 'bg-success' : 'bg-primary'
-                  )}
+                  className="h-full rounded-full transition-all duration-300 bg-[#CDF22B]"
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>

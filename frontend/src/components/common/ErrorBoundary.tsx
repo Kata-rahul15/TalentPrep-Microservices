@@ -41,16 +41,16 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     }
 
     return (
-      <div className="min-h-[60vh] flex items-center justify-center p-6 bg-[#FAFAFA] dark:bg-slate-950">
-        <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto">
+      <div className="min-h-[60vh] flex items-center justify-center p-6 bg-[#FAF8F3] dark:bg-[#080908]">
+        <div className="w-full max-w-md bg-white dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-2xl p-6 text-center space-y-4 shadow-sm">
+          <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/20 text-[#DC2626] flex items-center justify-center mx-auto">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div className="space-y-1.5">
-            <h2 className="font-heading font-bold text-lg text-[#111827] dark:text-white">
+            <h2 className="font-heading font-bold text-lg text-[#080908] dark:text-[#FAF8F3]">
               {this.props.fallbackTitle || 'Something went wrong'}
             </h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs text-[#2C2E2B] dark:text-[#E2DFD7] leading-relaxed">
               {this.state.errorMessage}
             </p>
           </div>
@@ -58,14 +58,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             <button
               type="button"
               onClick={this.handleReset}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#CDF22B] hover:bg-[#BCE01E] text-[#080908] text-xs font-bold transition-colors cursor-pointer shadow-2xs"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Try Again
             </button>
             <a
               href="/home"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 text-[#111827] dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#E5E0D5] dark:border-[#232621] bg-white dark:bg-[#181A16] text-[#080908] dark:text-[#FAF8F3] text-xs font-semibold hover:bg-[#FAF8F3] dark:hover:bg-[#1E201C] transition-colors"
             >
               <Home className="w-3.5 h-3.5" />
               Dashboard

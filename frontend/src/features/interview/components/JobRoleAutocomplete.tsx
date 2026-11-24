@@ -121,7 +121,7 @@ export default function JobRoleAutocomplete({
   return (
     <div ref={containerRef} className="relative">
       <div className="relative flex items-center">
-        <Briefcase className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+        <Briefcase className="w-4 h-4 text-muted-foreground absolute left-3.5 pointer-events-none" />
         <input
           ref={inputRef}
           type="text"
@@ -138,7 +138,7 @@ export default function JobRoleAutocomplete({
           }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full pl-10 pr-16 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/60 text-sm text-[#111827] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-[#2563EB]"
+          className="w-full pl-10 pr-16 py-2.5 rounded-xl border border-border bg-secondary-bg/60 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#080908] focus:border-[#080908]"
         />
         <div className="absolute right-2 flex items-center gap-1">
           {value && (
@@ -150,7 +150,7 @@ export default function JobRoleAutocomplete({
                 setIsOpen(true)
                 inputRef.current?.focus()
               }}
-              className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+              className="p-1 rounded-md text-muted-foreground hover:text-foreground cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -159,7 +159,7 @@ export default function JobRoleAutocomplete({
             type="button"
             aria-label="Toggle role suggestions"
             onClick={() => setIsOpen((prev) => !prev)}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+            className="p-1 rounded-md text-muted-foreground hover:text-foreground cursor-pointer"
           >
             <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </button>
@@ -170,9 +170,9 @@ export default function JobRoleAutocomplete({
         <div
           id="job-role-listbox"
           role="listbox"
-          className="absolute z-30 mt-1.5 w-full bg-white dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-700 rounded-xl shadow-lg overflow-hidden"
+          className="absolute z-30 mt-1.5 w-full bg-card border border-border rounded-xl shadow-lg overflow-hidden"
         >
-          <div className="max-h-60 overflow-y-auto py-1 divide-y divide-slate-100/70 dark:divide-slate-800/70">
+          <div className="max-h-60 overflow-y-auto py-1 divide-y divide-border/60">
             {filteredRoles.map((role, index) => {
               const isSelected = role.toLowerCase() === value.trim().toLowerCase()
               const isHighlighted = index === highlightedIndex
@@ -185,12 +185,12 @@ export default function JobRoleAutocomplete({
                   onClick={() => selectRole(role)}
                   className={`w-full px-3.5 py-2 text-left text-xs sm:text-sm flex items-center justify-between cursor-pointer transition-colors ${
                     isHighlighted || isSelected
-                      ? 'bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-blue-300 font-semibold'
-                      : 'text-[#111827] dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      ? 'bg-[#080908] text-[#CDF22B] font-semibold'
+                      : 'text-foreground hover:bg-secondary-bg'
                   }`}
                 >
                   <span>{role}</span>
-                  {isSelected && <Check className="w-4 h-4 text-[#2563EB] flex-shrink-0" />}
+                  {isSelected && <Check className="w-4 h-4 text-[#CDF22B] flex-shrink-0" />}
                 </button>
               )
             })}
@@ -203,8 +203,8 @@ export default function JobRoleAutocomplete({
                 onClick={() => selectRole(value)}
                 className={`w-full px-3.5 py-2.5 text-left text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-colors ${
                   highlightedIndex === filteredRoles.length
-                    ? 'bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] font-semibold'
-                    : 'text-[#2563EB] dark:text-blue-400 hover:bg-blue-50/60 dark:hover:bg-slate-800 font-medium'
+                    ? 'bg-[#080908] text-[#CDF22B] font-semibold'
+                    : 'text-foreground hover:bg-secondary-bg font-medium'
                 }`}
               >
                 <Plus className="w-4 h-4 flex-shrink-0" />
@@ -213,7 +213,7 @@ export default function JobRoleAutocomplete({
             )}
 
             {filteredRoles.length === 0 && !value.trim() && (
-              <div className="px-3.5 py-2.5 text-xs text-slate-400">
+              <div className="px-3.5 py-2.5 text-xs text-muted-foreground">
                 Type to search or enter a custom role.
               </div>
             )}
@@ -223,4 +223,3 @@ export default function JobRoleAutocomplete({
     </div>
   )
 }
-

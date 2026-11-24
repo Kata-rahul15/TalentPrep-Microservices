@@ -48,7 +48,7 @@ export default function EducationEditor({ education, onChange }: Props) {
           <h3 className="font-heading font-bold text-sm text-slate-900 dark:text-white">
             Education
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-[#383B36] dark:text-[#BDB9AF] mt-0.5">
             Add degrees, certifications, institutions, and relevant academic highlights.
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function EducationEditor({ education, onChange }: Props) {
         <button
           type="button"
           onClick={addEducation}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-2xs cursor-pointer h-7.5"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#FAF8F3] bg-[#080908] hover:bg-[#1f201e] rounded-lg transition-colors shadow-2xs cursor-pointer h-7.5"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add Education</span>
@@ -64,18 +64,18 @@ export default function EducationEditor({ education, onChange }: Props) {
       </div>
 
       {education.length === 0 ? (
-        <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-6 text-center space-y-2">
-          <GraduationCap className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
-          <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+        <div className="border border-dashed border-border rounded-xl p-6 text-center space-y-2">
+          <GraduationCap className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+          <p className="text-xs font-semibold text-foreground">
             No education entries yet
           </p>
-          <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+          <p className="text-[11px] text-muted-foreground max-w-sm mx-auto">
             Click &quot;Add Education&quot; to list your university degrees, diplomas, or academic institutions.
           </p>
           <button
             type="button"
             onClick={addEducation}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline pt-1"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-foreground hover:underline pt-1"
           >
             <Plus className="w-3 h-3" /> Add education
           </button>
@@ -98,7 +98,7 @@ export default function EducationEditor({ education, onChange }: Props) {
                     type="button"
                     disabled={idx === 0}
                     onClick={() => moveItem(idx, 'up')}
-                    className="p-1 text-slate-400 hover:text-slate-600 disabled:opacity-30 cursor-pointer"
+                    className="p-1 text-[#484B46] dark:text-[#BDB9AF] hover:text-[#080908] dark:hover:text-[#FAF8F3] disabled:opacity-30 cursor-pointer"
                     title="Move up"
                   >
                     <ArrowUp className="w-3.5 h-3.5" />
@@ -107,7 +107,7 @@ export default function EducationEditor({ education, onChange }: Props) {
                     type="button"
                     disabled={idx === education.length - 1}
                     onClick={() => moveItem(idx, 'down')}
-                    className="p-1 text-slate-400 hover:text-slate-600 disabled:opacity-30 cursor-pointer"
+                    className="p-1 text-[#484B46] dark:text-[#BDB9AF] hover:text-[#080908] dark:hover:text-[#FAF8F3] disabled:opacity-30 cursor-pointer"
                     title="Move down"
                   >
                     <ArrowDown className="w-3.5 h-3.5" />
@@ -189,7 +189,7 @@ export default function EducationEditor({ education, onChange }: Props) {
                       placeholder="Start (e.g. 2018)"
                       className="w-full px-2 py-1.5 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white"
                     />
-                    <span className="text-slate-400 text-xs">–</span>
+                    <span className="text-[#383B36] dark:text-[#BDB9AF] text-xs">–</span>
                     <input
                       type="text"
                       value={edu.graduationYear}

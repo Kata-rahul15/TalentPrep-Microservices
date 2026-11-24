@@ -8,7 +8,6 @@ interface SocialLoginButtonsProps {
 export default function SocialLoginButtons({ onSuccess: _onSuccess }: SocialLoginButtonsProps) {
   const [loadingProvider, setLoadingProvider] = useState<'google' | 'github' | null>(null)
 
-  // Reset loading state if the user navigates back to this page
   useEffect(() => {
     const handlePageShow = () => {
       setLoadingProvider(null)
@@ -27,7 +26,7 @@ export default function SocialLoginButtons({ onSuccess: _onSuccess }: SocialLogi
   }
 
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-2 gap-2.5">
       {/* ── Google Button ── */}
       <button
         type="button"
@@ -35,18 +34,12 @@ export default function SocialLoginButtons({ onSuccess: _onSuccess }: SocialLogi
         onClick={() =>
           handleProviderClick('google', `${API.AUTH_BASE_URL}/oauth2/authorization/google`)
         }
-        className={`relative w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold rounded-lg border transition-all duration-200 cursor-pointer disabled:cursor-not-allowed disabled:hover:translate-y-0 ${
-          loadingProvider === 'google'
-            ? 'bg-secondary-bg text-muted-foreground border-border shadow-none'
-            : loadingProvider !== null
-            ? 'bg-secondary-bg/60 text-muted-foreground/60 border-border/60 opacity-60 shadow-none'
-            : 'bg-card hover:bg-secondary-bg border-border text-foreground hover:-translate-y-0.5 shadow-2xs'
-        }`}
+        className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border border-[#E5E0D5] dark:border-[#232621] bg-[#FFFFFF] dark:bg-[#181A16] text-[#080908] dark:text-[#FAF8F3] hover:bg-[#FAF8F3] dark:hover:bg-[#20221E] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed h-9"
       >
         {loadingProvider === 'google' ? (
-          <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+          <div className="w-3.5 h-3.5 border-2 border-[#080908] dark:border-[#FAF8F3] border-t-transparent rounded-full animate-spin flex-shrink-0" />
         ) : (
-          <svg className="w-4.5 h-4.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"
@@ -75,18 +68,12 @@ export default function SocialLoginButtons({ onSuccess: _onSuccess }: SocialLogi
         onClick={() =>
           handleProviderClick('github', `${API.AUTH_BASE_URL}/oauth2/authorization/github`)
         }
-        className={`relative w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold rounded-lg border transition-all duration-200 cursor-pointer disabled:cursor-not-allowed disabled:hover:translate-y-0 ${
-          loadingProvider === 'github'
-            ? 'bg-secondary-bg text-muted-foreground border-border shadow-none'
-            : loadingProvider !== null
-            ? 'bg-secondary-bg/60 text-muted-foreground/60 border-border/60 opacity-60 shadow-none'
-            : 'bg-card hover:bg-secondary-bg border-border text-foreground hover:-translate-y-0.5 shadow-2xs'
-        }`}
+        className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border border-[#E5E0D5] dark:border-[#232621] bg-[#FFFFFF] dark:bg-[#181A16] text-[#080908] dark:text-[#FAF8F3] hover:bg-[#FAF8F3] dark:hover:bg-[#20221E] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed h-9"
       >
         {loadingProvider === 'github' ? (
-          <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+          <div className="w-3.5 h-3.5 border-2 border-[#080908] dark:border-[#FAF8F3] border-t-transparent rounded-full animate-spin flex-shrink-0" />
         ) : (
-          <svg className="w-4.5 h-4.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
             <path
               fillRule="evenodd"
               clipRule="evenodd"

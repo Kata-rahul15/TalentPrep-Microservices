@@ -110,7 +110,7 @@ export default function ResumeEditorPanel({
       className={cn(
         'flex-1 overflow-y-auto',
         !embedded &&
-          'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl p-4 sm:p-5 shadow-2xs'
+          'bg-card border border-border rounded-xl p-4 sm:p-5 shadow-2xs'
       )}
     >
       {renderEditor()}

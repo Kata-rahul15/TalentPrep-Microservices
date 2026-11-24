@@ -27,19 +27,19 @@ export default function EvaluationFeedbackModal({
   const isPassing = evaluation.score >= 60
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080908]/60 backdrop-blur-xs overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, scale: 0.97, y: 8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-6 sm:p-7 space-y-5 my-8"
+        className="w-full max-w-2xl bg-card border border-border rounded-2xl shadow-xl p-6 sm:p-7 space-y-5 my-8"
       >
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
           <div>
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
               Turn Evaluation
             </span>
-            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 mt-0.5">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground mt-0.5">
               {isHighPerformance
                 ? 'Strong Response'
                 : isPassing
@@ -53,16 +53,44 @@ export default function EvaluationFeedbackModal({
           </div>
         </div>
 
+        {/* Deterministic Execution Metrics (for Coding Submissions) */}
+        {evaluation.passedCount !== undefined && evaluation.totalCount !== undefined && (
+          <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-secondary-bg/80 border border-border">
+            <div className="flex items-center gap-2">
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold ${
+                evaluation.passedCount === evaluation.totalCount && evaluation.totalCount > 0
+                  ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20'
+                  : 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20'
+              }`}>
+                {evaluation.passedCount === evaluation.totalCount && evaluation.totalCount > 0 ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
+                )}
+                <span>{evaluation.verdict || (evaluation.passedCount === evaluation.totalCount ? 'ACCEPTED' : 'TESTS_FAILED')}</span>
+              </span>
+              <span className="text-xs font-mono font-medium text-foreground">
+                Passed {evaluation.passedCount} / {evaluation.totalCount} test cases
+              </span>
+            </div>
+            {evaluation.executionTimeMs !== undefined && (
+              <span className="text-[11px] font-mono text-muted-foreground px-2 py-0.5 rounded bg-card border border-border">
+                Runtime: {evaluation.executionTimeMs} ms
+              </span>
+            )}
+          </div>
+        )}
+
         {/* General Feedback Quote */}
         {evaluation.feedback && (
-          <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-4 border border-slate-200/80 dark:border-slate-700/80 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+          <div className="bg-secondary-bg/60 rounded-xl p-4 border border-border text-xs sm:text-sm text-foreground leading-relaxed">
             {evaluation.feedback}
           </div>
         )}
 
         {/* 4 Dimension Score Bars */}
-        <div className="space-y-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+        <div className="space-y-3 bg-card border border-border rounded-xl p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Competency Dimensions
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -88,13 +116,13 @@ export default function EvaluationFeedbackModal({
         {/* Strengths & Improvements */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Strengths */}
-          <div className="bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <div className="bg-secondary-bg/60 border border-border rounded-xl p-4 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+              <CheckCircle2 className="w-4 h-4 text-foreground" />
               <span>Key Strengths</span>
             </div>
             {evaluation.strengths && evaluation.strengths.length > 0 ? (
-              <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1.5 list-disc list-inside">
+              <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
                 {evaluation.strengths.map((str, idx) => (
                   <li key={idx} className="leading-relaxed">
                     {str}
@@ -102,18 +130,18 @@ export default function EvaluationFeedbackModal({
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-slate-400">None highlighted for this question.</p>
+              <p className="text-xs text-muted-foreground">None highlighted for this question.</p>
             )}
           </div>
 
           {/* Improvements */}
-          <div className="bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-300">
-              <AlertCircle className="w-4 h-4 text-amber-600" />
+          <div className="bg-secondary-bg/60 border border-border rounded-xl p-4 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+              <AlertCircle className="w-4 h-4 text-muted-foreground" />
               <span>Areas for Improvement</span>
             </div>
             {evaluation.improvements && evaluation.improvements.length > 0 ? (
-              <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1.5 list-disc list-inside">
+              <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
                 {evaluation.improvements.map((imp, idx) => (
                   <li key={idx} className="leading-relaxed">
                     {imp}
@@ -121,32 +149,32 @@ export default function EvaluationFeedbackModal({
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-slate-400">No major weaknesses identified.</p>
+              <p className="text-xs text-muted-foreground">No major weaknesses identified.</p>
             )}
           </div>
         </div>
 
         {/* Suggested Ideal Answer (Collapsible) */}
         {evaluation.suggestedIdealAnswer && (
-          <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="border border-border rounded-xl overflow-hidden">
             <button
               type="button"
               onClick={() => setShowIdealAnswer((prev) => !prev)}
-              className="w-full flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer text-left"
+              className="w-full flex items-center justify-between p-3.5 bg-secondary-bg/60 hover:bg-secondary-bg transition-colors cursor-pointer text-left"
             >
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200">
-                <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+                <BookOpen className="w-4 h-4 text-foreground" />
                 <span>Reference Model Answer</span>
               </div>
               {showIdealAnswer ? (
-                <ChevronUp className="w-4 h-4 text-slate-400" />
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-slate-400" />
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
               )}
             </button>
 
             {showIdealAnswer && (
-              <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 text-xs sm:text-[13px] text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-sans">
+              <div className="p-4 bg-card border-t border-border text-xs sm:text-[13px] text-foreground leading-relaxed whitespace-pre-wrap font-sans">
                 {evaluation.suggestedIdealAnswer}
               </div>
             )}
@@ -158,7 +186,7 @@ export default function EvaluationFeedbackModal({
           <button
             type="button"
             onClick={onContinue}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#CDF22B] hover:bg-[#b8da25] text-[#080908] font-bold text-xs sm:text-sm transition-colors cursor-pointer"
           >
             <span>
               {evaluation.interviewCompleted

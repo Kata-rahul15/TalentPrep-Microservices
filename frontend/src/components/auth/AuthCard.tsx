@@ -6,7 +6,7 @@ interface AuthCardProps {
 
 export default function AuthCard({ children }: AuthCardProps) {
   return (
-    <div className="glass-card bg-card/70 backdrop-blur-xl border border-border shadow-sm py-4 px-4 sm:py-5 sm:px-6 rounded-xl">
+    <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] shadow-sm py-5 px-5 sm:py-6 sm:px-7 rounded-xl">
       {children}
     </div>
   )

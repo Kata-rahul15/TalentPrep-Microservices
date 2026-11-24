@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react'
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import { resumeApi } from '../api/resumeApi'
 import type { UploadResumeResponse } from '../types/resume.types'
 
@@ -60,6 +60,26 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem(STORAGE_KEY)
     }
   }, [])
+
+  // Auto-resolve active resume from server if none is set
+  useEffect(() => {
+    if (!selectedResumeId) {
+      let isMounted = true
+      resumeApi
+        .getResume()
+        .then((file) => {
+          if (isMounted && file?.id) {
+            setSelectedResumeId(file.id)
+          }
+        })
+        .catch(() => {
+          // Graceful ignore if unauthenticated or no resume uploaded yet
+        })
+      return () => {
+        isMounted = false
+      }
+    }
+  }, [selectedResumeId, setSelectedResumeId])
 
   const updateUploadState = useCallback((partial: Partial<ActiveUploadState>) => {
     setActiveUpload((prev) => ({ ...prev, ...partial }))

@@ -1,20 +1,14 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Search,
   Briefcase,
   MapPin,
-  Sparkles,
   ArrowRight,
   CheckCircle2,
   Clock,
+  Search,
 } from 'lucide-react'
 
 export default function JobSearchSection() {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-
   const mockJobs = [
     {
       id: 'job-1',
@@ -24,7 +18,7 @@ export default function JobSearchSection() {
       salary: '$145k – $185k',
       type: 'Full-time',
       matchScore: 96,
-      skills: ['TypeScript', 'React.js', 'Next.js', 'Node.js'],
+      skills: ['TypeScript', 'React', 'Next.js', 'Node.js'],
       posted: '2d ago',
       featured: true,
     },
@@ -44,7 +38,7 @@ export default function JobSearchSection() {
       id: 'job-3',
       title: 'Senior Backend Developer',
       company: 'Stripe',
-      location: 'Remote · US/EU/India',
+      location: 'Remote · US / EU / India',
       salary: '$150k – $190k',
       type: 'Full-time',
       matchScore: 92,
@@ -55,53 +49,48 @@ export default function JobSearchSection() {
   ]
 
   return (
-    <section id="job-search" className="py-20 md:py-28 bg-secondary-bg/30 border-t border-border scroll-mt-20">
+    <section id="job-search" className="py-20 md:py-28 bg-[#FFFFFF] dark:bg-[#080908] border-t border-[#E5E0D5] dark:border-[#232621] scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div ref={ref} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          {/* ── LEFT: Editorial Narrative & Value Proposition ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-5 space-y-6 text-left"
-          >
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
-              AI Job Search
+          {/* ── LEFT: Value Proposition ── */}
+          <div className="lg:col-span-5 space-y-6 text-left">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F3] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#FAF8F3] text-xs font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" />
+              Role Matching Engine
             </div>
 
-            <h2 className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl text-foreground tracking-tight leading-[1.15]">
-              Find Roles Matched to Your Real Experience.
+            <h2 className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl text-[#080908] dark:text-[#FAF8F3] tracking-tight leading-[1.12]">
+              Roles matched directly to your verified skills
             </h2>
 
-            <p className="text-secondary-foreground text-sm sm:text-base md:text-lg leading-relaxed">
-              Search opportunities ranked by true skill alignment. Filter by work model, see compatibility scores, and focus on roles where your background stands out.
+            <p className="text-[#40433C] dark:text-[#B8BCAE] text-sm sm:text-base leading-relaxed">
+              Search engineering and technical opportunities ranked by skill compatibility. Filter by work model, see match breakdowns upfront, and prioritize positions where your background is competitive.
             </p>
 
             <div className="space-y-3 pt-2">
               {[
                 {
-                  title: 'Skill-Weighted Match Scoring',
-                  desc: 'Understand exactly how your experience aligns with each opening, including matched skills and key requirements.',
+                  title: 'Skill-weighted match scoring',
+                  desc: 'Inspect exact alignment against requirements, including identified strengths and missing keywords.',
                 },
                 {
-                  title: 'Work Model & Role Filtering',
-                  desc: 'Quickly find Remote, Hybrid, and On-site positions with transparent location and compensation details.',
+                  title: 'Work model and role filters',
+                  desc: 'Isolate remote, hybrid, and on-site listings with verified compensation ranges.',
                 },
                 {
-                  title: 'Actionable Compatibility Insights',
-                  desc: 'See your match percentage upfront to prioritize opportunities and apply with confidence.',
+                  title: 'Compatibility telemetry',
+                  desc: 'Benchmark your profile against job descriptions to target your preparation before submitting.',
                 },
               ].map((item, idx) => (
                 <div key={idx} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#080908] dark:text-[#CDF22B] flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-heading font-bold text-sm sm:text-base text-foreground">
+                    <h3 className="font-heading font-bold text-sm text-[#080908] dark:text-[#FAF8F3]">
                       {item.title}
-                    </h4>
-                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    </h3>
+                    <p className="text-xs text-[#383B36] dark:text-[#BDB9AF] leading-relaxed mt-0.5">
                       {item.desc}
                     </p>
                   </div>
@@ -109,122 +98,110 @@ export default function JobSearchSection() {
               ))}
             </div>
 
-            <div className="pt-4">
+            <div className="pt-2">
               <Link
                 to="/signup"
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-primary hover:bg-primary-hover text-white font-bold text-sm sm:text-base rounded-xl shadow-sm transition-all hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-5 py-3 bg-[#080908] hover:bg-[#1A1C18] text-[#FAF8F3] font-bold text-sm rounded-lg transition-colors cursor-pointer"
               >
-                <span>Explore Job Search</span>
+                <span>Explore job matching</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-          </motion.div>
+          </div>
 
-          {/* ── RIGHT: High-Fidelity Interactive Job Search UI Mockup ── */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.55, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-7"
-          >
-            <div className="rounded-3xl border border-border bg-card shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] overflow-hidden">
+          {/* ── RIGHT: Job Search Preview UI ── */}
+          <div className="lg:col-span-7">
+            <div className="rounded-xl border border-[#080908]/12 bg-[#FAF8F3] dark:bg-[#121311] dark:border-[#232621] shadow-sm overflow-hidden">
               
-              {/* Explorer Search & Filter Bar */}
-              <div className="p-4 sm:p-5 border-b border-border bg-secondary-bg/60 space-y-3">
+              {/* Header Bar */}
+              <div className="p-4 border-b border-[#E5E0D5] dark:border-[#232621] space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                    <Briefcase className="w-4 h-4 text-primary" />
-                    Job Search Experience Preview
+                  <span className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3] flex items-center gap-2">
+                    <Briefcase className="w-4 h-4 text-[#080908] dark:text-[#CDF22B]" />
+                    Job Matching Explorer
                   </span>
-                  <span className="text-[10px] font-semibold text-muted-foreground">
-                    Interactive Interface
+                  <span className="text-[11px] font-mono text-[#383B36] dark:text-[#BDB9AF]">
+                    LIVE PREVIEW
                   </span>
                 </div>
 
-                {/* Mock Search Inputs */}
+                {/* Search Bar Preview */}
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
                   <div className="sm:col-span-7 relative">
-                    <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <div className="w-full pl-8 pr-3 py-2 text-xs font-semibold rounded-xl bg-card border border-border text-foreground truncate">
-                      Full Stack Engineer Developer
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#383B36] dark:text-[#BDB9AF]" />
+                    <div className="w-full pl-8 pr-3 py-2 text-xs font-medium rounded-lg bg-[#FFFFFF] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#FAF8F3] truncate">
+                      Full Stack Engineer / Platform
                     </div>
                   </div>
                   <div className="sm:col-span-5 relative">
-                    <MapPin className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <div className="w-full pl-8 pr-3 py-2 text-xs font-medium rounded-xl bg-card border border-border text-muted-foreground truncate">
-                      Remote / All Locations
+                    <MapPin className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#383B36] dark:text-[#BDB9AF]" />
+                    <div className="w-full pl-8 pr-3 py-2 text-xs font-medium rounded-lg bg-[#FFFFFF] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[#383B36] dark:text-[#BDB9AF] truncate">
+                      Remote / Worldwide
                     </div>
                   </div>
                 </div>
 
                 {/* Filter Pills */}
-                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[10.5px]">
-                  <span className="px-2.5 py-1 rounded-lg bg-primary text-white font-bold">
+                <div className="flex items-center gap-1.5 text-xs">
+                  <span className="px-2.5 py-1 rounded-md bg-[#CDF22B] text-[#080908] font-bold text-[11px]">
                     All Models
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-card border border-border text-foreground font-medium">
-                    Remote Only
+                  <span className="px-2.5 py-1 rounded-md bg-[#FFFFFF] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#FAF8F3] font-medium text-[11px]">
+                    Remote
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-card border border-border text-foreground font-medium">
+                  <span className="px-2.5 py-1 rounded-md bg-[#FFFFFF] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#FAF8F3] font-medium text-[11px]">
                     Hybrid
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-card border border-border text-muted-foreground font-medium flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> Past 30 Days
+                  <span className="px-2.5 py-1 rounded-md bg-[#FFFFFF] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] text-[#383B36] dark:text-[#BDB9AF] font-medium text-[11px] flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Past 30 days
                   </span>
                 </div>
               </div>
 
-              {/* Mock Job Listing Cards */}
-              <div className="p-4 sm:p-5 space-y-3">
+              {/* Cards List */}
+              <div className="p-4 space-y-2.5">
                 {mockJobs.map((job) => (
                   <div
                     key={job.id}
-                    className={`p-4 rounded-2xl border transition-all ${
-                      job.featured
-                        ? 'bg-primary/[0.03] border-primary/30 shadow-xs'
-                        : 'bg-card border-border hover:border-primary/20'
-                    }`}
+                    className="p-3.5 rounded-lg border border-[#E5E0D5] dark:border-[#232621] bg-[#FFFFFF] dark:bg-[#181A16] transition-all hover:border-[#080908]/30 dark:hover:border-[#CDF22B]/40"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="font-heading font-extrabold text-sm sm:text-base text-foreground">
+                          <h4 className="font-heading font-bold text-sm text-[#080908] dark:text-[#FAF8F3]">
                             {job.title}
                           </h4>
                           {job.featured && (
-                            <span className="px-2 py-0.2 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-wider">
+                            <span className="px-1.5 py-0.5 rounded bg-[#080908] text-[#CDF22B] text-[9px] font-mono font-bold uppercase">
                               Top Match
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {job.company} · <span className="text-foreground/80 font-medium">{job.location}</span>
+                        <p className="text-xs text-[#383B36] dark:text-[#BDB9AF] mt-0.5">
+                          {job.company} · <span className="text-[#080908] dark:text-[#FAF8F3] font-medium">{job.location}</span>
                         </p>
                       </div>
 
-                      {/* Compatibility Badge */}
                       <div className="text-right flex-shrink-0">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-success/15 text-success text-xs font-black">
-                          <Sparkles className="w-3 h-3" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FAF8F3] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] text-[#080908] dark:text-[#CDF22B] text-xs font-mono font-bold tabular-nums">
                           {job.matchScore}% Match
                         </span>
-                        <span className="block text-[9px] text-muted-foreground mt-0.5">{job.posted}</span>
+                        <span className="block text-[10px] text-[#383B36] dark:text-[#BDB9AF] mt-0.5">{job.posted}</span>
                       </div>
                     </div>
 
-                    {/* Meta and Skills Row */}
-                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-divider">
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E5E0D5] dark:border-[#232621]">
                       <div className="flex flex-wrap gap-1.5">
                         {job.skills.map((skill) => (
                           <span
                             key={skill}
-                            className="px-2 py-0.5 rounded-md bg-secondary-bg border border-border text-[10px] font-medium text-foreground"
+                            className="px-2 py-0.5 rounded bg-[#FAF8F3] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] text-[10px] font-mono text-[#080908] dark:text-[#FAF8F3]"
                           >
                             {skill}
                           </span>
                         ))}
                       </div>
-                      <span className="text-[11px] font-bold text-foreground">
+                      <span className="text-xs font-mono font-bold text-[#080908] dark:text-[#FAF8F3] tabular-nums">
                         {job.salary}
                       </span>
                     </div>
@@ -233,7 +210,7 @@ export default function JobSearchSection() {
               </div>
 
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </div>

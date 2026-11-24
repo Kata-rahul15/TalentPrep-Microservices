@@ -1,16 +1,17 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
   Home,
   FileText,
-  Sparkles,
   Briefcase,
   Video,
+  Bot,
   User,
   Settings,
   LogOut,
   Menu,
+  ChevronLeft,
 } from 'lucide-react'
 import { useAuth } from '@/services/authService'
 import TalentPrepLogo from '@/components/common/TalentPrepLogo'
@@ -19,9 +20,9 @@ import { cn } from '@/lib/utils'
 const workspaceNav = [
   { to: '/home', label: 'Home', icon: Home, match: (p: string) => p === '/home' },
   { to: '/resume', label: 'Resume', icon: FileText, match: (p: string) => p.startsWith('/resume') },
-  { to: '/interview', label: 'AI Interview', icon: Video, match: (p: string) => p.startsWith('/interview') },
+  { to: '/interview', label: 'Interview', icon: Video, match: (p: string) => p.startsWith('/interview') },
   { to: '/jobs', label: 'Jobs', icon: Briefcase, match: (p: string) => p.startsWith('/jobs') },
-  { to: '/agent', label: 'AI Career Agent', icon: Sparkles, match: (p: string) => p.startsWith('/agent') },
+  { to: '/agent', label: 'Career Agent', icon: Bot, match: (p: string) => p.startsWith('/agent') },
 ]
 
 const accountNav = [
@@ -35,7 +36,7 @@ interface AppSidebarProps {
 }
 
 /**
- * Robust portal tooltip that escapes sidebar overflow clipping when collapsed.
+ * Escaped portal tooltip for collapsed sidebar items
  */
 function SidebarTooltip({
   label,
@@ -57,7 +58,7 @@ function SidebarTooltip({
         const rect = e.currentTarget.getBoundingClientRect()
         setCoords({
           top: rect.top + rect.height / 2,
-          left: rect.right + 10,
+          left: rect.right + 8,
         })
       }}
       onMouseLeave={() => setCoords(null)}
@@ -71,8 +72,9 @@ function SidebarTooltip({
               left: `${coords.left}px`,
               transform: 'translateY(-50%)',
             }}
-            className="fixed z-50 px-2.5 py-1.5 bg-slate-900 text-white dark:bg-slate-800 dark:text-slate-100 text-xs font-medium rounded-lg shadow-lg border border-slate-700/60 pointer-events-none whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
+            className="fixed z-50 px-2.5 py-1 bg-[#080908] text-[#FAF8F3] text-xs font-medium rounded-md shadow-md border border-[#232621] pointer-events-none whitespace-nowrap animate-in fade-in duration-100 flex items-center gap-1.5"
           >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" />
             {label}
           </div>,
           document.body
@@ -102,15 +104,15 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   return (
     <aside
       className={cn(
-        'fixed top-0 left-0 z-40 h-screen flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 transition-all duration-300 ease-in-out select-none',
-        collapsed ? 'w-[64px]' : 'w-[240px]'
+        'fixed top-0 left-0 z-40 h-screen flex flex-col bg-[#080908] text-[#FAF8F3] border-r border-[#1E201B] transition-all duration-200 ease-out select-none',
+        collapsed ? 'w-16' : 'w-60'
       )}
     >
       {/* ── Top Header Brand Row ── */}
       <div
         className={cn(
-          'flex items-center h-14 border-b border-slate-200/70 dark:border-slate-800/70 flex-shrink-0 transition-all duration-300',
-          collapsed ? 'justify-center px-2' : 'justify-between px-4 gap-3'
+          'flex items-center h-14 border-b border-[#1E201B] flex-shrink-0 transition-all duration-200',
+          collapsed ? 'justify-center px-2' : 'justify-between px-3.5'
         )}
       >
         {collapsed ? (
@@ -118,30 +120,29 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
             <button
               type="button"
               onClick={onToggle}
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150 cursor-pointer focus:outline-none"
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-[#D8D5CB] hover:text-[#FAF8F3] hover:bg-[#181A16] transition-colors cursor-pointer focus:outline-none"
               aria-label="Expand sidebar"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-4.5 h-4.5" />
             </button>
           </SidebarTooltip>
         ) : (
           <>
             <div
               onClick={() => navigate('/home')}
-              className="cursor-pointer group min-w-0 transition-opacity duration-200 flex-shrink-0"
+              className="cursor-pointer group min-w-0 flex-shrink-0"
             >
-              <TalentPrepLogo size="md" />
+              <TalentPrepLogo size="md" inverted />
             </div>
 
-            {/* Expanded Menu Toggle Button */}
             <SidebarTooltip label="Collapse sidebar" show={true}>
               <button
                 type="button"
                 onClick={onToggle}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150 cursor-pointer flex-shrink-0 focus:outline-none"
+                className="w-7 h-7 rounded-md flex items-center justify-center text-[#BDB9AF] hover:text-[#FAF8F3] hover:bg-[#181A16] transition-colors cursor-pointer flex-shrink-0 focus:outline-none"
                 aria-label="Collapse sidebar"
               >
-                <Menu className="w-4.5 h-4.5" />
+                <ChevronLeft className="w-4 h-4" />
               </button>
             </SidebarTooltip>
           </>
@@ -149,10 +150,10 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
       </div>
 
       {/* ── Workspace Navigation ── */}
-      <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto overflow-x-hidden">
+      <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto overflow-x-hidden" aria-label="Workspace Navigation">
         {!collapsed && (
-          <div className="px-2 mb-1.5 transition-opacity duration-150">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="px-2.5 mb-1.5">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#BDB9AF]">
               Workspace
             </span>
           </div>
@@ -165,21 +166,21 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
             <NavLink
               to={item.to}
               className={cn(
-                'flex items-center gap-3 rounded-xl transition-all duration-150 group h-9 w-full',
+                'flex items-center gap-2.5 rounded-lg transition-colors duration-150 h-9 w-full font-medium text-xs',
                 collapsed ? 'justify-center px-0' : 'px-2.5',
                 isActive
-                  ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold border border-blue-200/60 dark:border-blue-900/50'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-[#CDF22B] text-[#080908] font-bold shadow-2xs'
+                  : 'text-[#D8D5CB] hover:bg-[#181A16] hover:text-[#FAF8F3]'
               )}
             >
               <item.icon
                 className={cn(
-                  'w-4.5 h-4.5 flex-shrink-0 transition-transform duration-150',
-                  isActive ? 'text-blue-600 dark:text-blue-400' : 'group-hover:scale-105'
+                  'w-4 h-4 flex-shrink-0',
+                  isActive ? 'text-[#080908]' : 'text-[#D8D5CB]'
                 )}
               />
               {!collapsed && (
-                <span className="text-xs font-medium leading-none whitespace-nowrap overflow-hidden text-ellipsis">
+                <span className="truncate">
                   {item.label}
                 </span>
               )}
@@ -197,10 +198,10 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
       </nav>
 
       {/* ── Account Navigation ── */}
-      <div className="px-2 pb-2 space-y-1 border-t border-slate-200/70 dark:border-slate-800/70 pt-2">
+      <div className="px-2 pb-2 space-y-1 border-t border-[#1E201B] pt-2.5">
         {!collapsed && (
-          <div className="px-2 mb-1 transition-opacity duration-150">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="px-2.5 mb-1.5">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#BDB9AF]">
               Account
             </span>
           </div>
@@ -213,21 +214,21 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
             <NavLink
               to={item.to}
               className={cn(
-                'flex items-center gap-3 rounded-xl transition-all duration-150 h-8.5 w-full group',
+                'flex items-center gap-2.5 rounded-lg transition-colors duration-150 h-8.5 w-full font-medium text-xs',
                 collapsed ? 'justify-center px-0' : 'px-2.5',
                 isActive
-                  ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold border border-blue-200/60 dark:border-blue-900/50'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-[#CDF22B] text-[#080908] font-bold shadow-2xs'
+                  : 'text-[#D8D5CB] hover:bg-[#181A16] hover:text-[#FAF8F3]'
               )}
             >
               <item.icon
                 className={cn(
-                  'w-4 h-4 flex-shrink-0 transition-transform duration-150',
-                  isActive ? 'text-blue-600 dark:text-blue-400' : 'group-hover:scale-105'
+                  'w-4 h-4 flex-shrink-0',
+                  isActive ? 'text-[#080908]' : 'text-[#D8D5CB]'
                 )}
               />
               {!collapsed && (
-                <span className="text-xs font-medium leading-none whitespace-nowrap overflow-hidden text-ellipsis">
+                <span className="truncate">
                   {item.label}
                 </span>
               )}
@@ -243,26 +244,26 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           )
         })}
 
-        {/* Logout button */}
-        <div className="w-full flex justify-center">
-          <SidebarTooltip label={isLoggingOut ? 'Logging out...' : 'Logout'} show={collapsed}>
+        {/* Logout */}
+        <div className="w-full flex justify-center pt-1">
+          <SidebarTooltip label={isLoggingOut ? 'Logging out...' : 'Log out'} show={collapsed}>
             <button
               type="button"
               onClick={handleLogout}
               disabled={isLoggingOut}
               className={cn(
-                'flex items-center gap-3 rounded-xl transition-all duration-150 w-full text-slate-600 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 disabled:bg-secondary-bg disabled:text-muted-foreground disabled:cursor-not-allowed cursor-pointer h-8.5 group',
+                'flex items-center gap-2.5 rounded-lg transition-colors duration-150 w-full text-[#D8D5CB] hover:bg-[#201414] hover:text-[#EF4444] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer h-8.5 text-xs font-medium',
                 collapsed ? 'justify-center px-0' : 'px-2.5'
               )}
             >
               {isLoggingOut ? (
-                <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                <div className="w-3.5 h-3.5 border-2 border-[#D8D5CB] border-t-transparent rounded-full animate-spin flex-shrink-0" />
               ) : (
-                <LogOut className="w-4 h-4 flex-shrink-0 transition-transform duration-150 group-hover:scale-105" />
+                <LogOut className="w-4 h-4 flex-shrink-0" />
               )}
               {!collapsed && (
-                <span className="text-xs font-medium leading-none whitespace-nowrap overflow-hidden text-ellipsis">
-                  {isLoggingOut ? 'Logging out...' : 'Logout'}
+                <span className="truncate">
+                  {isLoggingOut ? 'Logging out...' : 'Log out'}
                 </span>
               )}
             </button>
@@ -272,33 +273,35 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
 
       {/* ── User Profile Footer ── */}
       {user && (
-        <div className="px-2 pb-2.5 border-t border-slate-200/70 dark:border-slate-800/70 pt-2 flex justify-center">
+        <div className="px-2 pb-2.5 border-t border-[#1E201B] pt-2 flex justify-center">
           {collapsed ? (
             <SidebarTooltip label={user.username || user.email || 'Profile'} show={true}>
-              <div
+              <button
+                type="button"
                 onClick={() => navigate('/profile')}
-                className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs uppercase border border-blue-200/60 dark:border-blue-900/60 cursor-pointer hover:bg-blue-100 transition-colors"
+                className="w-8 h-8 rounded-lg bg-[#181A16] text-[#CDF22B] flex items-center justify-center font-bold text-xs uppercase border border-[#282B24] cursor-pointer hover:border-[#CDF22B] transition-colors"
               >
                 {user.username?.slice(0, 2) || 'TP'}
-              </div>
+              </button>
             </SidebarTooltip>
           ) : (
-            <div
+            <button
+              type="button"
               onClick={() => navigate('/profile')}
-              className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-slate-100/80 dark:hover:bg-slate-800/60 cursor-pointer transition-colors w-full"
+              className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-[#181A16] cursor-pointer transition-colors w-full text-left"
             >
-              <div className="w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs uppercase flex-shrink-0 border border-blue-200/60 dark:border-blue-900/60">
+              <div className="w-7 h-7 rounded-lg bg-[#181A16] text-[#CDF22B] flex items-center justify-center font-bold text-xs uppercase flex-shrink-0 border border-[#282B24]">
                 {user.username?.slice(0, 2) || 'TP'}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-900 dark:text-white truncate leading-tight">
+                <p className="text-xs font-semibold text-[#FAF8F3] truncate leading-tight">
                   {user.username || 'User'}
                 </p>
-                <p className="text-[10px] text-muted-foreground truncate leading-tight mt-0.5">
-                  {user.email || ''}
+                <p className="text-[11px] text-[#BDB9AF] truncate leading-tight mt-0.5">
+                  {user.email || 'Account'}
                 </p>
               </div>
-            </div>
+            </button>
           )}
         </div>
       )}

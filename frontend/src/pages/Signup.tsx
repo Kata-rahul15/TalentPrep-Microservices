@@ -269,23 +269,22 @@ export default function Signup() {
               {/* Strength meter bar */}
               {password.length > 0 && (
                 <div className="flex flex-col gap-1 mt-0.5 select-none">
-                  <div className="flex items-center justify-between text-[10px] font-semibold text-gray-500">
+                  <div className="flex items-center justify-between text-[10px] font-semibold text-[#2C2E2B] dark:text-[#E2DFD7]">
                     <span>Password Strength</span>
-                    <span className={`font-bold ${
-                      strengthScore <= 1 ? 'text-red-500' : strengthScore <= 3 ? 'text-amber-500' : 'text-emerald-500'
-                    }`}>
+                    <span className={`font-bold ${strengthScore <= 1 ? 'text-red-500' : strengthScore <= 3 ? 'text-amber-500' : 'text-emerald-500'
+                      }`}>
                       {getStrengthLabel()}
                     </span>
                   </div>
                   {/* Bar indicators */}
-                  <div className="flex gap-1 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                  <div className="flex gap-1 h-1 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
                     <div
                       className={`h-full transition-all duration-300 ${getStrengthColor()}`}
                       style={{ width: `${(strengthScore / 4) * 100}%` }}
                     />
                   </div>
                   {/* Rule checklist */}
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[9px] text-gray-400 mt-0.5">
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[10px] text-[#383B36] dark:text-[#BDB9AF] mt-0.5">
                     <span className={rules.length ? 'text-emerald-600 font-bold' : ''}>
                       ✓ Min 8 chars
                     </span>
@@ -359,25 +358,25 @@ export default function Signup() {
             <button
               type="submit"
               disabled={!isFormValid || isSubmitting}
-              className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary hover:bg-primary-hover disabled:bg-secondary-bg disabled:text-muted-foreground text-white font-bold text-sm rounded-lg shadow-sm disabled:shadow-none transition-all duration-200 hover:-translate-y-0.5 disabled:translate-y-0 disabled:cursor-not-allowed cursor-pointer border border-transparent disabled:border-border"
+              className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#CDF22B] hover:bg-[#BCE01E] disabled:bg-[#F2EFE9] dark:disabled:bg-[#1A1C18] disabled:text-[#383B36]/60 dark:disabled:text-[#BDB9AF]/60 text-[#080908] font-bold text-xs sm:text-sm rounded-lg shadow-2xs transition-colors duration-150 disabled:cursor-not-allowed cursor-pointer border border-transparent disabled:border-[#E5E0D5] dark:disabled:border-[#232621]"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                  <div className="w-4 h-4 border-2 border-[#080908] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                   <span>Creating account...</span>
                 </>
               ) : (
-                'Create Account'
+                'Create account'
               )}
             </button>
 
             {/* Divider */}
             <div className="relative my-1">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-divider" />
+                <div className="w-full border-t border-[#E5E0D5] dark:border-[#232621]" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-3 bg-card text-muted-foreground font-semibold uppercase tracking-wider">
+                <span className="px-2.5 bg-[#FFFFFF] dark:bg-[#121311] text-[#383B36] dark:text-[#BDB9AF] font-medium text-[11px]">
                   Or sign up with
                 </span>
               </div>
@@ -386,11 +385,11 @@ export default function Signup() {
             <SocialLoginButtons onSuccess={handleSocialSuccess} />
 
             {/* Login link */}
-            <p className="mt-1 text-center text-xs font-semibold text-muted-foreground">
+            <p className="mt-1 text-center text-xs text-[#2C2E2B] dark:text-[#E2DFD7]">
               Already have an account?{' '}
               <Link
                 to="/login"
-                className="font-bold text-primary hover:text-primary-hover transition-colors"
+                className="font-bold text-[#080908] dark:text-[#FAF8F3] hover:underline transition-colors"
               >
                 Sign in
               </Link>

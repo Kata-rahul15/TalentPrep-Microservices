@@ -17,7 +17,7 @@ export default function SummaryEditor({ summary, onChange, onImproveWithAI }: Pr
           <h3 className="font-heading font-bold text-sm text-slate-900 dark:text-white">
             Professional Summary
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-[#383B36] dark:text-[#BDB9AF] mt-0.5">
             Summarize your core strengths, years of experience, and key achievements in 2–4 concise sentences.
           </p>
         </div>
@@ -25,9 +25,9 @@ export default function SummaryEditor({ summary, onChange, onImproveWithAI }: Pr
         <button
           type="button"
           onClick={() => onImproveWithAI(summary, 'Professional Summary')}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/60 rounded-lg hover:bg-blue-100 transition-colors shadow-2xs cursor-pointer h-7"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-foreground bg-secondary-bg/60 border border-border rounded-lg hover:bg-secondary-bg transition-colors shadow-2xs cursor-pointer h-7"
         >
-          <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+          <Sparkles className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
           <span>Improve with AI</span>
         </button>
       </div>
@@ -41,7 +41,7 @@ export default function SummaryEditor({ summary, onChange, onImproveWithAI }: Pr
           className="w-full p-3 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white leading-relaxed resize-y"
         />
 
-        <div className="flex items-center justify-between text-[11px] text-slate-400">
+        <div className="flex items-center justify-between text-[11px] text-[#383B36] dark:text-[#BDB9AF]">
           <span>Target length: 40–80 words (3–4 sentences)</span>
           <div className="flex items-center gap-3">
             <span>{wordCount} words</span>

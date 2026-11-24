@@ -1,296 +1,179 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
   ChevronDown,
   CheckCircle2,
-  Sparkles,
   FileText,
-  Search,
-  Bot,
-  Zap,
   Briefcase,
-  TrendingUp,
+  Video,
 } from 'lucide-react'
 
-/* ─────────────────────────────────────────────
-   ATS Score Gauge SVG Component
-   ───────────────────────────────────────────── */
-function ScoreRingMini({ score = 92 }: { score?: number }) {
-  const r = 26
+function ScoreRingMini({ score = 94 }: { score?: number }) {
+  const r = 22
   const circ = 2 * Math.PI * r
   const dash = (score / 100) * circ
 
   return (
-    <div className="relative flex items-center justify-center">
-      <svg width="68" height="68" viewBox="0 0 68 68" aria-label={`ATS Score ${score}`} className="block">
+    <div className="relative flex items-center justify-center shrink-0">
+      <svg width="56" height="56" viewBox="0 0 56 56" aria-label={`ATS Score ${score}`} className="block">
         <circle
-          cx="34"
-          cy="34"
+          cx="28"
+          cy="28"
           r={r}
           fill="none"
-          stroke="currentColor"
-          strokeWidth="5"
-          className="text-border"
+          stroke="#E5E0D5"
+          className="dark:stroke-[#232621]"
+          strokeWidth="4"
         />
         <circle
-          cx="34"
-          cy="34"
+          cx="28"
+          cy="28"
           r={r}
           fill="none"
-          stroke="#2563EB"
-          strokeWidth="5"
+          stroke="#080908"
+          className="dark:stroke-[#CDF22B]"
+          strokeWidth="4"
           strokeLinecap="round"
           strokeDasharray={`${dash} ${circ}`}
-          transform="rotate(-90 34 34)"
-          style={{ transition: 'stroke-dasharray 1.4s cubic-bezier(0.16,1,0.3,1) 0.3s' }}
+          transform="rotate(-90 28 28)"
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-        <span className="font-heading font-extrabold text-base text-foreground">{score}</span>
-        <span className="text-[8px] font-bold text-primary uppercase tracking-wider">ATS</span>
+        <span className="font-mono font-bold text-xs sm:text-sm text-[#080908] dark:text-[#FAF8F3] tabular-nums">{score}</span>
+        <span className="text-[7px] font-semibold text-[#383B36] dark:text-[#BDB9AF] uppercase tracking-wider">ATS</span>
       </div>
     </div>
   )
 }
 
-/* ─────────────────────────────────────────────
-   Hero Visual / Layered Product Story Composition
-   Resume → AI Intelligence → Job Search → Career Agent
-   ───────────────────────────────────────────── */
-function HeroProductComposition() {
+function HeroProductPreview() {
   return (
-    <div className="relative w-full max-w-[560px] mx-auto lg:mx-0 select-none" aria-hidden="true">
-      {/* Background ambient lighting */}
-      <div className="absolute -inset-6 rounded-3xl bg-primary/10 dark:bg-primary/20 blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 -right-6 w-56 h-56 bg-info/10 rounded-full blur-2xl pointer-events-none" />
-
-      {/* ── Main Center Panel: AI Career Agent & Workspace ── */}
-      <div className="relative rounded-2xl border border-border bg-card shadow-[0_20px_60px_-12px_rgba(0,0,0,0.08),_0_8px_24px_-4px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_60px_-12px_rgba(0,0,0,0.5),_0_8px_24px_-4px_rgba(0,0,0,0.3)] overflow-hidden">
-        {/* Window Chrome */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary-bg/80 backdrop-blur-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-danger/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-warning/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-success/70" />
-            <span className="ml-2.5 text-[11px] font-semibold text-foreground/80 tracking-tight flex items-center gap-1.5">
-              <Bot className="w-3.5 h-3.5 text-primary" />
+    <div className="w-full max-w-[540px] mx-auto lg:mx-0 select-none">
+      {/* ── Main Unified Product Preview Frame ── */}
+      <div className="rounded-xl border border-[#080908]/15 dark:border-[#232621] bg-[#FFFFFF] dark:bg-[#121311] shadow-[0_8px_30px_rgba(8,9,8,0.06)] overflow-hidden">
+        {/* Workspace Window Header */}
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#E5E0D5] dark:border-[#232621] bg-[#FAF8F3] dark:bg-[#181A16]">
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1.5" aria-hidden="true">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E5E0D5] dark:bg-[#2C2F29]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E5E0D5] dark:bg-[#2C2F29]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E5E0D5] dark:bg-[#2C2F29]" />
+            </div>
+            <span className="text-[11px] font-semibold text-[#2C2E2B] dark:text-[#E2DFD7] ml-2">
               TalentPrep Workspace
             </span>
           </div>
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold border border-primary/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            Context Synced
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#080908] text-[#CDF22B] text-[10px] font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" />
+            LIVE PREVIEW
           </span>
         </div>
 
-        {/* Panel Content */}
+        {/* Unified 3-Pillar Body */}
         <div className="p-4 sm:p-5 space-y-3.5">
-          {/* Active Context Banner */}
-          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-primary/5 border border-primary/10 text-[11px]">
-            <div className="flex items-center gap-2">
-              <FileText className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-              <span className="font-semibold text-foreground truncate max-w-[200px]">
-                Senior_Engineer_Resume.pdf
+          {/* Pillar 1: Resume Analysis Score Preview */}
+          <div className="p-3.5 rounded-lg bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <ScoreRingMini score={94} />
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
+                  <span className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">
+                    Resume Analysis
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#383B36] dark:text-[#BDB9AF] mt-0.5 leading-snug">
+                  High ATS match · Formatting and skills benchmarked
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono font-bold text-[#080908] dark:text-[#CDF22B] bg-[#CDF22B]/25 dark:bg-[#CDF22B]/20 px-2 py-1 rounded">
+              Ready
+            </span>
+          </div>
+
+          {/* Pillar 2: Matching Job Opportunity Preview */}
+          <div className="p-3.5 rounded-lg bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#080908] text-[#CDF22B] flex items-center justify-center font-bold text-xs shrink-0">
+                <Briefcase className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">
+                    Senior Platform Engineer
+                  </span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#080908] text-[#CDF22B] font-bold">
+                    96% Match
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#383B36] dark:text-[#BDB9AF] mt-0.5">
+                  Stripe · Distributed Systems · Remote
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] font-mono font-semibold text-[#080908] dark:text-[#FAF8F3] shrink-0">
+              $150k+
+            </span>
+          </div>
+
+          {/* Pillar 3: Interview Question Preview */}
+          <div className="p-3.5 rounded-lg bg-[#FAF8F3] dark:bg-[#181A16] border border-[#E5E0D5] dark:border-[#232621] space-y-2">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="font-semibold text-[#080908] dark:text-[#FAF8F3] flex items-center gap-1.5">
+                <Video className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
+                Technical Interview · System Design
+              </span>
+              <span className="text-[10px] font-mono text-[#383B36] dark:text-[#BDB9AF]">
+                Round 1 of 3
               </span>
             </div>
-            <span className="text-[10px] font-bold text-success flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" />
-              Parsed & Ready
-            </span>
-          </div>
-
-          {/* AI Career Agent Message Stream Preview */}
-          <div className="space-y-2.5 text-[11px]">
-            {/* User Query */}
-            <div className="flex items-start justify-end gap-2">
-              <div className="max-w-[85%] px-3 py-2 rounded-2xl rounded-tr-xs bg-primary text-white font-medium shadow-xs">
-                Find roles matching my TypeScript & Cloud backend experience and optimize my positioning.
-              </div>
+            <p className="text-xs font-medium text-[#080908] dark:text-[#FAF8F3] leading-snug">
+              "How do you ensure idempotency when payment webhooks arrive concurrently under network partitions?"
+            </p>
+            <div className="flex items-center justify-between pt-1 text-[10px] font-mono text-[#383B36] dark:text-[#BDB9AF] border-t border-[#E5E0D5] dark:border-[#232621]">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" /> Real-time feedback enabled
+              </span>
+              <span className="font-bold text-[#080908] dark:text-[#CDF22B]">Clarity: 9.2/10</span>
             </div>
-
-            {/* Agent Answer */}
-            <div className="flex items-start gap-2.5">
-              <div className="w-6 h-6 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Sparkles className="w-3.5 h-3.5" />
-              </div>
-              <div className="flex-1 px-3.5 py-2.5 rounded-2xl rounded-tl-xs bg-secondary-bg border border-border text-foreground space-y-1.5 shadow-xs">
-                <p className="font-semibold text-foreground flex items-center justify-between">
-                  <span>Target Match Analysis:</span>
-                  <span className="text-primary font-bold text-[10px]">3 High-Fit Roles Found</span>
-                </p>
-                <p className="text-muted-foreground text-[10.5px] leading-relaxed">
-                  Your resume has strong alignment with <strong className="text-foreground">Full Stack / Platform roles</strong>.
-                  I’ve matched your cloud architecture skills and prepared 2 actionable bullet-point enhancements.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Connected Quick Action Pills */}
-          <div className="pt-1 flex items-center gap-2 overflow-x-auto no-scrollbar">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-card border border-border text-[10.5px] font-semibold text-foreground shadow-2xs hover:border-primary/40 transition-colors">
-              <Search className="w-3 h-3 text-primary" /> View 3 Matched Jobs
-            </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-card border border-border text-[10.5px] font-semibold text-foreground shadow-2xs hover:border-primary/40 transition-colors">
-              <Zap className="w-3 h-3 text-warning" /> Refine in Resume Builder
-            </span>
           </div>
         </div>
       </div>
-
-      {/* ── Top-Left Floating Badge: Resume Parsing & ATS Metric ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 15, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ delay: 0.8, duration: 0.5, type: 'spring', stiffness: 120, damping: 16 }}
-        className="absolute -top-6 -left-4 sm:-top-7 sm:-left-6 p-3 rounded-2xl bg-card border border-border shadow-[0_12px_32px_rgba(0,0,0,0.09)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.5)] flex items-center gap-3 backdrop-blur-md"
-      >
-        <ScoreRingMini score={92} />
-        <div className="flex flex-col">
-          <span className="text-[11px] font-extrabold text-foreground">ATS Optimization</span>
-          <span className="text-[10px] text-muted-foreground mt-0.5">Top 5% Keyword Match</span>
-          <div className="flex items-center gap-1 mt-1">
-            <span className="px-1.5 py-0.2 rounded bg-success/10 text-success text-[9px] font-bold">
-              ↑ +14 pts
-            </span>
-            <span className="text-[9px] text-muted-foreground">vs generic CV</span>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ── Bottom-Right Floating Card: Intelligent Job Match Preview ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ delay: 1.0, duration: 0.55, type: 'spring', stiffness: 110, damping: 17 }}
-        className="absolute -bottom-6 -right-3 sm:-bottom-7 sm:-right-5 p-3.5 rounded-2xl bg-card border border-border shadow-[0_16px_36px_rgba(0,0,0,0.1)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.55)] flex items-center gap-3.5 max-w-[280px]"
-      >
-        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center flex-shrink-0">
-          <Briefcase className="w-5 h-5" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-1">
-            <span className="text-[11px] font-extrabold text-foreground truncate">
-              Senior Full Stack Engineer
-            </span>
-            <span className="px-1.5 py-0.5 rounded-md bg-success/15 text-success text-[9px] font-black flex-shrink-0">
-              96% Fit
-            </span>
-          </div>
-          <p className="text-[10px] text-muted-foreground truncate mt-0.5">
-            Stripe · Remote (Global)
-          </p>
-          <div className="flex items-center gap-1 mt-1 text-[9px] text-primary font-semibold">
-            <TrendingUp className="w-3 h-3" />
-            <span>Skills matched: React, Node, AWS</span>
-          </div>
-        </div>
-      </motion.div>
     </div>
   )
 }
 
-/* ─────────────────────────────────────────────
-   Hero Section Main Export
-   ───────────────────────────────────────────── */
 export default function Hero() {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: { staggerChildren: 0.08, delayChildren: 0.05 },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring' as const, stiffness: 80, damping: 18 },
-    },
-  }
-
-  const panelVariants = {
-    hidden: { opacity: 0, y: 35, scale: 0.98 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { type: 'spring' as const, stiffness: 70, damping: 16, delay: 0.2 },
-    },
-  }
-
   return (
-    <section
-      ref={ref}
-      className="relative min-h-[88vh] pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-background"
-      aria-label="Hero"
-    >
-      {/* ── Background Ambient Canvas ────────────────── */}
-      <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
-        {/* Central primary glow */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[550px] bg-primary/8 dark:bg-primary/12 rounded-full blur-[140px]" />
-        {/* Subtle accent glow */}
-        <div className="absolute top-1/3 right-4 w-[420px] h-[420px] bg-info/6 dark:bg-info/8 rounded-full blur-[110px]" />
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-55" />
-        {/* Gradient fade to bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
-      </div>
+    <section id="home" className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-[#FAF8F3] dark:bg-[#080908] scroll-mt-20" aria-label="Hero">
+      {/* Background Architectural Grid */}
+      <div className="pointer-events-none absolute inset-0 z-0 bg-grid-pattern opacity-60" aria-hidden="true" />
 
-      {/* ── Main Hero Layout ─────────────────────────── */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-12 xl:gap-16">
-
-          {/* ── LEFT: Value Proposition Column ───────── */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-            className="flex-1 max-w-2xl lg:max-w-none text-center lg:text-left"
-          >
-            {/* Category Pill */}
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-wide">
-                <Sparkles className="w-3.5 h-3.5" />
-                AI Job Search & Career Agent
-              </span>
-            </motion.div>
-
+        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-14 xl:gap-20">
+          
+          {/* ── LEFT: Value Proposition ── */}
+          <div className="flex-1 max-w-2xl lg:max-w-none text-left">
             {/* Headline */}
-            <motion.h1
-              variants={itemVariants}
-              className="font-heading font-black text-3xl sm:text-4xl md:text-5xl lg:text-[3.35rem] xl:text-[3.65rem] tracking-tight text-foreground leading-[1.1] sm:leading-[1.12]"
-            >
-              AI-Powered Job Discovery &amp;{' '}
-              <span className="text-primary">Personalized Career Guidance.</span>
-            </motion.h1>
+            <h1 className="font-heading font-black text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] tracking-tight text-[#080908] dark:text-[#FAF8F3] leading-[1.08]">
+              Your Resume. Your Role. Your Next Opportunity.
+            </h1>
 
-            {/* Subtitle */}
-            <motion.p
-              variants={itemVariants}
-              className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg text-secondary-foreground leading-relaxed max-w-[52ch] mx-auto lg:mx-0"
-            >
-              Discover relevant tech opportunities matched to your actual skills, and collaborate with a dedicated AI Career Agent to navigate your job search and optimize your resume.
-            </motion.p>
+            {/* Supporting description */}
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg text-[#2C2E2B] dark:text-[#E2DFD7] leading-relaxed max-w-[52ch]">
+              Analyze your resume, discover relevant job opportunities, and prepare for interviews with AI-powered guidance. Everything you need to take the next step in your career.
+            </p>
 
             {/* CTA Button Group */}
-            <motion.div
-              variants={itemVariants}
-              className="mt-7 sm:mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5"
-            >
+            <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Link
                 to="/signup"
                 id="hero-cta-primary"
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-primary hover:bg-primary-hover active:bg-primary-active active:scale-[0.98] text-white font-bold text-sm sm:text-base rounded-xl shadow-[0_4px_20px_rgba(37,99,235,0.35)] hover:shadow-[0_6px_28px_rgba(37,99,235,0.45)] hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer w-full sm:w-auto justify-center"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#CDF22B] hover:bg-[#BCE01E] active:scale-[0.98] text-[#080908] font-bold text-sm sm:text-base rounded-lg transition-all shadow-2xs cursor-pointer"
               >
                 <span>Get Started Free</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                <ArrowRight className="w-4 h-4" />
               </Link>
 
               <a
@@ -300,35 +183,36 @@ export default function Hero() {
                   e.preventDefault()
                   document.querySelector('#how-it-works')?.scrollIntoView({ behavior: 'smooth' })
                 }}
-                className="inline-flex items-center gap-2 px-5 py-3.5 text-secondary-foreground hover:text-foreground active:scale-[0.98] font-semibold text-sm sm:text-base rounded-xl border border-border hover:border-primary/30 hover:bg-secondary-bg transition-all duration-200 cursor-pointer w-full sm:w-auto justify-center"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 text-[#080908] dark:text-[#FAF8F3] hover:bg-[#F2EFE9] dark:hover:bg-[#1A1C18] font-semibold text-sm sm:text-base rounded-lg border border-[#E5E0D5] dark:border-[#232621] transition-all cursor-pointer"
               >
                 <ChevronDown className="w-4 h-4" />
-                <span>See How It Works</span>
+                <span>Explore How It Works</span>
               </a>
-            </motion.div>
+            </div>
 
-            {/* Micro-Proof Footer */}
-            <motion.div
-              variants={itemVariants}
-              className="mt-6 flex items-center justify-center lg:justify-start gap-3.5 text-xs text-muted-foreground"
-            >
-              <span>No credit card required</span>
-              <span className="w-1 h-1 rounded-full bg-border" />
-              <span>Instant profile matching</span>
-              <span className="w-1 h-1 rounded-full bg-border" />
-              <span>Free to get started</span>
-            </motion.div>
-          </motion.div>
+            {/* Proof bar */}
+            <div className="mt-8 flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-[#2C2E2B] dark:text-[#E2DFD7]">
+              <span className="flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
+                Resume Analysis
+              </span>
+              <span className="w-1 h-1 rounded-full bg-[#080908]/20 dark:bg-[#FAF8F3]/20" />
+              <span className="flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
+                Job Matching
+              </span>
+              <span className="w-1 h-1 rounded-full bg-[#080908]/20 dark:bg-[#FAF8F3]/20" />
+              <span className="flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#080908] dark:text-[#CDF22B]" />
+                Interview Preparation
+              </span>
+            </div>
+          </div>
 
-          {/* ── RIGHT: Layered SaaS Product Story Visual ── */}
-          <motion.div
-            variants={panelVariants}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-            className="mt-14 lg:mt-0 flex-1 flex items-center justify-center lg:justify-end animate-float-gentle"
-          >
-            <HeroProductComposition />
-          </motion.div>
+          {/* ── RIGHT: Realistic Unified Product Preview ── */}
+          <div className="mt-12 lg:mt-0 flex-1 flex items-center justify-center lg:justify-end">
+            <HeroProductPreview />
+          </div>
 
         </div>
       </div>

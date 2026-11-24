@@ -29,8 +29,10 @@ import ResumeChat from '@/features/resume/pages/ResumeChat'
 import InterviewLandingPage from '@/features/interview/pages/InterviewLandingPage'
 import InterviewSetupPage from '@/features/interview/pages/InterviewSetupPage'
 import InterviewRoomPage from '@/features/interview/pages/InterviewRoomPage'
+import CodingInterviewPreviewPage from '@/features/interview/pages/CodingInterviewPreviewPage'
 import InterviewReportPage from '@/features/interview/pages/InterviewReportPage'
 import InterviewTranscriptPage from '@/features/interview/pages/InterviewTranscriptPage'
+import InterviewReviewPage from '@/features/interview/pages/InterviewReviewPage'
 
 import OAuthCallback from '@/pages/OAuthCallback'
 import PrivacyPolicy from '@/pages/PrivacyPolicy'
@@ -47,8 +49,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (loading || authStatus === 'loading') {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center gap-3">
-        <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+        <div className="w-8 h-8 border-3 border-[#080908] dark:border-[#FAF8F3] border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs font-semibold text-[#2C2E2B] dark:text-[#E2DFD7]">
           Restoring your session...
         </p>
       </div>
@@ -62,13 +64,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
           <h2 className="font-heading font-bold text-lg text-slate-900 dark:text-white">
             Service Temporarily Unavailable
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs text-[#2C2E2B] dark:text-[#E2DFD7] leading-relaxed">
             {authError || 'We could not reach the authentication gateway right now. Your session has not been logged out.'}
           </p>
           <button
             type="button"
             onClick={() => retrySessionCheck()}
-            className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#CDF22B] hover:bg-[#BCE01E] text-[#080908] text-xs font-bold transition-colors cursor-pointer"
           >
             Retry Connection
           </button>
@@ -96,8 +98,8 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
   if (loading || authStatus === 'loading') {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#FAF8F3] dark:bg-[#080908] flex items-center justify-center">
+        <div className="w-8 h-8 border-3 border-[#080908] dark:border-[#FAF8F3] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -162,10 +164,12 @@ export default function AppRoutes() {
           <Route path="/settings" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
           {/* Interview Module Routes */}
+          <Route path="/interview-preview" element={<CodingInterviewPreviewPage />} />
           <Route path="/interview" element={<ProtectedRoute><InterviewLandingPage /></ProtectedRoute>} />
           <Route path="/interview/setup" element={<ProtectedRoute><InterviewSetupPage /></ProtectedRoute>} />
           <Route path="/interview/:sessionId" element={<ProtectedRoute><InterviewRoomPage /></ProtectedRoute>} />
           <Route path="/interview/:sessionId/report" element={<ProtectedRoute><InterviewReportPage /></ProtectedRoute>} />
+          <Route path="/interview/:sessionId/review" element={<ProtectedRoute><InterviewReviewPage /></ProtectedRoute>} />
           <Route path="/interview/:sessionId/transcript" element={<ProtectedRoute><InterviewTranscriptPage /></ProtectedRoute>} />
 
           {/* Resume Module Routes */}

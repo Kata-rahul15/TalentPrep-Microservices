@@ -55,43 +55,43 @@ const STATUS_STEPS: {
   description: string
   icon: typeof Brain
 }[] = [
-  {
-    status: 'PREPARING_JD',
-    label: '1. Preparing job description',
-    description: 'Validating and formatting job description input.',
-    icon: FileSearch,
-  },
-  {
-    status: 'QUEUED',
-    label: '2. Analyzing resume information',
-    description: 'Parsing skills, work history, and education context.',
-    icon: Brain,
-  },
-  {
-    status: 'ANALYZING_JOB',
-    label: '3. Extracting job requirements',
-    description: 'Identifying key technical skills, experience levels, and keywords.',
-    icon: Search,
-  },
-  {
-    status: 'RETRIEVING_EVIDENCE',
-    label: '4. Comparing skills and experience',
-    description: 'Cross-referencing resume qualifications with job specifications.',
-    icon: Sparkles,
-  },
-  {
-    status: 'EVALUATING_MATCH',
-    label: '5. Generating match analysis',
-    description: 'Calculating keyword coverage and identifying qualification gaps.',
-    icon: Calculator,
-  },
-  {
-    status: 'CALCULATING_SCORE',
-    label: '6. Preparing final results',
-    description: 'Finalizing recommendations and overall fit score.',
-    icon: CheckCircle2,
-  },
-]
+    {
+      status: 'PREPARING_JD',
+      label: '1. Preparing job description',
+      description: 'Validating and formatting job description input.',
+      icon: FileSearch,
+    },
+    {
+      status: 'QUEUED',
+      label: '2. Analyzing resume information',
+      description: 'Parsing skills, work history, and education context.',
+      icon: Brain,
+    },
+    {
+      status: 'ANALYZING_JOB',
+      label: '3. Extracting job requirements',
+      description: 'Identifying key technical skills, experience levels, and keywords.',
+      icon: Search,
+    },
+    {
+      status: 'RETRIEVING_EVIDENCE',
+      label: '4. Comparing skills and experience',
+      description: 'Cross-referencing resume qualifications with job specifications.',
+      icon: Sparkles,
+    },
+    {
+      status: 'EVALUATING_MATCH',
+      label: '5. Generating match analysis',
+      description: 'Calculating keyword coverage and identifying qualification gaps.',
+      icon: Calculator,
+    },
+    {
+      status: 'CALCULATING_SCORE',
+      label: '6. Preparing final results',
+      description: 'Finalizing recommendations and overall fit score.',
+      icon: CheckCircle2,
+    },
+  ]
 
 function getStatusIndex(status?: JobMatchStatus): number {
   if (!status) return 0
@@ -168,13 +168,12 @@ function MatchProgress({
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="flex items-start gap-3">
           <div
-            className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              isFailed
-                ? 'bg-danger/10 text-danger'
-                : isCompleted
-                  ? 'bg-success/10 text-success'
-                  : 'bg-primary/10 text-primary'
-            }`}
+            className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${isFailed
+              ? 'bg-red-500/10 text-red-600'
+              : isCompleted
+                ? 'bg-[#080908] text-[#CDF22B]'
+                : 'bg-[#080908]/5 text-[#080908]'
+              }`}
           >
             {isFailed ? (
               <AlertCircle className="w-4 h-4" />
@@ -203,7 +202,7 @@ function MatchProgress({
         {/* Elapsed Timer Badge */}
         {!isCompleted && !isFailed && (
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-bg border border-border text-[11px] font-mono text-muted-foreground flex-shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B] animate-pulse" />
             <span>{formatTime(elapsedSeconds)}</span>
           </div>
         )}
@@ -223,21 +222,19 @@ function MatchProgress({
                 {/* Vertical line */}
                 {index < STATUS_STEPS.length - 1 && (
                   <div
-                    className={`absolute left-[14px] top-8 w-px h-[calc(100%-2px)] ${
-                      isDone ? 'bg-success/40' : 'bg-border'
-                    }`}
+                    className={`absolute left-[14px] top-8 w-px h-[calc(100%-2px)] ${isDone ? 'bg-[#080908]' : 'bg-border'
+                      }`}
                   />
                 )}
 
                 {/* Step icon */}
                 <div
-                  className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 border ${
-                    isDone
-                      ? 'bg-success/10 border-success/30 text-success'
-                      : isCurrent
-                        ? 'bg-primary/10 border-primary/30 text-primary'
-                        : 'bg-muted/30 border-border text-muted-foreground/50'
-                  }`}
+                  className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 border ${isDone
+                    ? 'bg-[#080908] border-[#080908] text-[#CDF22B]'
+                    : isCurrent
+                      ? 'bg-[#080908] border-[#080908] text-[#CDF22B]'
+                      : 'bg-muted/30 border-border text-muted-foreground/50'
+                    }`}
                 >
                   {isDone ? (
                     <CheckCircle2 className="w-3.5 h-3.5" />
@@ -252,13 +249,12 @@ function MatchProgress({
                 <div className={`pb-3 flex-1 ${isUpcoming ? 'opacity-50' : ''}`}>
                   <div className="flex items-center gap-2">
                     <p
-                      className={`text-xs font-semibold ${
-                        isCurrent
-                          ? 'text-primary'
-                          : isDone
-                            ? 'text-foreground'
-                            : 'text-muted-foreground'
-                      }`}
+                      className={`text-xs font-semibold ${isCurrent
+                        ? 'text-[#080908] dark:text-[#FAF8F3] font-bold'
+                        : isDone
+                          ? 'text-foreground'
+                          : 'text-muted-foreground'
+                        }`}
                     >
                       {step.label}
                     </p>
@@ -416,7 +412,7 @@ function ResultPanel({ result }: ResultPanelProps) {
       {/* Recommendations */}
       <div className="bg-card border border-border rounded-xl p-4">
         <h3 className="font-heading font-semibold text-xs sm:text-sm text-foreground flex items-center gap-1.5 mb-2.5">
-          <Lightbulb className="w-3.5 h-3.5 text-primary" />
+          <Lightbulb className="w-3.5 h-3.5 text-[#080908]" />
           <span>Recommendations</span>
         </h3>
 
@@ -424,7 +420,7 @@ function ResultPanel({ result }: ResultPanelProps) {
           <ul className="space-y-1.5">
             {result.recommendations.map((recommendation, index) => (
               <li key={index} className="flex items-start gap-2 text-xs text-secondary-foreground leading-relaxed">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#080908] mt-1.5 flex-shrink-0" />
                 <span>{recommendation}</span>
               </li>
             ))}
@@ -539,7 +535,7 @@ export default function JobMatch() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-start gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-[#080908]/5 text-[#080908] flex items-center justify-center flex-shrink-0">
             <Briefcase className="w-4 h-4" />
           </div>
           <div>
@@ -561,7 +557,7 @@ export default function JobMatch() {
         className="bg-card border border-border rounded-xl p-4 space-y-3 shadow-2xs"
       >
         <div className="flex items-center gap-1.5">
-          <Briefcase className="w-3.5 h-3.5 text-primary" />
+          <Briefcase className="w-3.5 h-3.5 text-[#080908]" />
           <h2 className="font-heading font-semibold text-xs sm:text-sm text-foreground">
             Job Description
           </h2>
@@ -683,7 +679,7 @@ export default function JobMatch() {
             <p className="font-heading font-bold text-xs sm:text-sm mb-0.5">
               Ready for Interview?
             </p>
-            <p className="text-slate-400 text-xs">
+            <p className="text-[#D8D5CB] text-xs">
               Your {result.overallMatch}% match indicates strong alignment with the job requirements.
             </p>
           </div>

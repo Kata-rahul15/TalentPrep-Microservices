@@ -29,30 +29,35 @@ export default function RoundProgressStepper({
               className={cn(
                 'flex items-center gap-2.5 px-3 py-1.5 rounded-lg border text-xs flex-shrink-0 transition-colors',
                 isActive
-                  ? 'bg-slate-50 dark:bg-slate-800 border-slate-900 dark:border-slate-100 font-medium'
+                  ? 'bg-[#080908] text-[#FAF8F3] border-[#080908] font-medium shadow-xs'
                   : isCompleted
-                    ? 'bg-slate-50/60 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500'
+                    ? 'bg-card border-border text-foreground'
+                    : 'bg-card/50 border-border/60 text-muted-foreground'
               )}
             >
               <div
                 className={cn(
-                  'w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-mono font-medium flex-shrink-0',
+                  'w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-mono font-bold flex-shrink-0',
                   isActive
-                    ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                    ? 'bg-[#CDF22B] text-[#080908]'
                     : isCompleted
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                      ? 'bg-[#080908] text-[#CDF22B]'
+                      : 'bg-muted text-muted-foreground'
                 )}
               >
                 {isCompleted ? <Check className="w-2.5 h-2.5 stroke-[3]" /> : round.roundOrder}
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-slate-900 dark:text-slate-100">
+                <span className={isActive ? 'text-[#FAF8F3]' : 'text-foreground'}>
                   {formatRoundTitle(round.roundType)}
                 </span>
-                <span className="text-[11px] font-mono text-slate-400">
+                <span
+                  className={cn(
+                    'text-[11px] font-mono tabular-nums',
+                    isActive ? 'text-[#FAF8F3]/60' : 'text-muted-foreground'
+                  )}
+                >
                   {round.completedQuestionCount}/{round.targetQuestionCount}
                 </span>
               </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, HelpCircle, FileText, Briefcase, Video, Wifi, ChevronDown, MessageSquare, AlertCircle } from 'lucide-react'
+import { Search, FileText, Briefcase, Video, Wifi, ChevronDown, MessageSquare, AlertCircle } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import AuthenticatedNavbar from '@/components/layout/AuthenticatedNavbar'
 import Footer from '@/components/layout/Footer'
@@ -18,49 +18,49 @@ const faqs: FAQItem[] = [
     id: 'resume-parsing',
     category: 'Resume Management',
     question: 'How does resume parsing work and what file formats are supported?',
-    answer: 'TalentPrep supports PDF and DOCX files up to 10MB. When you upload a resume, our parser extracts your work history, technical skills, projects, and education into structured JSON data. Ensure your PDF has selectable text for optimal extraction accuracy.',
+    answer: 'TalentPrep supports PDF and DOCX files up to 10MB. When you upload a resume, our parser extracts your work history, technical skills, projects, and education into structured data. Selectable text PDFs yield optimal parsing accuracy.',
   },
   {
     id: 'ats-score-meaning',
     category: 'Resume Management',
     question: 'What does my ATS Evaluation Score mean?',
-    answer: 'Your overall ATS score (0-100) measures formatting readability, keyword density, section organization, and measurable achievements. A score above 80 indicates high compatibility with enterprise applicant tracking systems.',
+    answer: 'Your overall ATS score (0-100) evaluates formatting machine-readability, keyword taxonomy coverage, section structure, and quantified impact. A score above 85 indicates strong compatibility with enterprise ATS scanners.',
   },
   {
     id: 'job-match-score',
     category: 'Job Matching',
     question: 'How is the Job Match score calculated?',
-    answer: 'The job match algorithm analyzes your parsed resume against the submitted job description, evaluating skill overlap, required technologies, experience level, and domain keywords. Matched and missing skills are highlighted with recommendations.',
+    answer: 'The matching algorithm evaluates your parsed resume taxonomy against the job description requirements, factoring in core technologies, experience depth, and domain requirements. Matched and missing skills are displayed transparently.',
   },
   {
     id: 'job-match-timing',
     category: 'Job Matching',
     question: 'Why does job matching show an indeterminate progress status?',
-    answer: 'Job matching performs multi-stage AI text analysis in the background. Depending on job description complexity, processing takes between 3 to 10 seconds. Live stage indicators update as each step completes.',
+    answer: 'Job matching performs multi-stage contextual text analysis in the background. Processing typically completes within 3 to 8 seconds with live stage progress updates.',
   },
   {
     id: 'interview-sessions',
     category: 'AI Interview Practice',
     question: 'How do AI Interview Simulations function?',
-    answer: 'Interview practice sessions generate roleplay questions tailored to your target job domain. The AI evaluates technical accuracy, answer structure (STAR method), and communication clarity, giving instant feedback.',
+    answer: 'Mock interview sessions simulate real technical, system design, coding, and behavioral rounds. The system asks calibrated questions, evaluates answer architecture using the STAR methodology or test suites, and provides actionable scorecards.',
   },
   {
     id: 'privacy-security',
     category: 'Privacy & Data',
     question: 'Is my resume data sold or shared with recruiters?',
-    answer: 'No. TalentPrep strictly protects your candidate privacy. Uploaded resumes and AI chat histories are stored securely and never sold to third-party ad networks or recruiters without your explicit permission.',
+    answer: 'No. TalentPrep enforces strict data security. Uploaded resumes and transcripts are encrypted in transit and at rest and are never sold to external third parties.',
   },
   {
     id: 'network-errors',
     category: 'Troubleshooting',
     question: 'What should I do if I get a Network Error or Offline Toast?',
-    answer: 'If your internet disconnects, TalentPrep notifies you with an offline toast notification. Your session remains logged in locally. Reconnect to the internet and click "Try Again" on any failed page components.',
+    answer: 'If connectivity drops, TalentPrep alerts you with a status banner. Your session remains authenticated in local storage. Once reconnected, click retry on the active component.',
   },
   {
     id: 'session-expiration',
     category: 'Troubleshooting',
     question: 'Why was I logged out automatically?',
-    answer: 'TalentPrep uses HttpOnly JWT access tokens. If your refresh token expires or is invalidated, you will be redirected to the login screen for session security. Refreshing your page re-authenticates automatically if your session is active.',
+    answer: 'TalentPrep utilizes secure HttpOnly JWT tokens. When your authentication token expires, you are prompted to sign in again to safeguard account security.',
   },
 ]
 
@@ -85,93 +85,89 @@ export default function HelpCenter() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors">
+    <div className="min-h-screen flex flex-col bg-[#FAF8F3] dark:bg-[#080908] text-[#080908] dark:text-[#FAF8F3] transition-colors">
       {user ? <AuthenticatedNavbar /> : <Navbar />}
 
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
         {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center max-w-2xl mx-auto mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">
-            <HelpCircle className="w-4 h-4" />
-            <span>Support & Documentation</span>
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#080908] text-[#FAF8F3] text-xs font-mono mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#CDF22B]" />
+            Documentation & Support
           </div>
 
-          <h1 className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl text-foreground tracking-tight">
+          <h1 className="font-heading font-black text-3xl sm:text-4xl text-[#080908] dark:text-[#FAF8F3] tracking-tight">
             How can we help you?
           </h1>
 
-          <p className="text-sm sm:text-base text-muted-foreground mt-3 leading-relaxed">
-            Search our knowledge base for guidance on resume uploads, job matching, AI scoring, and system error resolution.
+          <p className="text-xs sm:text-sm text-[#2C2E2B] dark:text-[#E2DFD7] mt-2 leading-relaxed">
+            Search our guides for resume parsing, mock interviews, ATS score diagnostics, and platform questions.
           </p>
 
           {/* Search Input */}
-          <div className="mt-8 relative max-w-xl mx-auto">
-            <Search className="w-5 h-5 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2" />
+          <div className="mt-6 relative max-w-lg mx-auto">
+            <Search className="w-4 h-4 text-[#383B36] dark:text-[#BDB9AF] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search resume parsing, job match scores, network errors..."
-              className="w-full pl-12 pr-4 py-3.5 bg-card border border-border rounded-2xl text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all"
+              placeholder="Search resume analysis, mock interview rounds, ATS scores..."
+              className="w-full pl-10 pr-4 py-2.5 bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-lg text-xs sm:text-sm text-[#080908] dark:text-[#FAF8F3] placeholder:text-[#080908]/50 dark:placeholder:text-[#FAF8F3]/50 focus:outline-none focus:border-[#080908] dark:focus:border-[#CDF22B] shadow-2xs transition-colors"
             />
           </div>
-        </motion.div>
+        </div>
 
         {/* Quick Category Badges */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-          <div className="bg-card border border-border rounded-2xl p-4 text-center space-y-1 shadow-xs">
-            <FileText className="w-5 h-5 text-primary mx-auto" />
-            <p className="text-xs font-bold text-foreground">Resume Analysis</p>
-            <p className="text-[11px] text-muted-foreground">Parsing & ATS</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
+          <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-lg p-3.5 text-center space-y-1">
+            <FileText className="w-4 h-4 text-[#080908] dark:text-[#CDF22B] mx-auto" />
+            <p className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">Resume Analysis</p>
+            <p className="text-[10px] text-[#383B36] dark:text-[#BDB9AF]">Parsing & ATS</p>
           </div>
 
-          <div className="bg-card border border-border rounded-2xl p-4 text-center space-y-1 shadow-xs">
-            <Briefcase className="w-5 h-5 text-primary mx-auto" />
-            <p className="text-xs font-bold text-foreground">Job Matching</p>
-            <p className="text-[11px] text-muted-foreground">Skills & Gaps</p>
+          <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-lg p-3.5 text-center space-y-1">
+            <Briefcase className="w-4 h-4 text-[#080908] dark:text-[#CDF22B] mx-auto" />
+            <p className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">Job Matching</p>
+            <p className="text-[10px] text-[#383B36] dark:text-[#BDB9AF]">Skills & Gaps</p>
           </div>
 
-          <div className="bg-card border border-border rounded-2xl p-4 text-center space-y-1 shadow-xs">
-            <Video className="w-5 h-5 text-primary mx-auto" />
-            <p className="text-xs font-bold text-foreground">AI Practice</p>
-            <p className="text-[11px] text-muted-foreground">Simulations</p>
+          <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-lg p-3.5 text-center space-y-1">
+            <Video className="w-4 h-4 text-[#080908] dark:text-[#CDF22B] mx-auto" />
+            <p className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">Mock Interviews</p>
+            <p className="text-[10px] text-[#383B36] dark:text-[#BDB9AF]">4 Format Practice</p>
           </div>
 
-          <div className="bg-card border border-border rounded-2xl p-4 text-center space-y-1 shadow-xs">
-            <Wifi className="w-5 h-5 text-primary mx-auto" />
-            <p className="text-xs font-bold text-foreground">Connectivity</p>
-            <p className="text-[11px] text-muted-foreground">Error fixes</p>
+          <div className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-lg p-3.5 text-center space-y-1">
+            <Wifi className="w-4 h-4 text-[#080908] dark:text-[#CDF22B] mx-auto" />
+            <p className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">Connectivity</p>
+            <p className="text-[10px] text-[#383B36] dark:text-[#BDB9AF]">Gateway & Status</p>
           </div>
         </div>
 
         {/* FAQ Accordion List */}
-        <div className="space-y-4 max-w-4xl mx-auto">
+        <div className="space-y-3 max-w-3xl mx-auto">
           {filteredFaqs.length > 0 ? (
             filteredFaqs.map((faq) => {
               const isOpen = openId === faq.id
               return (
                 <div
                   key={faq.id}
-                  className="bg-card border border-border rounded-2xl overflow-hidden transition-all shadow-xs"
+                  className="bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-lg overflow-hidden transition-all"
                 >
                   <button
+                    type="button"
                     onClick={() => toggleAccordion(faq.id)}
-                    className="w-full text-left p-5 flex items-center justify-between gap-4 font-semibold text-sm text-foreground hover:text-primary transition-colors cursor-pointer"
+                    className="w-full text-left p-4 flex items-center justify-between gap-4 font-semibold text-xs sm:text-sm text-[#080908] dark:text-[#FAF8F3] cursor-pointer"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="px-2.5 py-0.5 rounded-full bg-secondary-bg text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
+                    <div className="flex items-center gap-2.5">
+                      <span className="px-2 py-0.5 rounded bg-[#FAF8F3] dark:bg-[#1A1C18] text-[#383B36] dark:text-[#BDB9AF] text-[10px] font-mono uppercase">
                         {faq.category}
                       </span>
                       <span>{faq.question}</span>
                     </div>
                     <ChevronDown
-                      className={`w-4 h-4 text-muted-foreground transition-transform duration-200 flex-shrink-0 ${
-                        isOpen ? 'rotate-180 text-primary' : ''
-                      }`}
+                      className={`w-4 h-4 text-[#383B36] dark:text-[#BDB9AF] transition-transform duration-150 flex-shrink-0 ${isOpen ? 'rotate-180 text-[#080908] dark:text-[#CDF22B]' : ''
+                        }`}
                     />
                   </button>
 
@@ -181,9 +177,9 @@ export default function HelpCenter() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.15 }}
                       >
-                        <div className="px-5 pb-5 pt-1 text-xs text-secondary-foreground leading-relaxed border-t border-border/40">
+                        <div className="px-4 pb-4 pt-1 text-xs text-[#2C2E2B] dark:text-[#E2DFD7] leading-relaxed border-t border-[#E5E0D5] dark:border-[#232621]">
                           {faq.answer}
                         </div>
                       </motion.div>
@@ -193,29 +189,29 @@ export default function HelpCenter() {
               )
             })
           ) : (
-            <div className="p-8 text-center bg-card border border-border rounded-2xl space-y-2">
-              <AlertCircle className="w-8 h-8 text-muted-foreground mx-auto" />
-              <p className="text-sm font-semibold text-foreground">No questions found matching your search.</p>
-              <p className="text-xs text-muted-foreground">Try searching for keywords like "ATS", "parsing", or "network".</p>
+            <div className="p-8 text-center bg-[#FFFFFF] dark:bg-[#121311] border border-[#E5E0D5] dark:border-[#232621] rounded-lg space-y-1.5">
+              <AlertCircle className="w-6 h-6 text-[#383B36] dark:text-[#BDB9AF] mx-auto" />
+              <p className="text-xs font-bold text-[#080908] dark:text-[#FAF8F3]">No questions found</p>
+              <p className="text-[11px] text-[#383B36] dark:text-[#BDB9AF]">Try searching for "ATS", "interview", or "parsing".</p>
             </div>
           )}
         </div>
 
         {/* Contact Support Banner */}
-        <div id="contact" className="mt-16 bg-slate-950 text-white rounded-3xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="font-heading font-bold text-lg">Still have questions?</h3>
-            <p className="text-xs text-slate-400 mt-1 max-w-md">
-              Our support engineering team is available to assist with resume parsing issues, API questions, or feedback.
+        <div id="contact" className="mt-14 bg-[#080908] text-[#FAF8F3] border border-[#232621] rounded-xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div className="text-center sm:text-left">
+            <h2 className="font-heading font-bold text-base text-[#FAF8F3]">Have a specific inquiry?</h2>
+            <p className="text-xs text-[#D8D5CB] mt-1 max-w-md leading-relaxed">
+              Our engineering team is available for API questions, mock interview configuration, or feedback.
             </p>
           </div>
 
           <a
             href="mailto:support@talentprep.ai"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-950 hover:bg-slate-100 font-bold text-xs rounded-xl transition-all shadow-sm flex-shrink-0"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#CDF22B] text-[#080908] hover:bg-[#BCE01E] font-bold text-xs rounded-lg transition-colors flex-shrink-0 cursor-pointer shadow-2xs"
           >
-            <MessageSquare className="w-4 h-4" />
-            <span>Contact Support</span>
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Contact support</span>
           </a>
         </div>
       </main>

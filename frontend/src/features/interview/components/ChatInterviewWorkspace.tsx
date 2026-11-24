@@ -169,24 +169,24 @@ export default function ChatInterviewWorkspace({
   return (
     <div className="w-full space-y-4">
       {/* ── Question Context Header Bar ── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-card border border-border rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded">
+          <span className="text-xs font-semibold text-foreground bg-muted border border-border/80 px-2.5 py-1 rounded-md">
             {formatRoundTitle(question.roundType)}
           </span>
 
-          <span className="text-xs font-mono text-slate-500 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 px-2 py-0.5 rounded">
+          <span className="text-xs font-mono tabular-nums text-muted-foreground bg-secondary-bg border border-border/70 px-2 py-0.5 rounded-md">
             Question {question.questionOrder} of {question.targetQuestionCount}
           </span>
 
           {question.topic && (
-            <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+            <span className="text-xs text-foreground font-medium">
               {question.topic}
             </span>
           )}
 
           {question.isFollowUp && (
-            <span className="text-[11px] font-mono text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/80 px-2 py-0.5 rounded">
+            <span className="text-[11px] font-mono text-[#080908] bg-[#CDF22B]/20 border border-[#CDF22B]/40 px-2 py-0.5 rounded-md">
               Follow-up {question.depth ? `(depth ${question.depth})` : ''}
             </span>
           )}
@@ -194,9 +194,9 @@ export default function ChatInterviewWorkspace({
 
         <div className="flex items-center gap-3">
           {wsConnected && (
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" title="Live sync connected" />
+            <span className="w-2 h-2 rounded-full bg-[#CDF22B] border border-[#080908]/20" title="Live sync connected" />
           )}
-          <div className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono tabular-nums">
             <Clock className="w-3.5 h-3.5" />
             <span>Turn: {formatElapsed(elapsedSeconds)}</span>
           </div>
@@ -204,28 +204,28 @@ export default function ChatInterviewWorkspace({
           <button
             type="button"
             onClick={onSwitchToVoice}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:bg-secondary-bg transition-colors cursor-pointer"
             title="Switch from Chat to Voice interaction mode"
           >
-            <Mic className="w-3.5 h-3.5 text-slate-400" />
+            <Mic className="w-3.5 h-3.5 text-muted-foreground" />
             <span>Switch to Voice</span>
           </button>
         </div>
       </div>
 
       {/* ── Active Question Presentation Surface ── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 sm:p-7 space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-          <span className="text-xs font-mono text-slate-400">
-            INTERVIEWER PROMPT
+      <div className="bg-card border border-border rounded-xl p-6 sm:p-7 space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-border/70">
+          <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+            Interviewer Prompt
           </span>
-          <span className="text-xs font-mono text-slate-400">
+          <span className="text-xs font-mono tabular-nums text-muted-foreground">
             Turn {String(question.questionOrder).padStart(2, '0')}
           </span>
         </div>
 
         <div className="space-y-3">
-          <p className="text-base sm:text-lg text-slate-900 dark:text-slate-100 leading-relaxed font-normal whitespace-pre-wrap">
+          <p className="text-base sm:text-lg text-foreground leading-relaxed font-normal whitespace-pre-wrap">
             {question.questionText}
           </p>
         </div>
@@ -233,39 +233,39 @@ export default function ChatInterviewWorkspace({
 
       {/* ── Prior Turns Accordion (if any) ── */}
       {priorCompletedTurns.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
           <button
             type="button"
             onClick={() => setShowHistory((prev) => !prev)}
-            className="w-full px-5 py-3 flex items-center justify-between text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
+            className="w-full px-5 py-3 flex items-center justify-between text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary-bg transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2">
-              <History className="w-3.5 h-3.5 text-slate-400" />
+              <History className="w-3.5 h-3.5 text-muted-foreground" />
               <span>Previous questions ({priorCompletedTurns.length})</span>
             </div>
             {showHistory ? (
-              <ChevronUp className="w-4 h-4 text-slate-400" />
+              <ChevronUp className="w-4 h-4 text-muted-foreground" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-slate-400" />
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
             )}
           </button>
 
           {showHistory && (
-            <div className="px-5 pb-4 pt-1 space-y-4 border-t border-slate-100 dark:border-slate-800/80">
+            <div className="px-5 pb-4 pt-1 space-y-4 border-t border-border">
               {priorCompletedTurns.map((turn, i) => (
-                <div key={turn.questionId || i} className="space-y-2 text-xs pt-2 first:pt-0">
-                  <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
+                <div key={turn.questionId || i} className="space-y-2 text-xs pt-3 first:pt-1">
+                  <div className="flex items-center gap-2 text-muted-foreground font-mono text-[11px]">
                     <span>Q{turn.questionOrder || i + 1}</span>
                     <span>•</span>
                     <span>{turn.topic || 'General'}</span>
                   </div>
-                  <p className="text-slate-800 dark:text-slate-200 font-medium">
+                  <p className="text-foreground font-medium">
                     {turn.questionText}
                   </p>
                   {turn.answerText && (
-                    <div className="flex items-start gap-2 pl-3 border-l-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400">
-                      <CornerDownRight className="w-3 h-3 text-slate-400 flex-shrink-0 mt-0.5" />
-                      <p className="whitespace-pre-wrap">{turn.answerText}</p>
+                    <div className="flex items-start gap-2 pl-3 border-l-2 border-[#080908] text-muted-foreground">
+                      <CornerDownRight className="w-3 h-3 text-muted-foreground flex-shrink-0 mt-0.5" />
+                      <p className="whitespace-pre-wrap text-foreground/90">{turn.answerText}</p>
                     </div>
                   )}
                 </div>
@@ -277,13 +277,13 @@ export default function ChatInterviewWorkspace({
 
       {/* ── Thinking / Evaluation Indicator ── */}
       {isThinking && (
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-3">
-          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+        <div className="p-4 rounded-xl bg-card border border-border flex items-center gap-3">
+          <div className="w-4 h-4 border-2 border-[#080908] border-t-[#CDF22B] rounded-full animate-spin flex-shrink-0" />
           <div className="text-xs space-y-0.5">
-            <p className="font-semibold text-slate-900 dark:text-slate-100">
-              Evaluating response & preparing next question
+            <p className="font-semibold text-foreground">
+              Evaluating response and preparing next question
             </p>
-            <p className="text-slate-500 dark:text-slate-400">
+            <p className="text-muted-foreground">
               Multi-dimensional analysis running via async worker.
             </p>
           </div>
@@ -292,26 +292,26 @@ export default function ChatInterviewWorkspace({
 
       {/* ── Error Banner ── */}
       {errorMsg && (
-        <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 flex items-start gap-2.5 text-rose-700 dark:text-rose-300 text-xs">
+        <div className="p-3.5 rounded-xl bg-card border border-destructive/40 flex items-start gap-2.5 text-destructive text-xs">
           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {(isSubmitting || isThinking) && submittedAnswers[question.questionId] && (
-        <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 font-mono">
-          <span className="text-slate-400 select-none">Submitted: </span>
+        <div className="p-3 rounded-lg bg-card border border-border text-xs text-muted-foreground font-mono">
+          <span className="text-muted-foreground/70 select-none">Submitted: </span>
           {submittedAnswers[question.questionId].slice(0, 140)}...
         </div>
       )}
 
       {/* ── Answer Composer ── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-          <span className="font-medium text-slate-700 dark:text-slate-300">
+      <div className="bg-card border border-border rounded-xl p-4 sm:p-5 space-y-3">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground">
             Candidate Response
           </span>
-          <span className="font-mono text-[11px]">
+          <span className="font-mono tabular-nums text-[11px]">
             {wordCount} words • {charCount} chars
           </span>
         </div>
@@ -324,12 +324,12 @@ export default function ChatInterviewWorkspace({
           disabled={isSubmitting || isThinking}
           rows={6}
           placeholder="Structure your answer with trade-offs, architecture decisions, and code rationale..."
-          className="w-full p-3.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-600 leading-relaxed resize-y disabled:opacity-50"
+          className="w-full p-3.5 rounded-lg border border-border bg-secondary-bg/60 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#080908] focus:border-[#080908] leading-relaxed resize-y disabled:opacity-50"
         />
 
         <div className="flex items-center justify-between pt-1">
-          <span className="text-[11px] text-slate-400 hidden sm:inline font-mono">
-            Press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">Enter</kbd> to submit
+          <span className="text-[11px] text-muted-foreground hidden sm:inline font-mono">
+            Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-foreground">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-foreground">Enter</kbd> to submit
           </span>
 
           <div className="flex items-center gap-2 ml-auto">
@@ -338,7 +338,7 @@ export default function ChatInterviewWorkspace({
                 type="button"
                 onClick={() => setInputText('')}
                 disabled={isSubmitting || isThinking}
-                className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 Clear
               </button>
@@ -348,11 +348,11 @@ export default function ChatInterviewWorkspace({
               type="button"
               onClick={handleSubmit}
               disabled={!inputText.trim() || isSubmitting || isThinking}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-medium rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#CDF22B] hover:bg-[#b8da25] active:bg-[#a6c521] disabled:opacity-50 disabled:cursor-not-allowed text-[#080908] text-xs font-bold rounded-lg transition-colors cursor-pointer"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-3.5 h-3.5 border-2 border-[#080908] border-t-transparent rounded-full animate-spin" />
                   <span>Submitting...</span>
                 </>
               ) : (

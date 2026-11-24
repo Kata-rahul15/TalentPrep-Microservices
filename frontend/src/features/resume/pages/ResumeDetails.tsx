@@ -59,10 +59,10 @@ export default function ResumeDetails() {
   if (resumeFile?.status === 'processing') {
     return (
       <div className="max-w-md mx-auto py-10 text-center space-y-3">
-        <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto animate-pulse">
+        <div className="w-12 h-12 rounded-xl bg-[#080908]/5 text-[#080908] flex items-center justify-center mx-auto animate-pulse">
           <RefreshCw className="w-6 h-6 animate-spin" />
         </div>
-        <h2 className="font-heading font-bold text-base sm:text-lg text-foreground">Processing Resume Content...</h2>
+        <h2 className="font-heading font-bold text-base sm:text-lg text-foreground">Processing resume content...</h2>
         <p className="text-xs text-muted-foreground">
           We are extracting and structuring content for your resume. Details will appear once analysis completes.
         </p>
@@ -97,7 +97,7 @@ export default function ResumeDetails() {
         transition={{ delay: 0.05 }}
         className="bg-card border border-border rounded-xl p-4 sm:p-4.5 flex flex-col sm:flex-row items-start gap-3.5 shadow-2xs"
       >
-        <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+        <div className="w-11 h-11 rounded-xl bg-[#080908]/5 text-[#080908] flex items-center justify-center flex-shrink-0">
           <FileText className="w-5.5 h-5.5" />
         </div>
         <div className="flex-1 min-w-0">
@@ -106,25 +106,25 @@ export default function ResumeDetails() {
               {filename}
             </h2>
             {resume.status && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.2 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#080908] text-[#CDF22B]">
                 <CheckCircle2 className="w-3 h-3" />
                 {resume.status}
               </span>
             )}
           </div>
 
-          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <HardDrive className="w-3 h-3 text-primary/70" />
-              {formatFileSize(resume.fileSize)}
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] font-mono text-muted-foreground">
+            <span className="flex items-center gap-1 font-sans">
+              <HardDrive className="w-3 h-3 text-[#080908]/70" />
+              <span className="font-mono">{formatFileSize(resume.fileSize)}</span>
             </span>
-            <span className="flex items-center gap-1">
-              <FileType className="w-3 h-3 text-primary/70" />
-              {resume.mimeType || 'application/pdf'}
+            <span className="flex items-center gap-1 font-sans">
+              <FileType className="w-3 h-3 text-[#080908]/70" />
+              <span>{resume.mimeType || 'application/pdf'}</span>
             </span>
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3 text-primary/70" />
-              Uploaded {formatDate(resume.createdAt)}
+            <span className="flex items-center gap-1 font-sans">
+              <Calendar className="w-3 h-3 text-[#080908]/70" />
+              <span>Uploaded {formatDate(resume.createdAt)}</span>
             </span>
           </div>
         </div>

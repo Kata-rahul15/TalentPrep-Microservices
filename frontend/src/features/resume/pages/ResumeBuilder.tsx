@@ -396,11 +396,11 @@ export default function ResumeBuilder() {
       />
 
       {/* ── Three-Panel Desktop Workspace Layout (Balanced Proportions: 18% Sections | 36% Editor | 46% Preview) ── */}
-      <div className="flex-1 flex flex-col xl:flex-row items-stretch border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 overflow-hidden shadow-2xs h-[calc(100dvh-135px)] min-h-[660px]">
+      <div className="flex-1 flex flex-col xl:flex-row items-stretch border border-border rounded-2xl bg-card overflow-hidden shadow-2xs h-[calc(100dvh-135px)] min-h-[660px]">
         {/* Panel 1: Left Section Navigation (~18% on desktop, subtle 1px right border, comfortable items) */}
         <div
           className={cn(
-            'w-full xl:w-[18%] xl:min-w-[210px] xl:max-w-[240px] flex-shrink-0 border-b xl:border-b-0 xl:border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 space-y-3 overflow-y-auto',
+            'w-full xl:w-[18%] xl:min-w-[210px] xl:max-w-[240px] flex-shrink-0 border-b xl:border-b-0 xl:border-r border-border bg-card p-3 space-y-3 overflow-y-auto',
             mobileViewMode === 'preview' ? 'hidden xl:block' : 'block'
           )}
         >
@@ -418,7 +418,7 @@ export default function ResumeBuilder() {
         {/* Panel 2: Center Section Editor (~36% on desktop, subtle 1px right border, comfortable forms) */}
         <div
           className={cn(
-            'w-full xl:w-[36%] flex-1 flex flex-col border-b xl:border-b-0 xl:border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 overflow-y-auto min-w-0',
+            'w-full xl:w-[36%] flex-1 flex flex-col border-b xl:border-b-0 xl:border-r border-border bg-card p-4 sm:p-5 overflow-y-auto min-w-0',
             mobileViewMode === 'preview' ? 'hidden xl:flex' : 'flex'
           )}
         >
@@ -434,7 +434,7 @@ export default function ResumeBuilder() {
         {/* Panel 3: Right Live A4 Preview (~46% on desktop - The Visual Focus of the Builder!) */}
         <div
           className={cn(
-            'w-full xl:w-[46%] xl:min-w-[480px] flex flex-col bg-slate-100/90 dark:bg-slate-950 overflow-hidden',
+            'w-full xl:w-[46%] xl:min-w-[480px] flex flex-col bg-secondary-bg/30 overflow-hidden',
             mobileViewMode === 'edit' ? 'hidden xl:flex' : 'flex'
           )}
         >

@@ -833,21 +833,50 @@ export const resumeApi = {
     question: string,
     conversationId?: string
   ): Promise<ChatMessage & { conversationId?: string }> => {
-    if (!resumeId?.trim()) throw new Error('A resume is required for the AI agent.')
+    if (!resumeId?.trim()) throw new Error('A resume is required for the Career Agent.')
     if (!question?.trim()) throw new Error('Chat message cannot be empty.')
+
+    const payload: { message: string; conversationId?: string } = {
+      message: question.trim(),
+    }
+    if (
+      conversationId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(conversationId)
+    ) {
+      payload.conversationId = conversationId
+    }
 
     const response = await api.post(
       `/api/resumes/${resumeId}/agent/chat`,
-      { message: question.trim(), conversationId }
+      payload
     )
+
+    const reply =
+      response.data?.reply ||
+      response.data?.answer ||
+      response.data?.message ||
+      response.data?.content ||
+      (typeof response.data === 'string' ? response.data : 'I could not produce a response.')
 
     return {
       id: `assistant-${Date.now()}`,
       role: 'assistant',
-      content: response.data?.reply || 'I could not produce a response.',
+      content: reply,
       timestamp: new Date().toISOString(),
-      toolTrace: response.data?.toolTrace || [],
-      conversationId: response.data?.conversationId,
+      toolTrace: Array.isArray(response.data?.toolTrace) ? response.data.toolTrace : [],
+      conversationId: response.data?.conversationId || conversationId,
+    }
+  },
+
+  clearAgentConversation: async (
+    resumeId: string,
+    conversationId: string
+  ): Promise<void> => {
+    if (!resumeId?.trim() || !conversationId?.trim()) return
+    try {
+      await api.delete(`/api/resumes/${resumeId}/agent/conversations/${conversationId}`)
+    } catch (err) {
+      console.warn('[Resume] Failed to clear agent conversation on server:', err)
     }
   },
   // ═══════════════════════════════════════════════════════════

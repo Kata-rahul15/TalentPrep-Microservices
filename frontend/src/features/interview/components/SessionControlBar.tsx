@@ -42,7 +42,7 @@ export default function SessionControlBar({
     <>
       <div
         className={cn(
-          'flex items-center gap-1.5 p-1 rounded-lg bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-xs',
+          'flex items-center gap-1.5 p-1 rounded-lg bg-secondary-bg/60 border border-border text-xs',
           className
         )}
       >
@@ -52,7 +52,7 @@ export default function SessionControlBar({
             type="button"
             onClick={onResume}
             disabled={isDisabled}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#080908] hover:bg-[#1f201e] disabled:opacity-50 disabled:cursor-not-allowed text-[#CDF22B] font-bold transition-colors cursor-pointer"
           >
             <Play className="w-3 h-3 fill-current" />
             <span>Resume</span>
@@ -62,7 +62,7 @@ export default function SessionControlBar({
             type="button"
             onClick={onPause}
             disabled={isDisabled}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-card hover:bg-secondary-bg border border-border text-foreground disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
           >
             <Pause className="w-3 h-3" />
             <span>Pause</span>
@@ -74,9 +74,9 @@ export default function SessionControlBar({
           type="button"
           onClick={() => setShowSkipModal(true)}
           disabled={isDisabled || isSkipping || isPaused}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-card hover:bg-secondary-bg border border-border text-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
-          <FastForward className="w-3 h-3 text-slate-400" />
+          <FastForward className="w-3 h-3 text-muted-foreground" />
           <span>Skip</span>
         </button>
 
@@ -85,7 +85,7 @@ export default function SessionControlBar({
           type="button"
           onClick={() => setShowEndModal(true)}
           disabled={isDisabled || isEnding}
-          className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-red-600 hover:bg-red-500/10 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-colors cursor-pointer"
         >
           <LogOut className="w-3 h-3" />
           <span>End</span>
@@ -94,36 +94,36 @@ export default function SessionControlBar({
 
       {/* ── Skip Confirmation Modal ── */}
       {showSkipModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl w-full max-w-sm p-5 space-y-4 shadow-xl">
+        <div className="fixed inset-0 z-50 bg-[#080908]/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl w-full max-w-sm p-5 space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <h3 className="font-heading font-bold text-sm text-foreground flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-amber-500" />
                 <span>Skip current question</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setShowSkipModal(false)}
-                className="text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Skipping will record zero score for this question and move directly to the next question in the round.
             </p>
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowSkipModal(false)}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 cursor-pointer"
+                className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:bg-secondary-bg cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmSkip}
-                className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium cursor-pointer"
+                className="px-3 py-1.5 rounded-lg bg-[#080908] hover:bg-[#1f201e] text-[#CDF22B] text-xs font-bold cursor-pointer"
               >
                 Confirm skip
               </button>
@@ -134,36 +134,36 @@ export default function SessionControlBar({
 
       {/* ── End Confirmation Modal ── */}
       {showEndModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl w-full max-w-sm p-5 space-y-4 shadow-xl">
+        <div className="fixed inset-0 z-50 bg-[#080908]/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl w-full max-w-sm p-5 space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-500" />
+              <h3 className="font-heading font-bold text-sm text-foreground flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-red-500" />
                 <span>End interview early</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setShowEndModal(false)}
-                className="text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               The session will conclude immediately. Your performance report will be generated from answers submitted so far.
             </p>
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowEndModal(false)}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 cursor-pointer"
+                className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:bg-secondary-bg cursor-pointer"
               >
                 Continue interview
               </button>
               <button
                 type="button"
                 onClick={handleConfirmEnd}
-                className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium cursor-pointer"
+                className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer"
               >
                 End session
               </button>

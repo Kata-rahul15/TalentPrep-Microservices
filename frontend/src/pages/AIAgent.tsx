@@ -13,6 +13,9 @@ import {
   FileEdit,
   Lightbulb,
   XCircle,
+  Copy,
+  Check,
+  FileText,
 } from 'lucide-react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useResumeContext } from '@/features/resume/context/ResumeContext'
@@ -23,21 +26,75 @@ import { cn } from '@/lib/utils'
 
 type AgentTab = 'chat' | 'find_jobs' | 'match_jd'
 
+const SUGGESTED_PROMPTS = [
+  'Find Java Backend Developer jobs for me.',
+  'Review my career profile and suggest improvements.',
+  'Help me prepare for a technical interview.',
+  'What skills should I learn to become a better Java developer?',
+  'Help me improve my resume for a particular job.',
+]
+
+function CodeBlock({ code, language }: { code: string; language?: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="my-2.5 rounded-xl border border-border overflow-hidden bg-[#080908] text-[#FAF8F3] shadow-xs">
+      <div className="flex items-center justify-between px-3.5 py-1.5 bg-[#141613] border-b border-[#232621] text-[11px] font-mono text-muted-foreground">
+        <span>{language || 'code'}</span>
+        <button
+          onClick={handleCopy}
+          type="button"
+          className="inline-flex items-center gap-1 hover:text-[#FAF8F3] transition-colors cursor-pointer px-1.5 py-0.5 rounded"
+          title="Copy code"
+        >
+          {copied ? (
+            <>
+              <Check className="w-3.5 h-3.5 text-[#CDF22B]" />
+              <span className="text-[#CDF22B]">Copied</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5" />
+              <span>Copy</span>
+            </>
+          )}
+        </button>
+      </div>
+      <pre className="p-3.5 overflow-x-auto text-xs font-mono leading-relaxed scrollbar-thin">
+        <code>{code}</code>
+      </pre>
+    </div>
+  )
+}
+
 function renderFormattedInline(text: string) {
-  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g)
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g)
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <strong key={i} className="font-semibold text-slate-900 dark:text-white">
+        <strong key={i} className="font-semibold text-foreground">
           {part.slice(2, -2)}
         </strong>
+      )
+    }
+    if (part.startsWith('*') && part.endsWith('*')) {
+      return (
+        <em key={i} className="italic text-foreground/95">
+          {part.slice(1, -1)}
+        </em>
       )
     }
     if (part.startsWith('`') && part.endsWith('`')) {
       return (
         <code
           key={i}
-          className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-mono text-[12px] border border-slate-200/60 dark:border-slate-700/60"
+          className="px-1.5 py-0.5 rounded bg-secondary-bg text-foreground font-mono text-[12px] border border-border"
         >
           {part.slice(1, -1)}
         </code>
@@ -47,7 +104,7 @@ function renderFormattedInline(text: string) {
   })
 }
 
-function renderMarkdown(text: string) {
+function TextMarkdown({ text }: { text: string }) {
   if (!text) return null
   const lines = text.split('\n')
 
@@ -62,7 +119,7 @@ function renderMarkdown(text: string) {
         // Heading 3
         if (trimmed.startsWith('### ')) {
           return (
-            <h4 key={idx} className="font-heading font-bold text-sm text-slate-900 dark:text-white mt-2 mb-0.5">
+            <h4 key={idx} className="font-bold text-sm text-foreground mt-2 mb-0.5">
               {renderFormattedInline(trimmed.slice(4))}
             </h4>
           )
@@ -70,17 +127,25 @@ function renderMarkdown(text: string) {
         // Heading 2
         if (trimmed.startsWith('## ')) {
           return (
-            <h3 key={idx} className="font-heading font-extrabold text-base text-slate-900 dark:text-white mt-2.5 mb-1">
+            <h3 key={idx} className="font-bold text-base text-foreground mt-2.5 mb-1">
               {renderFormattedInline(trimmed.slice(3))}
             </h3>
+          )
+        }
+        // Heading 1
+        if (trimmed.startsWith('# ')) {
+          return (
+            <h2 key={idx} className="font-extrabold text-lg text-foreground mt-3 mb-1">
+              {renderFormattedInline(trimmed.slice(2))}
+            </h2>
           )
         }
 
         // Bullet point
         if (trimmed.startsWith('• ') || trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
           return (
-            <div key={idx} className="flex items-start gap-2 ml-1 text-slate-700 dark:text-slate-200">
-              <span className="text-blue-500 font-bold mt-1 text-xs">•</span>
+            <div key={idx} className="flex items-start gap-2 ml-1 text-foreground/90">
+              <span className="text-[#080908] dark:text-[#CDF22B] font-bold mt-1 text-xs">•</span>
               <span className="flex-1 leading-relaxed">{renderFormattedInline(trimmed.slice(2))}</span>
             </div>
           )
@@ -90,8 +155,8 @@ function renderMarkdown(text: string) {
         const numberMatch = trimmed.match(/^(\d+)\.\s+(.*)$/)
         if (numberMatch) {
           return (
-            <div key={idx} className="flex items-start gap-2 ml-1 text-slate-700 dark:text-slate-200">
-              <span className="font-semibold text-blue-600 dark:text-blue-400 text-xs mt-0.5">
+            <div key={idx} className="flex items-start gap-2 ml-1 text-foreground/90">
+              <span className="font-mono font-bold text-foreground text-xs mt-0.5">
                 {numberMatch[1]}.
               </span>
               <span className="flex-1 leading-relaxed">{renderFormattedInline(numberMatch[2])}</span>
@@ -100,7 +165,7 @@ function renderMarkdown(text: string) {
         }
 
         return (
-          <p key={idx} className="text-slate-700 dark:text-slate-200 leading-relaxed">
+          <p key={idx} className="text-foreground/90 leading-relaxed">
             {renderFormattedInline(line)}
           </p>
         )
@@ -109,227 +174,59 @@ function renderMarkdown(text: string) {
   )
 }
 
-// ─────────────────────────────────────────────────────────────
-// 1. CONVERSATIONAL RAG CHAT COMPONENT (Clean Continuous Workspace)
-// ─────────────────────────────────────────────────────────────
-// function AgentChatPanel() {
-//   const { messages, isLoading, error, sendMessage, clearHistory } = useResumeChat()
-//   const [input, setInput] = useState('')
-//   const messagesEndRef = useRef<HTMLDivElement>(null)
-//   const inputRef = useRef<HTMLTextAreaElement>(null)
+function FormattedMessage({ content }: { content: string }) {
+  if (!content) return null
 
-//   useEffect(() => {
-//     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-//   }, [messages, isLoading])
+  // Split content by markdown code blocks ```lang\n...```
+  const codeBlockRegex = /```([a-zA-Z0-9_-]*)\n?([\s\S]*?)```/g
+  const segments: React.ReactNode[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
 
-//   const handleSend = () => {
-//     const trimmed = input.trim()
-//     if (!trimmed || isLoading) return
-//     sendMessage(trimmed)
-//     setInput('')
-//     requestAnimationFrame(() => {
-//       inputRef.current?.focus()
-//     })
-//   }
+  while ((match = codeBlockRegex.exec(content)) !== null) {
+    if (match.index > lastIndex) {
+      const textBefore = content.substring(lastIndex, match.index)
+      segments.push(
+        <TextMarkdown key={`text-${lastIndex}`} text={textBefore} />
+      )
+    }
+    const lang = match[1] || ''
+    const code = match[2] || ''
+    segments.push(
+      <CodeBlock key={`code-${match.index}`} language={lang} code={code.trimEnd()} />
+    )
+    lastIndex = match.index + match[0].length
+  }
 
-//   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-//     if (e.key === 'Enter' && !e.shiftKey) {
-//       e.preventDefault()
-//       handleSend()
-//     }
-//   }
+  if (lastIndex < content.length) {
+    segments.push(
+      <TextMarkdown key={`text-${lastIndex}`} text={content.substring(lastIndex)} />
+    )
+  }
 
-//   const starterPrompts = [
-//     'Analyze my resume & top skills',
-//     'Interview questions for my background',
-//     'Improve my ATS score',
-//     'Add architecture & leadership keywords',
-//   ]
+  return <div className="space-y-2">{segments}</div>
+}
 
-//   return (
-//     <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-//       {/* ── Status & Clear Chat Sub-row ── */}
-//       <div className="pt-3 pb-3 flex items-center justify-between flex-shrink-0 text-xs border-b border-slate-200/70 dark:border-slate-800/70">
-//         <div className="flex items-center gap-2.5">
-//           <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-//           <span className="font-bold text-slate-900 dark:text-slate-100 text-[12.5px]">
-//             TalentPrep Grounded AI Assistant
-//           </span>
-//           <span className="text-[12px] text-slate-400 font-normal">
-//             • Powered by Resume RAG + PGVector
-//           </span>
-//         </div>
-
-//         <button
-//           onClick={clearHistory}
-//           className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer py-0.5 px-2 rounded hover:bg-rose-50 dark:hover:bg-rose-950/30"
-//           title="Clear conversation history"
-//         >
-//           <Trash2 className="w-3.5 h-3.5" />
-//           <span>Clear Chat</span>
-//         </button>
-//       </div>
-
-//       {/* ── Continuous Conversation Scroll Surface ── */}
-//       <div className="flex-1 overflow-y-auto py-5 space-y-5 scroll-smooth pr-1">
-//         <AnimatePresence initial={false}>
-//           {messages.map((msg) => (
-//             <motion.div
-//               key={msg.id}
-//               initial={{ opacity: 0, y: 6 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               transition={{ duration: 0.16 }}
-//               className="group"
-//             >
-//               {msg.role === 'user' ? (
-//                 /* USER MESSAGE: Compact right-aligned tinted bubble */
-//                 <div className="flex justify-end pl-10">
-//                   <div className="bg-blue-600 text-white rounded-2xl rounded-tr-xs px-4 py-2.5 text-[14px] leading-relaxed max-w-[85%] sm:max-w-[75%] shadow-2xs">
-//                     <p className="whitespace-pre-wrap">{msg.content}</p>
-//                     <div className="text-[10px] text-blue-200 mt-1 text-right">
-//                       {new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(msg.timestamp))}
-//                     </div>
-//                   </div>
-//                 </div>
-//               ) : (
-//                 /* AI MESSAGE: Clean natural prose with circular avatar */
-//                 <div className="flex items-start gap-3.5 pr-4">
-//                   <div className="w-7 h-7 rounded-full bg-blue-100/90 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-//                     <Bot className="w-4 h-4" />
-//                   </div>
-
-//                   <div className="flex-1 min-w-0 space-y-1.5">
-//                     <div className="text-[14.5px] leading-[1.65] text-slate-800 dark:text-slate-100 font-normal">
-//                       {renderMarkdown(msg.content)}
-//                     </div>
-
-//                     {msg.toolTrace && msg.toolTrace.length > 0 && (
-//                       <div className="flex items-center gap-1.5 pt-1">
-//                         <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-//                           Tool Activity:
-//                         </span>
-//                         <div className="flex flex-wrap gap-1">
-//                           {msg.toolTrace.map((tool) => (
-//                             <span
-//                               key={tool}
-//                               className="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/50"
-//                             >
-//                               {tool}
-//                             </span>
-//                           ))}
-//                         </div>
-//                       </div>
-//                     )}
-
-//                     <div className="text-[11px] text-slate-400 mt-1.5">
-//                       {new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(msg.timestamp))}
-//                     </div>
-//                   </div>
-//                 </div>
-//               )}
-//             </motion.div>
-//           ))}
-
-//           {/* Reasoning / Thinking state */}
-//           {isLoading && (
-//             <motion.div
-//               initial={{ opacity: 0, y: 4 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               className="flex items-start gap-3.5 pr-4"
-//             >
-//               <div className="w-7 h-7 rounded-full bg-blue-100/90 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-//                 <Sparkles className="w-4 h-4 animate-pulse" />
-//               </div>
-//               <div className="space-y-1.5 py-0.5">
-//                 <div className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 font-semibold">
-//                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-//                   <span>TalentPrep Copilot is reasoning...</span>
-//                 </div>
-//                 <div className="space-y-1 max-w-xs pt-0.5">
-//                   <div className="h-2 w-52 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
-//                   <div className="h-2 w-36 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
-//                 </div>
-//               </div>
-//             </motion.div>
-//           )}
-//         </AnimatePresence>
-
-//         {error && (
-//           <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-lg text-xs text-rose-600 flex items-center gap-2">
-//             <XCircle className="w-3.5 h-3.5 flex-shrink-0" />
-//             <span>{error}</span>
-//           </div>
-//         )}
-
-//         <div ref={messagesEndRef} />
-//       </div>
-
-//       {/* ── Bottom Fixed Input & Suggested Questions (Anchored near bottom) ── */}
-//       <div className="pt-2 pb-5 flex-shrink-0 space-y-2.5 bg-[#FAFBFC] dark:bg-slate-950">
-//         {/* Suggested Questions Chips */}
-//         {messages.length <= 2 && (
-//           <div className="space-y-1.5">
-//             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-0.5">
-//               Suggested Questions
-//             </p>
-//             <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-none flex-wrap">
-//               {starterPrompts.map((prompt, idx) => (
-//                 <button
-//                   key={idx}
-//                   onClick={() => sendMessage(prompt)}
-//                   disabled={isLoading}
-//                   className="h-8 text-[12px] px-3.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/40 transition-all whitespace-nowrap cursor-pointer flex-shrink-0 shadow-2xs"
-//                 >
-//                   {prompt}
-//                 </button>
-//               ))}
-//             </div>
-//           </div>
-//         )}
-
-//         {/* Modern Clean AI Chat Composer */}
-//         <div className="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3 shadow-2xs">
-//           <textarea
-//             ref={inputRef}
-//             value={input}
-//             onChange={(e) => setInput(e.target.value)}
-//             onKeyDown={handleKeyDown}
-//             placeholder="Ask me anything about your career, resume strengths, target roles, interview prep..."
-//             rows={1}
-//             disabled={isLoading}
-//             className="flex-1 resize-none bg-transparent border-0 px-1 py-1 text-[13.5px] sm:text-[14px] text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none max-h-28 leading-normal"
-//           />
-//           <button
-//             onClick={handleSend}
-//             disabled={!input.trim() || isLoading}
-//             className="w-9 h-9 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all cursor-pointer shadow-xs flex-shrink-0"
-//             aria-label="Send message"
-//           >
-//             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
 // ─────────────────────────────────────────────────────────────
 // 1. CONVERSATIONAL RAG CHAT COMPONENT
-// Clean continuous workspace
 // ─────────────────────────────────────────────────────────────
 
 function AgentChatPanel() {
+  const navigate = useNavigate()
+  const { selectedResumeId } = useResumeContext()
+  const { data: resume, isLoading: isResumeLoading } = useResume(selectedResumeId)
+
   const {
     messages,
     isLoading,
     error,
     sendMessage,
     clearHistory,
-  } = useResumeChat()
+  } = useResumeChat([])
 
   const [input, setInput] = useState('')
-
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
@@ -339,335 +236,282 @@ function AgentChatPanel() {
 
   const handleSend = () => {
     const trimmed = input.trim()
-
     if (!trimmed || isLoading) return
 
     sendMessage(trimmed)
     setInput('')
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
 
     requestAnimationFrame(() => {
-      inputRef.current?.focus()
+      textareaRef.current?.focus()
     })
   }
 
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement>
-  ) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
+      if (e.nativeEvent.isComposing) return
       e.preventDefault()
       handleSend()
     }
   }
 
-  const starterPrompts = [
-    'Analyze my resume & top skills',
-    'Interview questions for my background',
-    'Improve my ATS score',
-    'Add architecture & leadership keywords',
-  ]
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+    e.target.style.height = 'auto'
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 140)}px`
+  }
+
+  const handleSuggestion = (prompt: string) => {
+    if (isLoading) return
+    sendMessage(prompt)
+  }
 
   return (
     <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-
-      {/* ─────────────────────────────────────────────
-          STATUS BAR
-      ───────────────────────────────────────────── */}
-      <div className="pt-3 pb-3 flex items-center justify-between flex-shrink-0 text-xs border-b border-slate-200/70 dark:border-slate-800/70">
-
-        <div className="flex items-center gap-2.5">
-
-          <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-
-          <span className="font-bold text-slate-900 dark:text-slate-100 text-[12.5px]">
-            TalentPrep Grounded AI Assistant
+      {/* ── Status Bar ── */}
+      <div className="py-2.5 flex items-center justify-between shrink-0 text-xs border-b border-border">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+          <span className="font-semibold text-foreground text-xs sm:text-[13px]">
+            Career Agent Session
           </span>
-
-          <span className="text-[12px] text-slate-400 font-normal">
-            • Powered by Resume RAG + PGVector
+          <span className="text-[11px] text-muted-foreground hidden sm:inline">
+            • Grounded Career Guidance & Job Intelligence
           </span>
-
         </div>
 
-        <button
-          onClick={clearHistory}
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer py-0.5 px-2 rounded hover:bg-rose-50 dark:hover:bg-rose-950/30"
-          title="Clear conversation history"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-          <span>Clear Chat</span>
-        </button>
-
+        {messages.length > 0 && (
+          <button
+            type="button"
+            onClick={clearHistory}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-destructive transition-colors cursor-pointer py-1 px-2 rounded-md hover:bg-secondary-bg"
+            title="Clear conversation history"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Clear Chat</span>
+          </button>
+        )}
       </div>
 
+      {/* ── Missing Resume Guidance Banner ── */}
+      {!resume && !isResumeLoading && (
+        <div className="mt-3 p-3 bg-secondary-bg border border-border rounded-xl flex items-center justify-between gap-3 text-xs shrink-0">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <FileText className="w-4 h-4 text-foreground shrink-0" />
+            <span>Upload or select your resume to unlock personalized career advice grounded in your qualifications.</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate('/resume/upload')}
+            className="px-3 py-1 bg-[#080908] dark:bg-[#FAF8F3] text-[#FAF8F3] dark:text-[#080908] font-bold text-xs rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap cursor-pointer shrink-0"
+          >
+            Upload Resume
+          </button>
+        </div>
+      )}
 
-      {/* ─────────────────────────────────────────────
-          CONVERSATION AREA
-      ───────────────────────────────────────────── */}
+      {/* ── Continuous Conversation Scroll Surface ── */}
       <div className="flex-1 overflow-y-auto py-5 space-y-5 scroll-smooth pr-1">
+        {messages.length === 0 ? (
+          /* Initial Welcome Screen */
+          <div className="max-w-2xl mx-auto my-auto py-8 sm:py-12 px-4 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-[#080908] dark:bg-[#CDF22B] text-[#CDF22B] dark:text-[#080908] flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <Bot className="w-7 h-7" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+              Career Agent
+            </h2>
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-lg mx-auto mb-8">
+              Hi! I'm your Career Agent. I can help you navigate your career, improve your job search, prepare for interviews, and identify opportunities.
+            </p>
 
-        <AnimatePresence initial={false}>
-
-          {messages.map((msg) => (
-
-            <motion.div
-              key={msg.id}
-              initial={{
-                opacity: 0,
-                y: 6,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.16,
-              }}
-              className="group"
-            >
-
-              {msg.role === 'user' ? (
-
-                /* USER MESSAGE */
-                <div className="flex justify-end pl-10">
-
-                  <div className="bg-blue-600 text-white rounded-2xl rounded-tr-xs px-4 py-2.5 text-[14px] leading-relaxed max-w-[85%] sm:max-w-[75%] shadow-2xs">
-
-                    <p className="whitespace-pre-wrap">
-                      {msg.content}
-                    </p>
-
-                    <div className="text-[10px] text-blue-200 mt-1 text-right">
-                      {new Intl.DateTimeFormat('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      }).format(new Date(msg.timestamp))}
+            <div className="text-left">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
+                Suggested Prompts
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {SUGGESTED_PROMPTS.map((prompt, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSuggestion(prompt)}
+                    disabled={isLoading}
+                    className="p-3 text-left text-xs sm:text-[13px] font-medium text-foreground bg-card hover:bg-secondary-bg border border-border hover:border-foreground/20 rounded-xl transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed group flex items-start justify-between gap-2"
+                  >
+                    <span className="leading-snug">{prompt}</span>
+                    <Sparkles className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground shrink-0 mt-0.5 transition-colors" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Conversational Messages */
+          <AnimatePresence initial={false}>
+            {messages.map((msg) => (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.16 }}
+                className="group"
+              >
+                {msg.role === 'user' ? (
+                  /* User message */
+                  <div className="flex justify-end pl-10">
+                    <div className="bg-[#080908] text-[#FAF8F3] dark:bg-[#1E201E] dark:text-[#FAF8F3] border border-transparent dark:border-border rounded-2xl rounded-tr-xs px-4 py-2.5 text-[14px] leading-relaxed max-w-[85%] sm:max-w-[75%] shadow-xs">
+                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                      <div className="text-[10px] text-[#FAF8F3]/60 mt-1 text-right font-mono">
+                        {new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(msg.timestamp))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* AI message */
+                  <div className="flex items-start gap-3.5 pr-4">
+                    <div className="w-8 h-8 rounded-full bg-[#080908] dark:bg-[#CDF22B] text-[#CDF22B] dark:text-[#080908] flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+                      <Bot className="w-4 h-4" />
                     </div>
 
-                  </div>
-
-                </div>
-
-              ) : (
-
-                /* AI MESSAGE */
-                <div className="flex items-start gap-3.5 pr-4">
-
-                  <div className="w-7 h-7 rounded-full bg-blue-100/90 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-
-                    <Bot className="w-4 h-4" />
-
-                  </div>
-
-                  <div className="flex-1 min-w-0 space-y-1.5">
-
-                    <div className="text-[14.5px] leading-[1.65] text-slate-800 dark:text-slate-100 font-normal">
-
-                      {renderMarkdown(msg.content)}
-
-                    </div>
-
-
-                    {/* Tool Activity */}
-                    {msg.toolTrace && msg.toolTrace.length > 0 && (
-
-                      <div className="flex items-center gap-1.5 pt-1">
-
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                          Tool Activity:
-                        </span>
-
-                        <div className="flex flex-wrap gap-1">
-
-                          {msg.toolTrace.map((tool) => (
-
-                            <span
-                              key={tool}
-                              className="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/50"
-                            >
-                              {tool}
-                            </span>
-
-                          ))}
-
-                        </div>
-
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="text-[14px] leading-[1.65] text-foreground font-normal bg-card/60 p-4 rounded-2xl rounded-tl-xs border border-border">
+                        <FormattedMessage content={msg.content} />
                       </div>
 
-                    )}
+                      {msg.toolTrace && msg.toolTrace.length > 0 && (
+                        <div className="flex items-center gap-1.5 pt-1 pl-1">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            Tool Activity:
+                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {msg.toolTrace.map((tool) => (
+                              <span
+                                key={tool}
+                                className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-secondary-bg text-foreground border border-border"
+                              >
+                                {tool}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
-
-                    <div className="text-[11px] text-slate-400 mt-1.5">
-
-                      {new Intl.DateTimeFormat('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      }).format(new Date(msg.timestamp))}
-
+                      <div className="text-[11px] text-muted-foreground mt-1 pl-1 font-mono">
+                        {new Intl.DateTimeFormat('en-US', {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        }).format(new Date(msg.timestamp))}
+                      </div>
                     </div>
-
                   </div>
+                )}
+              </motion.div>
+            ))}
 
+            {/* Thinking / Loading State */}
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-start gap-3.5 pr-4"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#080908] dark:bg-[#CDF22B] text-[#CDF22B] dark:text-[#080908] flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+                  <Bot className="w-4 h-4" />
                 </div>
 
-              )}
-
-            </motion.div>
-
-          ))}
-
-
-          {/* ─────────────────────────────────────
-              THINKING / LOADING STATE
-          ───────────────────────────────────── */}
-          {isLoading && (
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 4,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              className="flex items-start gap-3.5 pr-4"
-            >
-
-              <div className="w-7 h-7 rounded-full bg-blue-100/90 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-
-                <Sparkles className="w-4 h-4 animate-pulse" />
-
-              </div>
-
-              <div className="space-y-1.5 py-0.5">
-
-                <div className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 font-semibold">
-
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-
-                  <span>
-                    TalentPrep Copilot is reasoning...
-                  </span>
-
+                <div className="space-y-1.5 py-1">
+                  <div className="flex items-center gap-2 text-xs text-foreground font-medium">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Career Agent is thinking...</span>
+                  </div>
+                  <div className="space-y-1 max-w-xs pt-0.5">
+                    <div className="h-2 w-48 bg-secondary-bg rounded-full animate-pulse" />
+                    <div className="h-2 w-32 bg-secondary-bg rounded-full animate-pulse" />
+                  </div>
                 </div>
-
-                <div className="space-y-1 max-w-xs pt-0.5">
-
-                  <div className="h-2 w-52 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
-
-                  <div className="h-2 w-36 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
-
-                </div>
-
-              </div>
-
-            </motion.div>
-
-          )}
-
-        </AnimatePresence>
-
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
 
         {/* Error */}
         {error && (
-
-          <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-lg text-xs text-rose-600 flex items-center gap-2">
-
-            <XCircle className="w-3.5 h-3.5 flex-shrink-0" />
-
-            <span>
-              {error}
-            </span>
-
+          <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-xl text-xs text-destructive flex items-center gap-2.5">
+            <XCircle className="w-4 h-4 flex-shrink-0" />
+            <span className="flex-1 font-medium">{error}</span>
           </div>
-
         )}
-
 
         <div ref={messagesEndRef} />
-
       </div>
 
-
-      {/* ─────────────────────────────────────────────
-          BOTTOM COMPOSER
-          Slightly lower with controlled spacing
-      ───────────────────────────────────────────── */}
-      <div className="pt-4 pb-1 flex-shrink-0 space-y-3 bg-[#FAFBFC] dark:bg-slate-950">
-
-
-        {/* ─────────────────────────────────────
-            SUGGESTED QUESTIONS
-        ───────────────────────────────────── */}
-        {messages.length <= 2 && (
-
-          <div className="space-y-1.5">
-
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-0.5">
-              Suggested Questions
-            </p>
-
-            <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-none flex-wrap">
-
-              {starterPrompts.map((prompt, idx) => (
-
-                <button
-                  key={idx}
-                  onClick={() => sendMessage(prompt)}
-                  disabled={isLoading}
-                  className="h-8 text-[12px] px-3.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/40 transition-all whitespace-nowrap cursor-pointer flex-shrink-0 shadow-2xs"
-                >
-                  {prompt}
-                </button>
-
-              ))}
-
-            </div>
-
+      {/* ── Bottom Composer ── */}
+      <div className="pt-3 pb-1 flex-shrink-0 space-y-2.5 bg-background">
+        {messages.length > 0 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+            {SUGGESTED_PROMPTS.slice(0, 3).map((prompt, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleSuggestion(prompt)}
+                disabled={isLoading}
+                className="h-7 text-[11px] px-3 rounded-full bg-card border border-border text-foreground hover:bg-secondary-bg transition-all whitespace-nowrap cursor-pointer flex-shrink-0 disabled:opacity-40"
+              >
+                {prompt}
+              </button>
+            ))}
           </div>
-
         )}
 
-
-        {/* ─────────────────────────────────────
-            CHAT INPUT
-        ───────────────────────────────────── */}
-        <div className="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3 shadow-2xs">
-
+        {/* Chat Input */}
+        <div className="relative rounded-2xl border border-border bg-card focus-within:border-foreground focus-within:ring-1 focus-within:ring-foreground transition-all p-2 sm:p-2.5 flex items-end gap-2 shadow-xs">
           <textarea
-            ref={inputRef}
+            ref={textareaRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Ask me anything about your career, resume strengths, target roles, interview prep..."
+            placeholder="Ask Career Agent anything... (Press Enter to send, Shift + Enter for newline)"
             rows={1}
             disabled={isLoading}
-            className="flex-1 resize-none bg-transparent border-0 px-1 py-1 text-[13.5px] sm:text-[14px] text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none max-h-28 leading-normal"
+            className="flex-1 resize-none bg-transparent border-0 px-2 py-1.5 text-[13.5px] sm:text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none max-h-36 min-h-[38px] leading-relaxed"
           />
 
           <button
+            type="button"
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="w-9 h-9 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-secondary-bg disabled:text-muted-foreground disabled:border disabled:border-border disabled:cursor-not-allowed text-white flex items-center justify-center transition-all cursor-pointer shadow-xs flex-shrink-0"
+            className="w-10 h-10 rounded-xl bg-[#080908] text-[#FAF8F3] dark:bg-[#CDF22B] dark:text-[#080908] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed font-bold flex items-center justify-center transition-all cursor-pointer shadow-xs flex-shrink-0"
             aria-label="Send message"
           >
             {isLoading ? (
-              <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
             ) : (
               <Send className="w-4 h-4" />
             )}
           </button>
-
         </div>
-
       </div>
-
     </div>
   )
 }
+
 // ─────────────────────────────────────────────────────────────
 // 2. FIND JOBS MATCHING MY RESUME TASK WORKFLOW
 // ─────────────────────────────────────────────────────────────
+
+interface AgentJobItem {
+  job_id: string
+  title: string
+  company: string
+  location: string
+  work_model?: string
+  employment_type?: string
+  url?: string
+  description?: string
+}
+
 function FindMatchingJobsWorkflow() {
   const navigate = useNavigate()
   const { selectedResumeId } = useResumeContext()
@@ -675,7 +519,7 @@ function FindMatchingJobsWorkflow() {
   const { data: details } = useResumeDetails(selectedResumeId)
 
   const [stage, setStage] = useState<'analyzing' | 'searching' | 'comparing' | 'complete'>('analyzing')
-  const [jobs, setJobs] = useState<any[]>([])
+  const [jobs, setJobs] = useState<AgentJobItem[]>([])
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -690,62 +534,6 @@ function FindMatchingJobsWorkflow() {
       setStage('searching')
 
       try {
-        // const buildRoleQuery = () => {
-        //   const skills = (details?.skills || '').toLowerCase()
-        //   const summary = (details?.summary || '').toLowerCase()
-        //   const experience = (details?.experience || '').toLowerCase()
-        //   const profile = `${summary} ${experience} ${skills}`
-
-        //   if (profile.includes('java') && (
-        //     profile.includes('spring boot') ||
-        //     profile.includes('springboot') ||
-        //     profile.includes('microservices') ||
-        //     profile.includes('backend') ||
-        //     profile.includes('back-end')
-        //   )) {
-        //     return 'Java Backend Developer'
-        //   }
-
-        //   if (profile.includes('java')) return 'Java Developer'
-
-        //   if (profile.includes('react') && (
-        //     profile.includes('node') ||
-        //     profile.includes('full stack') ||
-        //     profile.includes('full-stack')
-        //   )) {
-        //     return 'Full Stack Developer'
-        //   }
-
-        //   if (profile.includes('python') && (
-        //     profile.includes('django') ||
-        //     profile.includes('flask') ||
-        //     profile.includes('fastapi') ||
-        //     profile.includes('backend')
-        //   )) {
-        //     return 'Python Backend Developer'
-        //   }
-
-        //   if (profile.includes('devops') || (profile.includes('kubernetes') && profile.includes('cloud'))) {
-        //     return 'DevOps Engineer'
-        //   }
-
-        //   if (profile.includes('data engineer')) return 'Data Engineer'
-        //   if (profile.includes('machine learning') || profile.includes('machine-learning')) return 'Machine Learning Engineer'
-        //   if (profile.includes('ai engineer') || profile.includes('artificial intelligence')) return 'AI Engineer'
-
-        //   const roleMatch = profile.match(/(?:senior|sr\.?|junior|jr\.?|lead)?\s*(software engineer|software developer|backend developer|frontend developer|full stack developer|data engineer|devops engineer|platform engineer|qa engineer|test engineer)/i)
-        //   if (roleMatch?.[1]) return roleMatch[1].replace(/\s+/g, ' ').trim()
-
-        //   return 'Software Engineer'
-        // }
-
-
-        // const result = await resumeApi.searchJobs({
-        //   q: roleQuery,
-        //   location: 'India',
-        //   days: 30,
-        //   limit: 10,
-        // })
         const result = await resumeApi.findJobsForMe({
           location: 'India',
           days: 30,
@@ -758,10 +546,10 @@ function FindMatchingJobsWorkflow() {
         if (cancelled) return
         setJobs(result?.jobs || [])
         setStage('complete')
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('[AgentJobSearch] Failed:', err)
         if (!cancelled) {
-          setError(err?.response?.data?.message || err?.message || 'Failed to search matching jobs.')
+          setError((err as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message || (err as { message?: string })?.message || 'Failed to search matching jobs.')
           setStage('complete')
         }
       }
@@ -776,16 +564,16 @@ function FindMatchingJobsWorkflow() {
   return (
     <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
       {/* Tool Execution Activity Progress */}
-      <div className="p-4 bg-slate-50/70 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 rounded-xl space-y-2.5">
+      <div className="p-4 bg-card border border-border rounded-xl space-y-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-blue-600" />
-            <h3 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+            <Sparkles className="w-4 h-4 text-foreground" />
+            <h3 className="font-bold text-xs sm:text-sm text-foreground">
               AI Career Agent Activity
             </h3>
           </div>
           {stage !== 'complete' && (
-            <span className="flex items-center gap-1 text-[11px] text-blue-600 font-semibold animate-pulse">
+            <span className="flex items-center gap-1 text-[11px] text-foreground font-semibold animate-pulse">
               <Loader2 className="w-3 h-3 animate-spin" /> In Progress
             </span>
           )}
@@ -793,30 +581,30 @@ function FindMatchingJobsWorkflow() {
 
         <div className="space-y-1.5 pt-1">
           <div className="flex items-center gap-2 text-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-            <span className="text-slate-700 dark:text-slate-300 font-medium">Resume profile analyzed ({resume?.fileName || 'Active resume'})</span>
+            <CheckCircle2 className="w-3.5 h-3.5 text-foreground flex-shrink-0" />
+            <span className="text-foreground font-medium">Resume profile analyzed ({resume?.fileName || 'Active resume'})</span>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
             {stage === 'analyzing' ? (
-              <Loader2 className="w-3.5 h-3.5 text-blue-600 animate-spin flex-shrink-0" />
+              <Loader2 className="w-3.5 h-3.5 text-foreground animate-spin flex-shrink-0" />
             ) : (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-foreground flex-shrink-0" />
             )}
-            <span className={cn('font-medium', stage === 'analyzing' ? 'text-blue-600' : 'text-slate-700 dark:text-slate-300')}>
+            <span className={cn('font-medium', stage === 'analyzing' ? 'text-foreground font-bold' : 'text-muted-foreground')}>
               Searching active job opportunities
             </span>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
             {stage === 'analyzing' || stage === 'searching' ? (
-              <div className="w-3.5 h-3.5 rounded-full border border-slate-300 dark:border-slate-700 flex-shrink-0" />
+              <div className="w-3.5 h-3.5 rounded-full border border-border flex-shrink-0" />
             ) : stage === 'comparing' ? (
-              <Loader2 className="w-3.5 h-3.5 text-blue-600 animate-spin flex-shrink-0" />
+              <Loader2 className="w-3.5 h-3.5 text-foreground animate-spin flex-shrink-0" />
             ) : (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-foreground flex-shrink-0" />
             )}
-            <span className={cn('font-medium', stage === 'comparing' ? 'text-blue-600' : stage === 'complete' ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400')}>
+            <span className={cn('font-medium', stage === 'comparing' ? 'text-foreground font-bold' : stage === 'complete' ? 'text-foreground' : 'text-muted-foreground')}>
               Comparing live job requirements against your resume qualifications
             </span>
           </div>
@@ -825,7 +613,7 @@ function FindMatchingJobsWorkflow() {
 
       {/* Error message */}
       {error && (
-        <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 rounded-xl text-xs text-rose-600">
+        <div className="p-3 bg-card border border-destructive/40 rounded-xl text-xs text-destructive">
           {error}
         </div>
       )}
@@ -834,12 +622,12 @@ function FindMatchingJobsWorkflow() {
       {stage === 'complete' && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+            <h3 className="font-bold text-xs sm:text-sm text-foreground">
               Matched Opportunities ({jobs.length} found)
             </h3>
             <button
               onClick={() => navigate('/jobs')}
-              className="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
+              className="text-xs font-semibold text-foreground underline hover:text-foreground/80 cursor-pointer"
             >
               Open in Job Explorer
             </button>
@@ -849,39 +637,39 @@ function FindMatchingJobsWorkflow() {
             {jobs.map((job) => (
               <div
                 key={job.job_id}
-                className="p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between"
+                className="p-3.5 rounded-xl border border-border bg-card hover:border-[#080908] transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                      <h4 className="font-bold text-xs sm:text-sm text-foreground truncate">
                         {job.title}
                       </h4>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {job.company} • {job.location}
                       </p>
                     </div>
                     {job.work_model && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex-shrink-0">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-secondary-bg text-muted-foreground border border-border flex-shrink-0">
                         {job.work_model}
                       </span>
                     )}
                   </div>
 
                   {job.employment_type && (
-                    <p className="text-[11px] text-slate-400 mt-1">
+                    <p className="text-[11px] text-muted-foreground mt-1">
                       {job.employment_type}
                     </p>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+                <div className="flex items-center justify-between pt-3 mt-2 border-t border-border text-xs">
                   {job.url && (
                     <a
                       href={job.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 font-semibold text-blue-600 hover:underline"
+                      className="inline-flex items-center gap-1 font-bold text-foreground underline hover:text-foreground/80"
                     >
                       <span>View & Apply</span>
                       <ExternalLink className="w-3 h-3" />
@@ -896,7 +684,7 @@ function FindMatchingJobsWorkflow() {
                         navigate('/agent?task=match_jd', { state: { jdText: `${job.title} at ${job.company}\nLocation: ${job.location}` } })
                       }
                     }}
-                    className="text-slate-500 hover:text-slate-900 dark:hover:text-white font-medium cursor-pointer"
+                    className="text-muted-foreground hover:text-foreground font-medium cursor-pointer"
                   >
                     Match Breakdown
                   </button>
@@ -913,6 +701,7 @@ function FindMatchingJobsWorkflow() {
 // ─────────────────────────────────────────────────────────────
 // 3. MATCH MY RESUME TO A JOB DESCRIPTION TASK WORKFLOW
 // ─────────────────────────────────────────────────────────────
+
 function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string }) {
   const navigate = useNavigate()
   const { selectedResumeId } = useResumeContext()
@@ -949,12 +738,12 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
   return (
     <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
       {/* JD Input Area */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-4 space-y-3 shadow-2xs">
+      <div className="bg-card border border-border rounded-xl p-4 space-y-3 shadow-xs">
         <div>
-          <h3 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+          <h3 className="font-bold text-xs sm:text-sm text-foreground">
             Target Job Description
           </h3>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-[11px] text-muted-foreground mt-0.5">
             Paste the full job posting text to analyze skill gaps and keyword alignment against your resume.
           </p>
         </div>
@@ -965,22 +754,22 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
           placeholder="Paste job description requirements, responsibilities, and qualifications here..."
           rows={5}
           disabled={isProcessing || jobMatchMutation.isPending}
-          className="w-full p-3 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white leading-relaxed resize-y"
+          className="w-full p-3 text-xs sm:text-sm bg-secondary-bg/60 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#080908] focus:border-[#080908] text-foreground leading-relaxed resize-y"
         />
 
         <div className="flex items-center justify-between flex-wrap gap-2 pt-1">
-          <span className="text-[11px] text-slate-400">
+          <span className="text-[11px] text-muted-foreground font-mono tabular-nums">
             {jobDescription.length} characters
           </span>
 
           <button
             onClick={handleMatch}
             disabled={!jobDescription.trim() || !resume?.id || isProcessing || jobMatchMutation.isPending}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-secondary-bg disabled:text-muted-foreground disabled:border disabled:border-border disabled:cursor-not-allowed text-white font-semibold text-xs rounded-lg transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#CDF22B] hover:bg-[#b8da25] disabled:opacity-40 disabled:cursor-not-allowed text-[#080908] font-bold text-xs rounded-lg transition-colors shadow-xs cursor-pointer"
           >
             {isProcessing || jobMatchMutation.isPending ? (
               <>
-                <div className="w-3.5 h-3.5 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                <div className="w-3.5 h-3.5 border-2 border-[#080908] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                 <span>Evaluating Match...</span>
               </>
             ) : (
@@ -995,20 +784,20 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
 
       {/* Status Progress State */}
       {(isProcessing || jobMatchMutation.isPending) && (
-        <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl space-y-3 shadow-2xs">
+        <div className="p-4 bg-card border border-border rounded-xl space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-blue-600 animate-pulse" />
-              <span className="text-xs font-bold text-slate-900 dark:text-white">
+              <Sparkles className="w-4 h-4 text-foreground animate-pulse" />
+              <span className="text-xs font-bold text-foreground">
                 Comparing resume against job requirements...
               </span>
             </div>
-            <span className="text-[11px] font-semibold text-blue-600">Analyzing skills</span>
+            <span className="text-[11px] font-semibold text-muted-foreground">Analyzing skills</span>
           </div>
           <div className="space-y-2">
-            <div className="h-3.5 w-full bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
-            <div className="h-3.5 w-4/5 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
-            <div className="h-3.5 w-3/5 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+            <div className="h-3.5 w-full bg-secondary-bg rounded animate-pulse" />
+            <div className="h-3.5 w-4/5 bg-secondary-bg rounded animate-pulse" />
+            <div className="h-3.5 w-3/5 bg-secondary-bg rounded animate-pulse" />
           </div>
         </div>
       )}
@@ -1017,15 +806,15 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
       {result && (
         <div className="space-y-3.5">
           {/* Top Overall Score Card */}
-          <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl flex items-center justify-between flex-wrap gap-4 shadow-2xs">
+          <div className="p-4 bg-card border border-border rounded-xl flex items-center justify-between flex-wrap gap-4 shadow-xs">
             <div className="flex items-center gap-4">
-              <ScoreRingContainer score={result.overallMatch ?? 0} size="lg" label="Match" color="#2563EB" />
+              <ScoreRingContainer score={result.overallMatch ?? 0} size="lg" label="Match" color="#080908" />
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Match Compatibility</span>
-                <h3 className="font-heading font-extrabold text-lg text-slate-900 dark:text-white">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-mono">Match Compatibility</span>
+                <h3 className="font-extrabold text-lg text-foreground">
                   {result.overallMatch}% Overall Fit
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   {(result.overallMatch ?? 0) >= 75
                     ? 'Strong alignment with key requirements.'
                     : 'Moderate alignment with noticeable skill gaps.'}
@@ -1035,7 +824,7 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
 
             <button
               onClick={() => navigate('/resume/builder')}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl transition-all shadow-2xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#CDF22B] hover:bg-[#b8da25] text-[#080908] font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Improve Resume for This Job</span>
@@ -1045,14 +834,14 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
           {/* Matched vs Missing Skills */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Matched */}
-            <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
-                <CheckCircle2 className="w-3.5 h-3.5" />
+            <div className="p-3.5 bg-card border border-border rounded-xl space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                <CheckCircle2 className="w-3.5 h-3.5 text-foreground" />
                 <span>Strong Matches ({result.matchedSkills.length})</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {result.matchedSkills.map((s) => (
-                  <span key={s} className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 border border-emerald-200/60 dark:border-emerald-800">
+                  <span key={s} className="px-2 py-0.5 rounded text-[11px] font-semibold bg-secondary-bg border border-border text-foreground">
                     {s}
                   </span>
                 ))}
@@ -1060,14 +849,14 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
             </div>
 
             {/* Missing */}
-            <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-rose-600">
-                <XCircle className="w-3.5 h-3.5" />
+            <div className="p-3.5 bg-card border border-border rounded-xl space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                <XCircle className="w-3.5 h-3.5 text-muted-foreground" />
                 <span>Missing / Weak Areas ({result.missingSkills.length})</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {result.missingSkills.map((s) => (
-                  <span key={s} className="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-600 border border-rose-200/60 dark:border-rose-800">
+                  <span key={s} className="px-2 py-0.5 rounded text-[11px] font-semibold bg-secondary-bg/60 border border-border text-muted-foreground">
                     {s}
                   </span>
                 ))}
@@ -1077,15 +866,15 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
 
           {/* Recommendations */}
           {result.recommendations && result.recommendations.length > 0 && (
-            <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+            <div className="p-3.5 bg-card border border-border rounded-xl space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                <Lightbulb className="w-3.5 h-3.5 text-foreground" />
                 <span>Recommended Improvements</span>
               </div>
-              <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+              <ul className="space-y-1 text-xs text-muted-foreground">
                 {result.recommendations.map((rec, idx) => (
                   <li key={idx} className="flex items-start gap-1.5 leading-relaxed">
-                    <span className="text-blue-500 mt-1 font-bold">•</span>
+                    <span className="text-foreground mt-1 font-bold">•</span>
                     <span>{rec}</span>
                   </li>
                 ))}
@@ -1101,6 +890,7 @@ function MatchJobDescriptionWorkflow({ initialJdText }: { initialJdText?: string
 // ─────────────────────────────────────────────────────────────
 // MAIN AI CAREER AGENT PAGE (Single Continuous Workspace)
 // ─────────────────────────────────────────────────────────────
+
 function AIAgentInner() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -1131,19 +921,21 @@ function AIAgentInner() {
   }
 
   return (
-    <div className="w-full max-w-[1140px] xl:max-w-[1280px] mx-auto flex flex-col h-full min-h-0 px-6 sm:px-8 lg:px-10 py-5 sm:py-6">
-      {/* ── Page Header (Clean & Compact) ── */}
-      <div className="pb-3 border-b border-slate-200/70 dark:border-slate-800/70 flex-shrink-0">
+    <div className="flex-1 w-full min-w-0 flex flex-col h-full min-h-0 px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+      {/* ── Page Header ── */}
+      <div className="pb-3 border-b border-border flex-shrink-0">
         <div>
-          <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 text-[11px] font-bold uppercase tracking-wider mb-1">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>AI CAREER COPILOT</span>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="font-extrabold text-2xl sm:text-[26px] text-foreground tracking-tight leading-tight">
+              Career Agent
+            </h1>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Online
+            </span>
           </div>
-          <h1 className="font-heading font-extrabold text-2xl sm:text-[26px] text-slate-900 dark:text-white tracking-tight leading-tight">
-            AI Career Agent
-          </h1>
-          <p className="text-[13px] sm:text-[13.5px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">
-            Your AI career copilot to analyze resumes, find matching opportunities, and optimize applications.
+          <p className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-normal">
+            Your AI-powered career assistant.
           </p>
         </div>
 
@@ -1152,10 +944,10 @@ function AIAgentInner() {
           <button
             onClick={() => setTabWithUrl('chat')}
             className={cn(
-              'h-9.5 inline-flex items-center gap-2 px-4 text-[13px] font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap border shadow-2xs',
+              'h-9.5 inline-flex items-center gap-2 px-4 text-[13px] rounded-full transition-all cursor-pointer whitespace-nowrap border shadow-xs',
               activeTab === 'chat'
-                ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                ? 'bg-[#080908] text-[#CDF22B] border-[#080908] font-bold shadow-xs'
+                : 'bg-card text-foreground border-border hover:bg-secondary-bg font-medium'
             )}
           >
             <Bot className="w-4 h-4" />
@@ -1165,10 +957,10 @@ function AIAgentInner() {
           <button
             onClick={() => setTabWithUrl('find_jobs')}
             className={cn(
-              'h-9.5 inline-flex items-center gap-2 px-4 text-[13px] font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap border shadow-2xs',
+              'h-9.5 inline-flex items-center gap-2 px-4 text-[13px] rounded-full transition-all cursor-pointer whitespace-nowrap border shadow-xs',
               activeTab === 'find_jobs'
-                ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                ? 'bg-[#080908] text-[#CDF22B] border-[#080908] font-bold shadow-xs'
+                : 'bg-card text-foreground border-border hover:bg-secondary-bg font-medium'
             )}
           >
             <Search className="w-4 h-4" />
@@ -1178,10 +970,10 @@ function AIAgentInner() {
           <button
             onClick={() => setTabWithUrl('match_jd')}
             className={cn(
-              'h-9.5 inline-flex items-center gap-2 px-4 text-[13px] font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap border shadow-2xs',
+              'h-9.5 inline-flex items-center gap-2 px-4 text-[13px] rounded-full transition-all cursor-pointer whitespace-nowrap border shadow-xs',
               activeTab === 'match_jd'
-                ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                ? 'bg-[#080908] text-[#CDF22B] border-[#080908] font-bold shadow-xs'
+                : 'bg-card text-foreground border-border hover:bg-secondary-bg font-medium'
             )}
           >
             <Target className="w-4 h-4" />
@@ -1190,9 +982,9 @@ function AIAgentInner() {
 
           <button
             onClick={() => navigate('/resume/builder')}
-            className="h-9.5 inline-flex items-center gap-2 px-4 text-[13px] font-semibold rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 dark:hover:border-slate-700 hover:text-blue-600 transition-all cursor-pointer whitespace-nowrap shadow-2xs sm:ml-auto"
+            className="h-9.5 inline-flex items-center gap-2 px-4 text-[13px] font-semibold rounded-full bg-card text-foreground border border-border hover:bg-secondary-bg transition-all cursor-pointer whitespace-nowrap shadow-xs sm:ml-auto"
           >
-            <FileEdit className="w-4 h-4 text-blue-600" />
+            <FileEdit className="w-4 h-4 text-foreground" />
             <span>Improve My Resume</span>
           </button>
         </div>
@@ -1210,9 +1002,8 @@ function AIAgentInner() {
 
 export default function AIAgent() {
   return (
-    <div className="flex-1 flex flex-col h-[calc(100dvh-0px)] overflow-hidden bg-[#FAFBFC] dark:bg-slate-950">
+    <div className="flex-1 flex flex-col h-[calc(100dvh-0px)] overflow-hidden bg-background">
       <AIAgentInner />
     </div>
   )
 }
-

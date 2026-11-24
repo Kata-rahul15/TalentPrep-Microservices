@@ -135,6 +135,7 @@ export interface InterviewQuestionResponse {
   parentQuestionId?: string | null
   questionStatus: QuestionStatus
   codingBoilerplate: string | null
+  codingStarterTemplates?: Record<string, string>
   codingTestCases: CodingTestCaseDto[]
 }
 
@@ -175,10 +176,17 @@ export interface AnswerEvaluationResponseDto {
   feedback: string
   strengths: string[]
   improvements: string[]
-  suggestedIdealAnswer: string
+  suggestedIdealAnswer?: string | null
   roundCompleted: boolean
   interviewCompleted: boolean
   currentRoundIndex: number
+  passedCount?: number
+  totalCount?: number
+  executionTimeMs?: number
+  verdict?: string
+  testCaseResults?: TestCaseResult[]
+  questionOrder?: number
+  targetQuestionCount?: number
 }
 
 // ─── Coding DTOs ─────────────────────────────────────────────
@@ -189,13 +197,35 @@ export interface CodeSubmissionRequest {
   code: string
 }
 
+export interface TestCaseResult {
+  input: string
+  expectedOutput: string
+  actualOutput?: string
+  passed: boolean
+  error?: string | null
+  verdict?: string
+  executionTimeMs?: number
+  memoryUsedBytes?: number
+  hidden?: boolean
+}
+
 export interface CodeRunResult {
-  compiled: boolean // false in current backend
-  output: string | null
-  executionTimeMs: number
-  testCasesPassed: number
-  totalTestCases: number
-  errorMessage: string | null
+  compiled: boolean
+  compilationOutput?: string | null
+  passedAllTestCases?: boolean
+  passedCount?: number
+  totalCount?: number
+  score?: number
+  executionTimeMs?: number
+  memoryUsedBytes?: number
+  verdict?: string
+  stdout?: string | null
+  stderr?: string | null
+  testCaseResults?: TestCaseResult[]
+  output?: string | null
+  errorMessage?: string | null
+  testCasesPassed?: number
+  totalTestCases?: number
 }
 
 // ─── Transcript & Report DTOs ────────────────────────────────
@@ -225,13 +255,48 @@ export interface InterviewTranscriptResponse {
   turns?: TranscriptItemDto[]
 }
 
+export interface RoundBreakdownQuestionDetail {
+  questionId: string
+  questionOrder: number
+  questionText: string
+  questionCategory?: string
+  difficulty?: string
+  score: number
+  feedback?: string
+  language?: string
+  codeSubmission?: string
+  timeTakenSeconds?: number
+  verdict?: string
+  passedCount?: number
+  totalCount?: number
+  executionTimeMs?: number
+  executionMetrics?: {
+    passedCount?: number
+    totalCount?: number
+    score?: number
+    verdict?: string
+    compiled?: boolean
+    compilationOutput?: string
+    executionTimeMs?: number
+    testCaseResults?: TestCaseResult[]
+  }
+}
+
 export interface RoundBreakdownItem {
   roundOrder?: number
   roundType: RoundType | string
   roundScore: number | null
   questionsCount?: number
   completedQuestions?: number
+  totalQuestions?: number
+  attemptedQuestions?: number
+  solvedQuestions?: number
+  totalTestCasesPassed?: number
+  totalTestCasesFailed?: number
+  testCasesPassed?: number
+  testCasesFailed?: number
   summary?: string
+  questions?: RoundBreakdownQuestionDetail[]
 }
 
 export interface InterviewReportResponse {
@@ -247,6 +312,89 @@ export interface InterviewReportResponse {
   improvementAreas?: string[]
   recommendedTopics: string[]
   generatedAt: string
+}
+
+// ─── History & Review DTOs ───────────────────────────────────
+
+export interface InterviewHistoryItem {
+  sessionId: string
+  interviewType: string
+  roundTypes: string[]
+  createdAt: string
+  completedAt?: string
+  overallScore?: number | null
+  status: string
+  totalQuestions: number
+  completedQuestions: number
+  durationMinutes?: number
+  targetRole: string
+  difficulty?: string
+}
+
+export interface InterviewRoundReview {
+  roundId: string
+  roundOrder: number
+  roundType: string
+  status: string
+  roundScore?: number | null
+  targetQuestionCount: number
+  completedQuestionCount: number
+  questions?: InterviewQuestionReview[]
+}
+
+export interface InterviewQuestionReview {
+  questionId: string
+  roundId?: string
+  roundOrder: number
+  roundType: string
+  questionOrder: number
+  questionText: string
+  questionCategory?: string
+  difficulty?: string
+  questionStatus: string
+  codingBoilerplate?: string
+  codingTestCases?: CodingTestCaseDto[]
+  candidateAnswer?: string
+  codeSubmission?: string
+  language?: string
+  timeTakenSeconds?: number
+  submittedAt?: string
+  score?: number
+  technicalAccuracy?: number
+  completeness?: number
+  clarity?: number
+  problemSolving?: number
+  feedback?: string
+  strengths?: string[]
+  improvements?: string[]
+  executionMetrics?: {
+    passedCount?: number
+    totalCount?: number
+    score?: number
+    verdict?: string
+    compiled?: boolean
+    compilationOutput?: string
+    executionTimeMs?: number
+    testCaseResults?: TestCaseResult[]
+  }
+}
+
+export interface InterviewDetailReview {
+  sessionId: string
+  targetRole: string
+  interviewType?: string
+  difficulty: string
+  mode: string
+  status: string
+  overallScore?: number | null
+  durationMinutes?: number
+  createdAt: string
+  startedAt?: string | null
+  completedAt?: string | null
+  candidateName?: string | null
+  rounds: InterviewRoundReview[]
+  questions: InterviewQuestionReview[]
+  report?: InterviewReportResponse | null
 }
 
 // ─── Standard Backend Error Response ─────────────────────────
@@ -316,4 +464,54 @@ export type WebSocketConnectionStatus =
   | 'reconciling'
   | 'error'
 
+// ─── Video Interview Room UI Interfaces ──────────────────────
+
+export type AvatarAnimationState = 'idle' | 'speaking' | 'listening' | 'thinking'
+
+export interface DeviceSettingsState {
+  cameraEnabled: boolean
+  micEnabled: boolean
+  speakerEnabled: boolean
+  audioLevel?: number
+}
+
+export type ConversationMessageKind =
+  | 'greeting'
+  | 'transition'
+  | 'question'
+  | 'answer'
+  | 'feedback'
+  | 'acknowledgement'
+  | 'system'
+
+export interface ConversationMessage {
+  id: string
+  sender: 'ai' | 'candidate' | 'system'
+  text: string
+  timestamp: string
+  kind?: ConversationMessageKind
+  questionId?: string
+  questionOrder?: number
+  topic?: string | null
+  roundType?: RoundType | string
+  isFollowUp?: boolean
+  depth?: number
+  codeSnippet?: string | null
+  isPending?: boolean
+}
+
+export interface SystemDesignNode {
+  id: string
+  type: 'client' | 'gateway' | 'service' | 'database' | 'cache' | 'queue'
+  label: string
+  x: number
+  y: number
+}
+
+export interface SystemDesignEdge {
+  id: string
+  fromId: string
+  toId: string
+  label?: string
+}
 
